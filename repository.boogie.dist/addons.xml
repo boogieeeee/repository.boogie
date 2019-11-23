@@ -98,14 +98,14 @@
 	</tinyxbmc>
 </addon>
 
-    <addon id="repository.boogie" name="Boogie Kodi Repo" version="0.0.1" provider-name="boogie">
+    <addon id="repository.boogie" name="Boogie Kodi Repo" version="0.0.2" provider-name="boogie">
         <requires>
             <import addon="xbmc.addon" version="12.0.0"/>
         </requires>
         <extension point="xbmc.addon.repository" name="Boogie Kodi Repo">
-            <info compressed="false">https://raw.githubusercontent.com/boogieeeee/repository.boogie.dist/master/repository.boogie.dist/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/boogieeeee/repository.boogie.dist/master/repository.boogie.dist/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/boogieeeee/repository.boogie.dist/master/repository.boogie.dist/</datadir>
+            <info compressed="false">https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/</datadir>
             <hashes>false</hashes>
         </extension>
         <extension point="xbmc.addon.metadata">
