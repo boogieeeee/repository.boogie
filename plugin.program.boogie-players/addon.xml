@@ -24,10 +24,10 @@
 		<email>boogiepop@gmx.com</email>
 	  </extension>
 	  <tinyxbmc>
-	  	<!-- plugin path="lib" id="vodslinkplayer" module="smu" instance="smu"/-->
-	  	<!-- plugin path="lib" id="vodslinkplayer" module="players" instance="streamlink"/-->
-	  	<!-- plugin path="lib" id="vodsaddonplayer" module="players" instance="plexus"/-->
-	  	<!-- plugin path="lib" id="vodsaddonplayer" module="players" instance="elementum"/-->
+	  	<plugin path="lib" id="vodslinkplayer" module="smu" instance="smu"/>
+	  	<plugin path="lib" id="vodslinkplayer" module="players" instance="streamlink"/>
+	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="plexus"/>
+	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="elementum"/>
 	  	<plugin path="lib" id="vodslinkplayer" module="streams" instance="streams"/>
 	  </tinyxbmc>
 </addon>
