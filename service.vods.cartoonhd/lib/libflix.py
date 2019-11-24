@@ -188,7 +188,6 @@ def geturls(self, url):
     domain = "https://%s" % self.setting.getstr("domain")
     page = self.download(url)
     header = {
-        'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36',
         'X-Requested-With': 'XMLHttpRequest',
         "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
         "cookie": "",
