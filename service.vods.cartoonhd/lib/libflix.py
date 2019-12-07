@@ -102,7 +102,9 @@ def scrapeinfo(self, url):
         info["tvshowtitle"] = js.get("name", "")
     info["plot"] = info["plotoutline"] = js.get("description", "")
     try:
-        info["year"] = int(js.get("dateCreated", "1000-").split("-")[0])
+        for _key in ["dateCreated", "datePublished"]: 
+            if _key in js:
+                info["year"] = int(js[_key].split("-")[0])
     except Exception:
         pass
     info["genre"] = ""
