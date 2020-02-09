@@ -20,9 +20,9 @@
 
 from liblivechannels import scraper
 
-
+"""
 class dailymotion(object):
-    domain = "https://www.dailymotion.com/embed/video/"
+    domain = "https://www.dailymotion.com/video/"
     did = ""
 
     def checkerrors(self):
@@ -52,3 +52,4 @@ class ulusal(dailymotion, scraper):
     categories = ["Dailymotion", "Turkish", "Turkey", "News"]
     did = "x7bkpdd"
     icon = "https://yt3.ggpht.com/-qsasr_ufaNg/AAAAAAAAAAI/AAAAAAAAAAA/iosChkp01qk/s288-c-k-no-mo-rj-c0xffffff/photo.jpg"
+"""

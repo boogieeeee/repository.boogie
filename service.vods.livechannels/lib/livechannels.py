@@ -60,9 +60,11 @@ class livechannels(vods.movieextension):
             cat = []
         else:
             cat = [cat]
-        chans = tools.safeiter(liblivechannels.iterchannels(*cat))
         ccache = self.hay("livechannelsdb")
-        if self.validate:
+        channels = ccache.find("channels").data
+        if self.validate or not channels.get("alives"):
+            chans = tools.safeiter(liblivechannels.iterchannels(*cat))
+            channels = {"alives": []}
             ccache.burn()
             pg = gui.progress("Checking")
             pg.update(0, "Loading Channels")
@@ -76,13 +78,13 @@ class livechannels(vods.movieextension):
                 if c.checkerrors is not None:
                     error = c.checkerrors()
                     if error is None:
-                        ccache.throw(c.index, {"alive": True})
+                        channels["alives"].append([c.icon, c.title, c.index])
                         pg.update(100 * index / len(chans), c.title, "UP", c.index)
                         continue
                 for url in tools.safeiter(c.get()):
                     error = self.headcheck(url)
                     if error is None:
-                        ccache.throw(c.index, {"alive": True})
+                        channels["alives"].append([c.icon, c.title, c.index])
                         valid = True
                         pg.update(100 * index / len(chans), c.title, "UP", c.index)
                         break
@@ -90,13 +92,13 @@ class livechannels(vods.movieextension):
                     pg.update(100 * index / len(chans), c.title, error, c.index)
                 if index == 200000:
                     break
+            ccache.throw("channels", channels)
             pg.close()
             self.validate = False
-        for c in chans:
-            if ccache.find(c.index).data.get("alive"):
-                info = {"title": c.title}
-                art = {"icon": c.icon, "thumb": c.icon, "poster": c.icon}
-                self.additem(c.title, c.index, info, art)
+        for icon, title, index in channels.get("alives", []):
+            info = {"title": title}
+            art = {"icon": icon, "thumb": icon, "poster": icon}
+            self.additem(title, index, info, art)
 
     def geturls(self, cid):
         chan = liblivechannels.loadchannel(cid, self)

@@ -40,10 +40,11 @@ class ecanli(object):
                     chdata = self.vods.download(src, referer=self.channel)
                     regx = "file\s?:\s?(?:'|\")(.+)(?:'|\")"
                     m3u8 = re.search(regx, chdata)
+                    m3u8url = self.m3u8workaround(m3u8.group(1), src, ua)
                     if m3u8 and "etvserver.com/" not in m3u8.group(1):
                         headers = {"Referer": src,
                                    "User-Agent": ua}
-                        m3u8 = "%s|%s" % (m3u8.group(1), urllib.urlencode(headers))
+                        m3u8 = "%s|%s" % (m3u8url, urllib.urlencode(headers))
                         yayinlar.append(m3u8)
                     break
         tree = htmlement.fromstring(self.vods.download(self.channel, referer=domain))
@@ -65,35 +66,37 @@ class ecanli(object):
             for yayin in yayinlar:
                 yield yayin
 
+    def m3u8workaround(self, url, referer, useragent):
+        if url.endswith(".m3u8"):
+            segments = re.findall("(.+?\.m3u8)", self.vods.download(url,
+                                                                    referer=referer,
+                                                                    useragent=useragent))
+            for segment in segments:
+                nurl = segments[0]
+                if not (nurl.startswith("http://") or nurl.startswith("https://")):
+                    nurl = "/".join(url.split("/")[:-1]) + "/" + nurl
+                resp = self.vods.download(nurl, method="HEAD", referer=referer, useragent=useragent)
+                if resp.status_code == 200:
+                    return nurl
+        return url
+
 
 def create_classes():
-    cachetime = 60 * 24 * 7
-    page = net.http(domain + "/sitemap.xml", referer=domain, cache=cachetime)
-    for link in re.finditer("<loc>(.+?)</loc>", page.encode("utf8")):
-        url = link.group(1).strip()
-        names = re.sub("[0-9]+\/", "/", url).split("/")
-        if "/category/" in url:
-            continue
-        if "-kanallar" in url:
-            continue
-        if "-channels" in url:
-            continue
-        if len(names) < 5:
-            continue 
-        namestrips = ["canli", "kesintisiz", "izle", "hd", "yayin", "film", "series", "live", "stream"]
-        cname = names[3].replace("-", " ")
-        for namestrip in namestrips:
-            cname = cname.replace(namestrip, "")
-        cname = cname.replace("  ", " ").title()
-        cid = "channel_%s" % url.replace(":", "")
-        bdict = {"channel": url,
-                 "title": cname,
-                 "categories": ["ecanlitv"]
-                 }
-        logos = list(names)
-        logos.insert(3, "logo")
-        bdict["icon"] = "/".join(logos[:-1]) + ".png"
-        globals()[cid] = type(cid, (ecanli, scraper), bdict)
+    page = net.http(domain, referer=domain)
+    trees = [htmlement.fromstring(page)]
+    for pg in trees[0].findall(".//div[@class='wp-pagenavi']/a")[:-1]:
+        trees.append(htmlement.fromstring(net.http(pg.get("href"), referer=domain)))
+    for tree in trees:
+        for chan in tree.iterfind(".//ul[@class='kanallar']/.//a"):
+            cname = chan.get("title")
+            url = chan.get("href")
+            cid = "channel_%s" % url.replace(":", "").encode("ascii", "replace")
+            bdict = {"channel": url,
+                     "title": cname,
+                     "categories": ["ecanlitv"]
+                     }
+            bdict["icon"] = chan.find(".//img").get("src")
+            globals()[cid] = type(cid, (ecanli, scraper), bdict)
 
 
 create_classes()
