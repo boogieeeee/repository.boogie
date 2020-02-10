@@ -71,6 +71,8 @@ class livechannels(vods.movieextension):
             chans = list(chans)
             index = 0
             for chan in chans:
+                if pg.iscanceled():
+                    break
                 valid = False
                 c = liblivechannels.loadchannel(chan, self)
                 index += 1

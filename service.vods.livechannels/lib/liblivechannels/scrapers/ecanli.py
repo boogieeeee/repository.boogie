@@ -67,6 +67,7 @@ class ecanli(object):
                 yield yayin
 
     def m3u8workaround(self, url, referer, useragent):
+        skip = False
         if url.endswith(".m3u8"):
             segments = re.findall("(.+?\.m3u8)", self.vods.download(url,
                                                                     referer=referer,
@@ -78,7 +79,10 @@ class ecanli(object):
                 resp = self.vods.download(nurl, method="HEAD", referer=referer, useragent=useragent)
                 if resp.status_code == 200:
                     return nurl
-        return url
+                else:
+                    skip = True
+        if not skip:
+            return url
 
 
 def create_classes():
