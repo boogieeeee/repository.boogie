@@ -21,6 +21,8 @@
 from liblivechannels import scraper
 import htmlement
 import json
+from tinyxbmc import net
+from tinyxbmc import const
 
 
 class dogan(object):
@@ -37,8 +39,7 @@ class dogan(object):
         return self.dataid
 
     def get(self):
-        if not self.dataid:
-            self.checkalive()
+        self.checkalive()
         u = self.jsurl % (self.domain, self.dataid)
         page = self.vods.download(u, referer=self.yayin)
         js = json.loads(page)
@@ -50,9 +51,7 @@ class dogan(object):
             link = securepath
         else:
             link = serviceurl + "/" + securepath
-        link = "%s|Referer=%s" % (link,
-                                  self.yayin)
-        yield link
+        yield net.tokodiurl(link, None, {"Referer": self.yayin, "User-agent": const.USERAGENT})
 
 
 class cnnturk(dogan, scraper):
@@ -65,7 +64,8 @@ class cnnturk(dogan, scraper):
     jsurl = "%s/action/media/%s"
 
 
-class kanald(dogan, scraper):
+"""
+class kanald(scraper):
     categories = ["Turkish", "Entertainment", "Turkey"]
     title = "Kanal D"
     domain = "https://www.kanald.com.tr"
@@ -73,3 +73,5 @@ class kanald(dogan, scraper):
     xpath = ".//div[@ng-controller='PlayerCtrl']"
     yayin = domain + "/canli-yayin"
     jsurl = "%s/actions/content/media/%s"
+
+"""

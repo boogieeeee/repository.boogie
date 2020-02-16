@@ -90,17 +90,22 @@ class ecanli(object):
 
 def create_classes():
     page = net.http(domain, referer=domain)
+    mtree = htmlement.fromstring(page)
+    """
     trees = [htmlement.fromstring(page)]
     for pg in trees[0].findall(".//div[@class='wp-pagenavi']/a")[:-1]:
         trees.append(htmlement.fromstring(net.http(pg.get("href"), referer=domain)))
     for tree in trees:
+    """
+    for cat in mtree.findall(".//li[2]/ul[@class='sub-menu']/li/a"):
+        tree = htmlement.fromstring(net.http(cat.get("href"), referer=domain))
         for chan in tree.iterfind(".//ul[@class='kanallar']/.//a"):
             cname = chan.get("title")
             url = chan.get("href")
             cid = "channel_%s" % url.replace(":", "").encode("ascii", "replace")
             bdict = {"channel": url,
                      "title": cname,
-                     "categories": ["ecanlitv"]
+                     "categories": ["ecanlitv", cat.get("title")]
                      }
             bdict["icon"] = chan.find(".//img").get("src")
             globals()[cid] = type(cid, (ecanli, scraper), bdict)
