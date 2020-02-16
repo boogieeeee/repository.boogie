@@ -33,7 +33,7 @@
 	  </tinyxbmc>
 </addon>
 
-<addon id="service.vods.livechannels" name="Live Channels module for VODS" provider-name="boogie" version="0.0.4">
+<addon id="service.vods.livechannels" name="Live Channels module for VODS" provider-name="boogie" version="0.0.5">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
