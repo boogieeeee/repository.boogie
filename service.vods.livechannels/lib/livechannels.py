@@ -127,7 +127,6 @@ class livechannels(vods.movieextension):
         self.uselinkplayers = chan.uselinkplayers
         self.useaddonplayers = chan.useaddonplayers
         for url in chan.get():
-            self.healthcheck(url)
             yield url
 
     def searchmovies(self, keyword):
