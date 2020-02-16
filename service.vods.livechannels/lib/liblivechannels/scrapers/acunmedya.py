@@ -36,7 +36,7 @@ class tv8(scraper):
             if chk1 is not None:
                 return chk1.group(group)
 
-        for rgx in ("push\(\{\'src\'\:\s+\"(.+?)\"", "file\:\s?\"(.+)\""):
+        for rgx in ("push\(\{\'src\'\:\s+\"(.+?)\"", "file\:\s?(?:\"|')(.+?)(?:\"|')"):
             res = checkregex(rgx)
             if res:
                 self.m3u8 = res

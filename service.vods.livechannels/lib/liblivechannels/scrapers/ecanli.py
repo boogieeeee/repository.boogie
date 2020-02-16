@@ -40,8 +40,9 @@ class ecanli(object):
                     chdata = self.vods.download(src, referer=self.channel)
                     regx = "file\s?:\s?(?:'|\")(.+)(?:'|\")"
                     m3u8 = re.search(regx, chdata)
-                    m3u8url = self.m3u8workaround(m3u8.group(1), src, ua)
-                    if m3u8 and "etvserver.com/" not in m3u8.group(1):
+                    if m3u8:
+                        #m3u8url = self.m3u8workaround(m3u8.group(1), src, ua)
+                        m3u8url = m3u8.group(1)
                         headers = {"Referer": src,
                                    "User-Agent": ua}
                         m3u8 = "%s|%s" % (m3u8url, urllib.urlencode(headers))
@@ -68,12 +69,14 @@ class ecanli(object):
 
     def m3u8workaround(self, url, referer, useragent):
         skip = False
-        if url.endswith(".m3u8"):
-            segments = re.findall("(.+?\.m3u8)", self.vods.download(url,
-                                                                    referer=referer,
-                                                                    useragent=useragent))
+        if ".m3u8" in url:
+            segments = re.findall("(.+?\.m3u8.*)", self.vods.download(url,
+                                                                       referer=referer,
+                                                                       useragent=useragent))
+            if len(segments) == 1:
+                return url
             for segment in segments:
-                nurl = segments[0]
+                nurl = segment
                 if not (nurl.startswith("http://") or nurl.startswith("https://")):
                     nurl = "/".join(url.split("/")[:-1]) + "/" + nurl
                 resp = self.vods.download(nurl, method="HEAD", referer=referer, useragent=useragent)
