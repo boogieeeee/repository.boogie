@@ -4,13 +4,12 @@ Created on Feb 22, 2020
 @author: boogie
 '''
 from addon import Base
-import liblivechannels
 from tinyxbmc import tools
 
 
 class Navi(Base):
     def cats(self):
-        for cat in tools.safeiter(liblivechannels.getcategories()):
+        for cat in tools.safeiter(self.getcategories()):
             self.item(cat, method="index").dir(cat)
 
     def index(self, cat=None):
@@ -24,7 +23,7 @@ class Navi(Base):
             self.item(title, info, art, method="geturls").resolve(index)
 
     def geturls(self, cid):
-        chan = liblivechannels.loadchannel(cid, self.download)
+        chan = self.loadchannel(cid)
         for url in chan.get():
             yield url
 

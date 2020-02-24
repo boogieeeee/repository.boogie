@@ -24,11 +24,15 @@ from tinyxbmc import const
 from tinyxbmc import net
 from tinyxbmc import gui
 from tinyxbmc import addon
+from tinyxbmc import extension
 
 import liblivechannels
 from liblivechannels import common
 
 from thirdparty import m3u8
+
+_chancls = {}
+_chanins = {}
 
 
 class Base(container.container):
@@ -95,7 +99,7 @@ class Base(container.container):
             return str(e)
 
     def do_validate(self, ccache):
-        chans = list(tools.safeiter(liblivechannels.iterchannels()))
+        chans = list(tools.safeiter(self.iterchannels()))
         channels = {"alives": []}
         ccache.burn()
         pg = gui.progress("Checking")
@@ -105,7 +109,7 @@ class Base(container.container):
             if pg.iscanceled():
                 break
             valid = False
-            c = liblivechannels.loadchannel(chan, self.download)
+            c = self.loadchannel(chan)
             index += 1
             error = "No links"
             if c.checkerrors is not None:
@@ -129,3 +133,76 @@ class Base(container.container):
         ccache.throw("channels", channels)
         ccache.snapshot()
         pg.close()
+    
+    def getchannel(self, channelid):
+        for chan in self.iterchannels():
+            if chan.index in _chancls:
+                return _chancls[chan.index]
+            elif chan.index == channelid:
+                _chancls[chan.index] = cls
+                return cls
+    
+    def iterchannels(self, *cats):
+        def _iterobjs():
+            for mod, cls in extension.getobjects(common.dpath, parents=[liblivechannels.scraper]):
+                if cls.subchannel:
+                    continue
+                if not cls.index:
+                    cls.index = "%s:%s:" % (mod.__name__, cls.__name__)
+                yield cls
+            for mod, cls in extension.getobjects(common.dpath, parents=[liblivechannels.scrapers]):
+                cls_ob = cls(self.download)
+                for cls_sub in cls_ob.iteratechannels():
+                    if not cls_sub.index:
+                        cls_sub.index = "%s:%s:%s" % (mod.__name__, cls.__name__, cls_sub.__name__)
+                    yield cls_sub
+    
+        for cls in _iterobjs():
+            found = False
+            for c in cats:
+                if c in cls.categories:
+                    found = True
+                    break
+            if not found and len(cats):
+                continue
+            if cls.index not in _chancls:
+                _chancls[cls.index] = cls
+            yield cls
+        
+    def loadchannel(self, chan):
+        try:
+            iscls = issubclass(chan, liblivechannels.scraper)
+        except Exception:
+            iscls = False
+        if iscls:
+            chanid = chan.index
+            if chanid not in _chanins:
+                _chanins[chanid] = chan(self.download)
+        else:
+            chanid = chan
+            if chanid not in _chanins:
+                m, c, subc = chanid.split(":")
+                if subc == "":
+                    for mod, cls in extension.getobjects(common.dpath, m, c, parents=[liblivechannels.scraper]):
+                        if cls.subchannel:
+                            continue
+                        cls.index = "%s:%s:" % (mod.__name__, cls.__name__)
+                        if chanid == cls.index:
+                            _chanins[chanid] = cls(self.download)
+                            break
+                else:
+                    for mod, cls in extension.getobjects(common.dpath, m, c, parents=[liblivechannels.scrapers]):
+                        if cls.__name__ == c and mod.__name__ == m:
+                            subcls = cls(self.download)._getchannel(subc)
+                            subcls.index = "%s:%s:%s" % (mod.__name__, cls.__name__, subcls.__name__)
+                            _chanins[chanid] = subcls(self.download)
+        return _chanins[chanid]
+    
+    def getcategories(self):
+        cats = []
+        for chan in self.iterchannels():
+            if isinstance(chan.categories, (list, tuple)):
+                for c in chan.categories:
+                    if c not in cats:
+                        cats.append(c)
+                        yield c

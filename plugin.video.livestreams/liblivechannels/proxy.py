@@ -10,13 +10,16 @@ import urlparse
 import urllib
 import socket
 import json
+import threading
+import Queue
+import time
 
 from thirdparty import m3u8
 from tinyxbmc import net
 from tinyxbmc import const
 
-import liblivechannels
 from liblivechannels import log
+from liblivechannels import common
 
 
 logger = log.Logger()
@@ -40,16 +43,25 @@ class ThreadedProxy(ThreadingMixIn, HTTPServer):
 
 
 class Handler(BaseHTTPRequestHandler):
-    def proxy_get(self, url, headers):
+    def proxy_get(self, url, headers, send_response=True):
         if "user-agent" not in [x.lower() for x in headers.keys()]:
             headers[u"User-agent"] = const.USERAGENT
-        resp = self.base.download(url, headers=headers, text=False)
-        self.send_response(resp.status_code)
-        if resp.status_code == 200:
-            self.end_headers()
-            return resp.content
-        else:
+        try:
+            resp = self.base.download(url, headers=headers, text=False,
+                                      timeout=common.query_timeout, cache=None)
+        except Exception, e:
+            if send_response:
+                self.send_response(500, str(e))
             return
+        if send_response:
+            self.send_response(resp.status_code)
+            if resp.status_code == 200:
+                self.end_headers()
+                return resp.content
+            else:
+                return
+        else:
+            return resp.content
 
     def render_m3(self, content, url, headers):
         if content[:7] == "#EXTM3U":
@@ -78,14 +90,21 @@ class Handler(BaseHTTPRequestHandler):
         if qurl:
             self.proxy_handle(qurl, qheaders)
         elif qplaylist:
-            chan = liblivechannels.loadchannel(qplaylist, self.base.download)
+            chan = self.base.loadchannel(qplaylist)
+            pgen = PlaylistGenerator(self)
+            self.send_response(200)
+            self.end_headers()
             for url in chan.get():
                 url, headers = net.fromkodiurl(url)
                 if not headers:
                     headers = {}
-                self.proxy_handle(url, headers)
-                # TODO: merge all variants
-                break
+                content = self.proxy_get(url, headers, False)
+                if not content:
+                    return
+                if content[:7] == "#EXTM3U":
+                    pgen.add(m3u8.loads(content, uri=url), headers)
+            self.wfile.write(pgen.m3file.dumps())
+                
         else:
             self.send_response(200)
             # self.send_header("Content-Type", "application/vnd.apple.mpegurl;charset=utf-8")
@@ -102,9 +121,14 @@ class Handler(BaseHTTPRequestHandler):
 
     @handle_client_disconnect
     def do_HEAD(self):
-        qurl, qheaders = self.decodeurl(self.path)
-        resp = net.http(qurl, text=False, headers=qheaders, method="HEAD")
-        self.send_response(resp.status_code)
+        kwargs = self.decodeurl(self.path)
+        qurl = kwargs.get("url")
+        qheaders = kwargs.get("headers", {})
+        if qurl:
+            resp = net.http(qurl, text=False, headers=qheaders, method="HEAD", timeout=common.query_timeout)
+            self.send_response(resp.status_code)
+        else:
+            self.send_response(200)
 
     @handle_client_disconnect
     def finish(self):
@@ -127,3 +151,53 @@ class Handler(BaseHTTPRequestHandler):
         for kwarg in kwargs:
             kwargs[kwarg] = urllib.quote_plus(json.dumps(kwargs[kwarg]))
         return "http://localhost:%s/?%s" % (self.base.port, urllib.urlencode(kwargs))
+    
+    
+class PlaylistGenerator(object):
+    def __init__(self, handler):
+        self.handler = handler
+        self.playlists = Queue.Queue()
+        self.__threads = []
+       
+    def add(self, m3file, headers):
+        for playlist in m3file.playlists:
+            thread = threading.Thread(target=self.headcheck, args=(self.playlists, playlist, headers))
+            thread.start()
+            self.__threads.append(thread)
+
+    def headcheck(self, queue, playlist, headers):
+        networkerr = False
+        try:
+            resp = self.handler.base.download(playlist.absolute_uri, headers=headers, method="HEAD",
+                                              timeout=common.query_timeout)
+        except Exception:
+            networkerr = True
+        if not networkerr and resp.status_code == 200:
+            queue.put((playlist, headers))
+        else:
+            try:
+                resp = self.handler.base.download(playlist.absolute_uri, headers=headers,
+                                                  text=False, timeout=common.query_timeout)
+            except Exception:
+                return
+            if resp.content[:7] == "#EXTM3U":
+                queue.put((playlist, headers))
+        pass
+    
+    @property
+    def m3file(self):
+        starttime = time.time()
+        for thread in self.__threads:
+            if (time.time() - starttime) > common.playlist_timeout:
+                break
+            thread.join(1)
+        m3file = m3u8.M3U8()
+        while True:
+            try:
+                playlist, headers = self.playlists.get(False)
+                playlist.uri = self.handler.encodeurl(url=playlist.absolute_uri, headers=headers)
+                m3file.add_playlist(playlist)
+            except Queue.Empty:
+                break
+        return m3file
+            

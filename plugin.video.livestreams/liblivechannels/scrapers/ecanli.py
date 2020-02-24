@@ -18,7 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from liblivechannels import scraper
+from liblivechannels import scraper, scrapers
 import re
 import htmlement
 from tinyxbmc import net
@@ -26,11 +26,12 @@ from tinyxbmc import net
 ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
 domain = "https://www.ecanlitvizle.live"
 
-
-class ecanli(object):
+class ecanli_channel(scraper):
+    subchannel = True
+    tree = None
+        
     def _check(self):
         linkcache = [self.channel]
-        yayinlar = []
 
         def extract(tree):
             for iframe in tree.findall(".//iframe"):
@@ -44,49 +45,54 @@ class ecanli(object):
                         headers = {"Referer": src,
                                    "User-Agent": ua}
                         m3u8 = net.tokodiurl(m3u8url, None, headers)
-                        yayinlar.append(m3u8)
+                        yield m3u8
                     break
-        tree = htmlement.fromstring(self.download(self.channel, referer=domain))
-        extract(tree)
-        for yayin in tree.findall(".//div[@class='alternatif']/.//a"):
+        if not self.tree:
+            self.tree = htmlement.fromstring(self.download(self.channel, referer=domain))
+        for yayin in extract(self.tree):
+            yield yayin
+        for yayin in self.tree.findall(".//div[@class='alternatif']/.//a"):
             alink = yayin.get("href")
             if alink in linkcache:
                 continue
             else:
                 linkcache.append(alink)
-                extract(htmlement.fromstring(self.download(alink, referer=domain)))
-
-        if len(yayinlar):
-            return yayinlar
+                for yayin in extract(htmlement.fromstring(self.download(alink, referer=domain))):
+                    yield yayin
 
     def get(self):
-        yayinlar = self._check()
-        if yayinlar is not None:
-            for yayin in yayinlar:
-                yield yayin
+        for yayin in self._check():
+            yield yayin
 
 
-def create_classes():
-    page = net.http(domain, referer=domain)
-    mtree = htmlement.fromstring(page)
-    """
-    trees = [htmlement.fromstring(page)]
-    for pg in trees[0].findall(".//div[@class='wp-pagenavi']/a")[:-1]:
-        trees.append(htmlement.fromstring(net.http(pg.get("href"), referer=domain)))
-    for tree in trees:
-    """
-    for cat in mtree.findall(".//li[2]/ul[@class='sub-menu']/li/a"):
-        tree = htmlement.fromstring(net.http(cat.get("href"), referer=domain))
-        for chan in tree.iterfind(".//ul[@class='kanallar']/.//a"):
-            cname = chan.get("title")
-            url = chan.get("href")
-            cid = "channel_%s" % url.replace(":", "").encode("ascii", "replace")
-            bdict = {"channel": url,
-                     "title": cname,
-                     "categories": ["ecanlitv", cat.get("title")]
-                     }
-            bdict["icon"] = chan.find(".//img").get("src")
-            globals()[cid] = type(cid, (ecanli, scraper), bdict)
 
+class ecanli(scrapers):
+    def iteratechannels(self):
+        page = self.download(domain, referer=domain)
+        mtree = htmlement.fromstring(page)
+        for cat in mtree.findall(".//li[2]/ul[@class='sub-menu']/li/a"):
+            tree = htmlement.fromstring(self.download(cat.get("href"), referer=domain))
+            for chan in tree.iterfind(".//ul[@class='kanallar']/.//a"):
+                cname = chan.get("title")
+                url = chan.get("href")
+                subchan = self.makechannel(url, ecanli_channel,
+                                          channel=url,
+                                          title=cname,
+                                          categories=["ecanlitv", cat.get("title")],
+                                          icon=chan.find(".//img").get("src"))
+                yield subchan        
 
-create_classes()
+    def getchannel(self, cid):
+        tree = htmlement.fromstring(self.download(cid))
+        cname = tree.find(".//div[@class='kanaldetay']/h1").text
+        categories=["ecanlitv"]
+        icon = tree.find(".//div[@class='kanaldetay']/img").get("src")
+        subchan = self.makechannel(cid, ecanli_channel,
+                          channel=cid,
+                          title=cname,
+                          categories=categories,
+                          icon=icon,
+                          tree=tree)
+        return subchan
+
+        
