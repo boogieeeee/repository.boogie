@@ -18,11 +18,8 @@ from tinyxbmc import const
 import liblivechannels
 from liblivechannels import log
 
-from addon import Base
-import common
 
 logger = log.Logger()
-base = Base(addon=common.addon_id)
 
 
 def handle_client_disconnect(callback):
@@ -46,7 +43,7 @@ class Handler(BaseHTTPRequestHandler):
     def proxy_get(self, url, headers):
         if "user-agent" not in [x.lower() for x in headers.keys()]:
             headers[u"User-agent"] = const.USERAGENT
-        resp = base.download(url, headers=headers, text=False)
+        resp = self.base.download(url, headers=headers, text=False)
         self.send_response(resp.status_code)
         if resp.status_code == 200:
             self.end_headers()
@@ -59,7 +56,7 @@ class Handler(BaseHTTPRequestHandler):
             m3file = m3u8.loads(content, uri=url)
             for components in [m3file.playlists, m3file.segments, m3file.media]:
                 for component in components:
-                    component.uri = encodeurl(url=component.absolute_uri, headers=headers)
+                    component.uri = self.encodeurl(url=component.absolute_uri, headers=headers)
             return m3file
 
     def proxy_handle(self, url, headers):
@@ -74,14 +71,14 @@ class Handler(BaseHTTPRequestHandler):
 
     @handle_client_disconnect
     def do_GET(self):
-        kwargs = decodeurl(self.path)
+        kwargs = self.decodeurl(self.path)
         qurl = kwargs.get("url")
         qheaders = kwargs.get("headers")
         qplaylist = kwargs.get("playlist")
         if qurl:
             self.proxy_handle(qurl, qheaders)
         elif qplaylist:
-            chan = liblivechannels.loadchannel(qplaylist, base.download)
+            chan = liblivechannels.loadchannel(qplaylist, self.base.download)
             for url in chan.get():
                 url, headers = net.fromkodiurl(url)
                 if not headers:
@@ -94,8 +91,8 @@ class Handler(BaseHTTPRequestHandler):
             # self.send_header("Content-Type", "application/vnd.apple.mpegurl;charset=utf-8")
             self.end_headers()
             self.wfile.write('#EXTM3U\r\n')
-            for icon, title, index, cats in base.channels.get("alives", []):
-                surl = encodeurl(playlist=index)
+            for icon, title, index, cats in self.base.channels.get("alives", []):
+                surl = self.encodeurl(playlist=index)
                 for cat in cats:
                     descline = '#EXTINF:0 tvg-logo="%s" group-title="%s",%s\r\n' % (icon,
                                                                                     cat,
@@ -105,7 +102,7 @@ class Handler(BaseHTTPRequestHandler):
 
     @handle_client_disconnect
     def do_HEAD(self):
-        qurl, qheaders = decodeurl(self.path)
+        qurl, qheaders = self.decodeurl(self.path)
         resp = net.http(qurl, text=False, headers=qheaders, method="HEAD")
         self.send_response(resp.status_code)
 
@@ -118,15 +115,15 @@ class Handler(BaseHTTPRequestHandler):
         return BaseHTTPRequestHandler.handle(self)
 
 
-def decodeurl(path):
-    query = urlparse.urlparse(path)
-    kwargs = dict(urlparse.parse_qsl(query.query))
-    for kwarg in kwargs:
-        kwargs[kwarg] = json.loads(urllib.unquote_plus(kwargs[kwarg]))
-    return kwargs
-
-
-def encodeurl(**kwargs):
-    for kwarg in kwargs:
-        kwargs[kwarg] = urllib.quote_plus(json.dumps(kwargs[kwarg]))
-    return "http://localhost:8000/?%s" % urllib.urlencode(kwargs)
+    def decodeurl(self, path):
+        query = urlparse.urlparse(path)
+        kwargs = dict(urlparse.parse_qsl(query.query))
+        for kwarg in kwargs:
+            kwargs[kwarg] = json.loads(urllib.unquote_plus(kwargs[kwarg]))
+        return kwargs
+    
+    
+    def encodeurl(self, **kwargs):
+        for kwarg in kwargs:
+            kwargs[kwarg] = urllib.quote_plus(json.dumps(kwargs[kwarg]))
+        return "http://localhost:%s/?%s" % (self.base.port, urllib.urlencode(kwargs))

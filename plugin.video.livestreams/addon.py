@@ -39,6 +39,14 @@ class Base(container.container):
     @property
     def validate(self):
         return self.setting.getbool("validate")
+    
+    @property
+    def pvr(self):
+        return self.setting.getbool("pvr")
+    
+    @property
+    def port(self):
+        return self.setting.getint("port")
 
     @property
     def channels(self):
@@ -53,7 +61,11 @@ class Base(container.container):
     @validate.setter
     def validate(self, value):
         self.setting.set("validate", value)
-
+        
+    @port.setter
+    def port(self, val):
+        self.setting.set("port", val)
+        
     def healthcheck(self, url):
         http_range = "bytes=0-300000"
         http_timeout = 2

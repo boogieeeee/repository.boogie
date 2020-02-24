@@ -1,5 +1,7 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
 		<setting default="false" id="validate" label="Validate Channels before showing up" type="bool"/>
+		<setting default="8010" id="port" label="Proxy Server Port" type="number"/>
+		<setting default="true" id="pvr" label="Configure IPTV Simple on start up" type="bool"/>
 	</category>
 </settings>
