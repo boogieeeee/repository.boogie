@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.0.1">
+    <requires>
+		<import addon="xbmc.python" version="2.19.0"/>
+		<import addon="script.module.tinyxbmc"/>
+		<import addon="script.module.htmlement"/>
+	</requires>
+	<extension library="navi.py" point="xbmc.python.pluginsource">
+		<provides>video</provides>
+	</extension>
+	<extension point="xbmc.service" library="proxy.py" />
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Live Streams</summary>
+		<description lang="en">Live Streams</description>
+		<license>GNU General Public License, v2</license>
+		<language/>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+	</extension>
+</addon>
