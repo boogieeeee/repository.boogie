@@ -15,6 +15,7 @@ import Queue
 import time
 
 from thirdparty import m3u8
+from thirdparty.m3u8 import model
 from tinyxbmc import net
 from tinyxbmc import const
 
@@ -87,6 +88,7 @@ class Handler(BaseHTTPRequestHandler):
         qurl = kwargs.get("url")
         qheaders = kwargs.get("headers")
         qplaylist = kwargs.get("playlist")
+        qsegment_url = kwargs.get("segment_url")
         if qurl:
             self.proxy_handle(qurl, qheaders)
         elif qplaylist:
@@ -100,11 +102,14 @@ class Handler(BaseHTTPRequestHandler):
                     headers = {}
                 content = self.proxy_get(url, headers, False)
                 if not content:
-                    return
+                    continue
                 if content[:7] == "#EXTM3U":
-                    pgen.add(m3u8.loads(content, uri=url), headers)
+                    m3file = m3u8.loads(content, uri=url)
+                    m3file.full_uri = url
+                    pgen.add(m3file, headers)
             self.wfile.write(pgen.m3file.dumps())
-                
+        elif qsegment_url:
+            pass
         else:
             self.send_response(200)
             # self.send_header("Content-Type", "application/vnd.apple.mpegurl;charset=utf-8")
@@ -158,12 +163,20 @@ class PlaylistGenerator(object):
         self.handler = handler
         self.playlists = Queue.Queue()
         self.__threads = []
+        self.index = 10
        
     def add(self, m3file, headers):
-        for playlist in m3file.playlists:
-            thread = threading.Thread(target=self.headcheck, args=(self.playlists, playlist, headers))
-            thread.start()
-            self.__threads.append(thread)
+        if len(m3file.playlists):
+            for playlist in m3file.playlists:
+                thread = threading.Thread(target=self.headcheck, args=(self.playlists, playlist, headers))
+                thread.start()
+                self.__threads.append(thread)
+        elif len(m3file.segments):
+            self.index += 1
+            playlist = model.Playlist(m3file.full_uri,
+                                      {"bandwidth": self.index},
+                                      None, m3file.base_uri)
+            self.playlists.put((playlist, headers))
 
     def headcheck(self, queue, playlist, headers):
         networkerr = False
