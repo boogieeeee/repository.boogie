@@ -13,6 +13,9 @@ class Navi(Base):
             self.item(cat, method="index").dir(cat)
 
     def index(self, cat=None):
+        if self.validate or not self.__channels.get("alives"):
+            self.do_validate(self.hay("chan"))
+            self.validate = False
         if not cat:
             self.item("Categories", method="cats").dir()
         for icon, title, index, cats in self.channels.get("alives", []):

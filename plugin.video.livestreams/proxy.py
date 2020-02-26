@@ -10,6 +10,7 @@ from addon import Base
 
 import time
 
+import xbmc
 
 
 PORT = 8000
@@ -20,7 +21,10 @@ proxy.Handler.base = base
 
 class Server(addon.blockingloop):
     def init(self):
+        self.wait = 1
         self.pvrenabled = False
+        self.updaterunning = False
+        self.deffered_pvr_update = False
         iptv = addon.addon_details("pvr.iptvsimple")
         if iptv:
             self.pvrenabled = iptv.get("enabled")
@@ -34,6 +38,19 @@ class Server(addon.blockingloop):
                     port += 1
                 if not port == base.port:
                     base.port = port
+                    
+    def onloop(self):
+        if not self.updaterunning and time.time() - base.lastupdate > common.check_timeout:
+            Thread(target=self.update_thread).start()
+        if not xbmc.Player().isPlaying() and self.deffered_pvr_update:
+            self.reload_pvr()
+            self.deffered_pvr_update = False
+            
+    def update_thread(self):
+        self.updaterunning = True
+        base.do_validate(base.hay("chan"), True, self.isclosed())
+        self.deffered_pvr_update = True
+        self.updaterunning = False
 
     def oninit(self):
         if self.pvrenabled:
@@ -47,10 +64,14 @@ class Server(addon.blockingloop):
                 m3uurl = "http://localhost:%s" % base.port
                 if not pvr_settings.getstr("m3uUrl") == m3uurl:
                     pvr_settings.set("m3uUrl", m3uurl)
-                time.sleep(1)
-                addon.toggle_addon("pvr.iptvsimple")
-                time.sleep(1)
-                addon.toggle_addon("pvr.iptvsimple")
+                self.reload_pvr()
+                
+    def reload_pvr(self):
+        time.sleep(1)
+        addon.toggle_addon("pvr.iptvsimple")
+        time.sleep(1)
+        addon.toggle_addon("pvr.iptvsimple")
+
 
     def onclose(self):
         if self.pvrenabled:

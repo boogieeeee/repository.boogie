@@ -26,6 +26,8 @@ from tinyxbmc import gui
 from tinyxbmc import addon
 from tinyxbmc import extension
 
+import time
+
 import liblivechannels
 from liblivechannels import common
 
@@ -49,6 +51,10 @@ class Base(container.container):
         return self.setting.getbool("pvr")
     
     @property
+    def lastupdate(self):
+        return self.setting.getint("lastupdate")
+    
+    @property
     def port(self):
         return self.setting.getint("port")
     
@@ -62,13 +68,12 @@ class Base(container.container):
 
     @property
     def channels(self):
-        if self.__channels is None:
-            hay_chan = self.hay("chan")
-            self.__channels = hay_chan.find(common.hay_chan).data
-        if self.validate or not self.__channels.get("alives"):
-            self.do_validate(hay_chan)
-            self.validate = False
+        self.__channels = self.hay("chan").find(common.hay_chan).data
         return self.__channels
+    
+    @lastupdate.setter
+    def lastupdate(self, value):
+        self.setting.set("lastupdate", value)
 
     @validate.setter
     def validate(self, value):
@@ -88,7 +93,7 @@ class Base(container.container):
             headers[u"User-agent"] = const.USERAGENT
         try:
             headers["Range"] = http_range
-            response = self.download(url, headers=headers, timeout=2)
+            response = self.download(url, headers=headers, timeout=2, cache=None)
             if not response[:7] == "#EXTM3U":
                 return "None m3u8 File: %s" % url
             m3u = m3u8.loads(response, url)
@@ -96,25 +101,25 @@ class Base(container.container):
                 headers.pop("Range")
                 for playlist in m3u.playlists:
                     response = self.download(playlist.absolute_uri, method="HEAD", headers=headers,
-                                             timeout=http_timeout)
+                                             timeout=http_timeout,cache=None)
                     if not response.status_code == 200:
                         headers["Range"] = http_range
                         response = self.download(playlist.absolute_uri, headers=headers,
-                                                 timeout=http_timeout)
+                                                 timeout=http_timeout, cache=None)
             elif not len(m3u.segments):
                 return "Broken m3u8 File: %s" % url
         except Exception, e:
             return str(e)
 
-    def do_validate(self, ccache):
+    def do_validate(self, ccache, silent=False, is_closed=None):
         chans = list(tools.safeiter(self.iterchannels()))
         channels = {"alives": []}
-        ccache.burn()
-        pg = gui.progress("Checking")
-        pg.update(0, "Loading Channels")
+        if not silent:
+            pg = gui.progress("Checking")
+            pg.update(0, "Loading Channels")
         index = 0
         for chan in chans:
-            if pg.iscanceled():
+            if is_closed or not silent and pg.iscanceled():
                 break
             valid = False
             c = self.loadchannel(chan)
@@ -125,22 +130,27 @@ class Base(container.container):
                 if error is None:
                     error = "UP"
                     channels["alives"].append([c.icon, c.title, c.index, c.categories])
-                pg.update(100 * index / len(chans), c.title, error, c.index)
+                if not silent:
+                    pg.update(100 * index / len(chans), c.title, error, c.index)
                 continue
             for url in tools.safeiter(c.get()):
                 error = self.healthcheck(url)
                 if error is None:
                     channels["alives"].append([c.icon, c.title, c.index, c.categories])
                     valid = True
-                    pg.update(100 * index / len(chans), c.title, "UP", c.index)
+                    if not silent:
+                        pg.update(100 * index / len(chans), c.title, "UP", c.index)
                     break
-            if not valid:
+            if not valid and not silent:
                 pg.update(100 * index / len(chans), c.title, error, c.index)
             if index == 200000:
                 break
+        ccache.burn()
         ccache.throw("channels", channels)
         ccache.snapshot()
-        pg.close()
+        self.lastupdate = int(time.time())
+        if not silent:
+            pg.close()
     
     def getchannel(self, channelid):
         for chan in self.iterchannels():
