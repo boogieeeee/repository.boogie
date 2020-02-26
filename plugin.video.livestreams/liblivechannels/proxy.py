@@ -107,6 +107,10 @@ class Handler(BaseHTTPRequestHandler):
                     m3file = m3u8.loads(content, uri=url)
                     m3file.full_uri = url
                     pgen.add(m3file, headers)
+                    if self.base.resolve_mode in [0, 1]:
+                        pgen.wait()
+                        if pgen.playlists.qsize():
+                            break
             self.wfile.write(pgen.m3file.dumps())
         elif qsegment_url:
             pass
@@ -164,13 +168,22 @@ class PlaylistGenerator(object):
         self.playlists = Queue.Queue()
         self.__threads = []
         self.index = 10
-       
+
+    @staticmethod
+    def sorter(playlist):
+        return playlist.stream_info.bandwidth
+
     def add(self, m3file, headers):
         if len(m3file.playlists):
-            for playlist in m3file.playlists:
-                thread = threading.Thread(target=self.headcheck, args=(self.playlists, playlist, headers))
-                thread.start()
-                self.__threads.append(thread)
+            for playlist in sorted(m3file.playlists, key=self.sorter, reverse=True):
+                if self.handler.base.resolve_mode == 0:
+                    self.headcheck(playlist, headers)
+                    if self.playlists.qsize():
+                        break
+                else:
+                    thread = threading.Thread(target=self.headcheck, args=(playlist, headers))
+                    thread.start()
+                    self.__threads.append(thread)
         elif len(m3file.segments):
             self.index += 1
             playlist = model.Playlist(m3file.full_uri,
@@ -178,7 +191,7 @@ class PlaylistGenerator(object):
                                       None, m3file.base_uri)
             self.playlists.put((playlist, headers))
 
-    def headcheck(self, queue, playlist, headers):
+    def headcheck(self, playlist, headers):
         networkerr = False
         try:
             resp = self.handler.base.download(playlist.absolute_uri, headers=headers, method="HEAD",
@@ -186,7 +199,7 @@ class PlaylistGenerator(object):
         except Exception:
             networkerr = True
         if not networkerr and resp.status_code == 200:
-            queue.put((playlist, headers))
+            self.playlists.put((playlist, headers))
         else:
             try:
                 resp = self.handler.base.download(playlist.absolute_uri, headers=headers,
@@ -194,16 +207,19 @@ class PlaylistGenerator(object):
             except Exception:
                 return
             if resp.content[:7] == "#EXTM3U":
-                queue.put((playlist, headers))
+                self.playlists.put((playlist, headers))
         pass
     
-    @property
-    def m3file(self):
+    def wait(self):
         starttime = time.time()
         for thread in self.__threads:
             if (time.time() - starttime) > common.playlist_timeout:
                 break
-            thread.join(1)
+            thread.join(1)  
+    
+    @property
+    def m3file(self):
+        self.wait()
         m3file = m3u8.M3U8()
         while True:
             try:

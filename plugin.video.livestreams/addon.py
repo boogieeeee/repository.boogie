@@ -51,6 +51,14 @@ class Base(container.container):
     @property
     def port(self):
         return self.setting.getint("port")
+    
+    @property
+    def resolve_mode(self):
+        modes = {"First highest quality variant in first alive stream": 0,
+                 "First alive stream with all variants": 1,
+                 "All streams with all variants redundantly": 2
+                 }
+        return modes[self.setting.getstr("pvr_resolve_mode")]
 
     @property
     def channels(self):

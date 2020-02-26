@@ -1,4 +1,5 @@
 from liblivechannels import log
+logger = log.Logger(10)
 from liblivechannels import proxy
 from liblivechannels import common
 
@@ -9,7 +10,7 @@ from addon import Base
 
 import time
 
-logger = log.Logger()
+
 
 PORT = 8000
 
