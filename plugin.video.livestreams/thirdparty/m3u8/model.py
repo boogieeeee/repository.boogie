@@ -707,7 +707,7 @@ class Playlist(BasePathMixin):
             resolution_pair = None
 
         self.stream_info = StreamInfo(
-            bandwidth=stream_info['bandwidth'],
+            bandwidth=stream_info.get('bandwidth', 1),
             video=stream_info.get('video'),
             audio=stream_info.get('audio'),
             subtitles=stream_info.get('subtitles'),

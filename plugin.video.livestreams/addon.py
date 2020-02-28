@@ -23,13 +23,13 @@ from tinyxbmc import tools
 from tinyxbmc import const
 from tinyxbmc import net
 from tinyxbmc import gui
-from tinyxbmc import addon
 from tinyxbmc import extension
 
 import time
 
 import liblivechannels
 from liblivechannels import common
+from liblivechannels import config
 
 from thirdparty import m3u8
 
@@ -39,81 +39,61 @@ _chanins = {}
 
 class Base(container.container):
     def init(self):
-        self.setting = addon.kodisetting(common.addon_id)
-        self.__channels = None
-
-    @property
-    def validate(self):
-        return self.setting.getbool("validate")
-    
-    @property
-    def pvr(self):
-        return self.setting.getbool("pvr")
-    
-    @property
-    def lastupdate(self):
-        return self.setting.getint("lastupdate")
-    
-    @property
-    def port(self):
-        return self.setting.getint("port")
-    
-    @property
-    def resolve_mode(self):
-        modes = {"First highest quality variant in first alive stream": 0,
-                 "First alive stream with all variants": 1,
-                 "All streams with all variants redundantly": 2
-                 }
-        return modes[self.setting.getstr("pvr_resolve_mode")]
-
-    @property
-    def channels(self):
-        self.__channels = self.hay("chan").find(common.hay_chan).data
-        return self.__channels
-    
-    @lastupdate.setter
-    def lastupdate(self, value):
-        self.setting.set("lastupdate", value)
-
-    @validate.setter
-    def validate(self, value):
-        self.setting.set("validate", value)
+        self.config = config.config()
         
-    @port.setter
-    def port(self, val):
-        self.setting.set("port", val)
-        
-    def healthcheck(self, url):
-        http_range = "bytes=0-300000"
-        http_timeout = 2
-        url, headers = net.fromkodiurl(url)
+    def proxy_get(self, url, headers,method="GET"):
+        for retry in range(3):
+            if "user-agent" not in [x.lower() for x in headers.keys()]:
+                headers[u"User-agent"] = const.USERAGENT
+            try:
+                resp = self.download(url, headers=headers, text=False,
+                                     timeout=common.query_timeout, cache=None, method=method)
+                if not resp.status_code in [200, 206]:
+                    if retry == 2:
+                        return resp
+                    else:
+                        continue
+                else:
+                    return resp
+            except Exception, e:
+                print e
+                if retry == 2: 
+                    return e
+
+    def healthcheck(self, url, headers=None):
+        if headers is None:
+            url, headers = net.fromkodiurl(url)
         if not headers:
             headers = {}
-        if "user-agent" not in [x.lower() for x in headers.keys()]:
-            headers[u"User-agent"] = const.USERAGENT
-        try:
-            headers["Range"] = http_range
-            response = self.download(url, headers=headers, timeout=2, cache=None)
-            if not response[:7] == "#EXTM3U":
-                return "None m3u8 File: %s" % url
-            m3u = m3u8.loads(response, url)
-            if m3u.is_variant:
-                headers.pop("Range")
-                for playlist in m3u.playlists:
-                    response = self.download(playlist.absolute_uri, method="HEAD", headers=headers,
-                                             timeout=http_timeout,cache=None)
-                    if not response.status_code == 200:
-                        headers["Range"] = http_range
-                        response = self.download(playlist.absolute_uri, headers=headers,
-                                                 timeout=http_timeout, cache=None)
-            elif not len(m3u.segments):
-                return "Broken m3u8 File: %s" % url
-        except Exception, e:
-            return str(e)
-
-    def do_validate(self, ccache, silent=False, is_closed=None):
+        response = self.proxy_get(url, headers)
+        print url
+        print response
+        if response is None or isinstance(response, Exception) or not response.content[:7] == "#EXTM3U":
+            print 111
+            return "M3U8 File does not have correct header"
+        m3u = m3u8.loads(response.content, url)
+        if m3u.is_variant:
+            for playlist in m3u.playlists:
+                response = self.proxy_get(playlist.absolute_uri, headers, "HEAD")
+                if response is None or isinstance(response, Exception) or not response.status_code in [200, 206]:
+                    response = self.proxy_get(playlist.absolute_uri, headers)
+                    if response is not None and not isinstance(response, Exception) and response.status_code in [200, 206]:
+                        return # Successfull GET
+                else: # Successfull HEAD
+                    return
+            return "M3U8 File has no available variant"
+        elif not len(m3u.segments):
+            return "M3U8 File has no available segment"
+    
+    def do_validate(self, silent=False, is_closed=None):
+        if self.config.update_running:
+            if not silent:
+                gui.ok("Update Running", "A current update of channels is in progress in background")
+                self.config.validate = False
+            return
+        self.config.update_running = True
         chans = list(tools.safeiter(self.iterchannels()))
-        channels = {"alives": []}
+        channels = []
         if not silent:
             pg = gui.progress("Checking")
             pg.update(0, "Loading Channels")
@@ -129,36 +109,32 @@ class Base(container.container):
                 error = c.checkerrors()
                 if error is None:
                     error = "UP"
-                    channels["alives"].append([c.icon, c.title, c.index, c.categories])
+                else:
+                    c.categories = ["Broken"]
+                channels.append([c.icon, c.title, c.index, c.categories])
                 if not silent:
                     pg.update(100 * index / len(chans), c.title, error, c.index)
                 continue
             for url in tools.safeiter(c.get()):
                 error = self.healthcheck(url)
                 if error is None:
-                    channels["alives"].append([c.icon, c.title, c.index, c.categories])
                     valid = True
                     if not silent:
                         pg.update(100 * index / len(chans), c.title, "UP", c.index)
                     break
-            if not valid and not silent:
-                pg.update(100 * index / len(chans), c.title, error, c.index)
+            if not valid:
+                c.categories = ["Broken"]
+                if not silent:
+                    pg.update(100 * index / len(chans), c.title, error, c.index)
+            channels.append([c.icon, c.title, c.index, c.categories])
             if index == 200000:
                 break
-        ccache.burn()
-        ccache.throw("channels", channels)
-        ccache.snapshot()
-        self.lastupdate = int(time.time())
+        self.config.channels = channels
+        self.config.lastupdate = int(time.time())
+        self.config.update_running = False
+        self.config.update_pvr = True
         if not silent:
             pg.close()
-    
-    def getchannel(self, channelid):
-        for chan in self.iterchannels():
-            if chan.index in _chancls:
-                return _chancls[chan.index]
-            elif chan.index == channelid:
-                _chancls[chan.index] = cls
-                return cls
     
     def iterchannels(self, *cats):
         def _iterobjs():
@@ -215,12 +191,3 @@ class Base(container.container):
                             subcls.index = "%s:%s:%s" % (mod.__name__, cls.__name__, subcls.__name__)
                             _chanins[chanid] = subcls(self.download)
         return _chanins[chanid]
-    
-    def getcategories(self):
-        cats = []
-        for chan in self.iterchannels():
-            if isinstance(chan.categories, (list, tuple)):
-                for c in chan.categories:
-                    if c not in cats:
-                        cats.append(c)
-                        yield c

@@ -25,7 +25,7 @@ class PlaylistGenerator(object):
     def add(self, m3file, headers):
         if len(m3file.playlists):
             for playlist in sorted(m3file.playlists, key=self.sorter, reverse=True):
-                if self.base.resolve_mode == 0:
+                if self.base.config.resolve_mode == 0:
                     self.headcheck(playlist, headers)
                     if self.playlists.qsize():
                         break
@@ -41,23 +41,9 @@ class PlaylistGenerator(object):
             self.playlists.put((playlist, headers))
 
     def headcheck(self, playlist, headers):
-        networkerr = False
-        try:
-            resp = self.base.download(playlist.absolute_uri, headers=headers, method="HEAD",
-                                      timeout=common.query_timeout)
-        except Exception:
-            networkerr = True
-        if not networkerr and resp.status_code == 200:
+        error = self.base.healthcheck(playlist.absolute_uri, headers)
+        if error is None:
             self.playlists.put((playlist, headers))
-        else:
-            try:
-                resp = self.base.download(playlist.absolute_uri, headers=headers,
-                                          text=False, timeout=common.query_timeout)
-            except Exception:
-                return
-            if resp.content[:7] == "#EXTM3U":
-                self.playlists.put((playlist, headers))
-        pass
     
     def wait(self):
         starttime = time.time()
