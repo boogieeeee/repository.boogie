@@ -56,7 +56,6 @@ class Base(container.container):
                 else:
                     return resp
             except Exception, e:
-                print e
                 if retry == 2: 
                     return e
 
@@ -66,10 +65,7 @@ class Base(container.container):
         if not headers:
             headers = {}
         response = self.proxy_get(url, headers)
-        print url
-        print response
         if response is None or isinstance(response, Exception) or not response.content[:7] == "#EXTM3U":
-            print 111
             return "M3U8 File does not have correct header"
         m3u = m3u8.loads(response.content, url)
         if m3u.is_variant:
@@ -146,7 +142,7 @@ class Base(container.container):
                 yield cls
             for mod, cls in extension.getobjects(common.dpath, parents=[liblivechannels.scrapers]):
                 cls_ob = cls(self.download)
-                for cls_sub in cls_ob.iteratechannels():
+                for cls_sub in tools.safeiter(cls_ob.iteratechannels()):
                     if not cls_sub.index:
                         cls_sub.index = "%s:%s:%s" % (mod.__name__, cls.__name__, cls_sub.__name__)
                     yield cls_sub

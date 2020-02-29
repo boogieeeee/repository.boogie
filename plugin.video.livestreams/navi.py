@@ -47,7 +47,6 @@ class Navi(Base):
                     update = True
                 
         if removefrom:
-            print repr(oldname)
             result = self.config.remove_from_playlist(oldname, index)
             if not result:
                 gui.warn("ERROR", "Can not remove channel from playlist %s" % oldname)

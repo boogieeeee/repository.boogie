@@ -6,6 +6,7 @@
 from tinyxbmc import addon
 from tinyxbmc import hay
 import common
+import urlparse
 
 
 class config(object):
@@ -60,6 +61,20 @@ class config(object):
     @validate.setter
     def validate(self, value):
         self.setting.set("validate", value)
+        
+    @property
+    def cdnlive(self):
+        up = urlparse.urlparse(self.setting.getstr("cdnlive"))
+        if up.netloc == "":
+            domain = up.path
+        else:
+            domain = up.netloc
+        domain = domain.replace("/", "")
+        return "https://" + domain
+    
+    @cdnlive.setter
+    def cdnlive(self, value):
+        self.setting.set("cdnlive", value)
         
     @property
     def channels(self):

@@ -5,4 +5,7 @@
 		<setting default="false" id="pvr" label="Configure IPTV Simple on start up" type="bool"/>
 		<setting default="First highest quality variant in first alive stream" id="pvr_resolve_mode" type="select" label="Resolve Mode for PVR Proxy" values="First highest quality variant in first alive stream|First alive stream with all variants|All streams with all variants redundantly" />
 	</category>
+	<category id="Scrapers" label="Scrapers">
+		<setting label="CDN Live address" type="text" id="cdnlive" default="safirbet55.tv"/>
+	</category>
 </settings>

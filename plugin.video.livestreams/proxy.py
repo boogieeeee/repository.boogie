@@ -25,6 +25,8 @@ class Server(addon.blockingloop):
         self.pvrenabled = False
         self.check_pvr()
         self.httpd = None
+        base.config.update_running = False
+        base.config.update_pvr = False
         if self.pvrenabled:
             while True:
                 try:
