@@ -27,7 +27,7 @@ import urlparse
 from operator import itemgetter
 
 import htmlement
-from tinyxbmc.net import __cookie as cj
+from tinyxbmc.net import loadcookies
 from tinyxbmc.net import tokodiurl
 
 
@@ -201,7 +201,7 @@ def geturls(self, url):
     
     cookies = {"loggedOut": "4"}
     dom = domain.split("//")[1]
-    for cookie in cj:
+    for cookie in loadcookies():
         if dom in cookie.domain:
             cookies[cookie.name] = cookie.value
             if cookie.name == "__utmx":

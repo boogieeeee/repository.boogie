@@ -40,6 +40,8 @@ class cdnlive(scrapers):
             num = int(num)
             while True:
                 dom2 = "https://" + pre + str(num) + post
+                if num >= 100:
+                    break
                 print "trying %s" % dom2
                 try:
                     page = self.download(dom2)
@@ -53,8 +55,6 @@ class cdnlive(scrapers):
                 else:
                     cfg.cdnlive = dom2
                     return channels
-                if num >= 100:
-                    break
         else:
             page = self.download("https://" + domain)
             tree = htmlement.fromstring(page)
