@@ -28,6 +28,7 @@ from operator import itemgetter
 
 import htmlement
 from tinyxbmc.net import __cookie as cj
+from tinyxbmc.net import tokodiurl
 
 
 searchstr = "evokjaqbb3"
@@ -191,13 +192,14 @@ def geturls(self, url):
     page = self.download(url)
     header = {
         'X-Requested-With': 'XMLHttpRequest',
-        "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "cookie": "",
-        "authorization": "Bearer false",
-        "accept": "application/json, text/javascript, */*; q=0.01",
+        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Cookie": "",
+        "Authorization": "Bearer false",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
         }
     data = {}
-    cookies = {"loggedOut": "1"}
+    
+    cookies = {"loggedOut": "4"}
     dom = domain.split("//")[1]
     for cookie in cj:
         if dom in cookie.domain:
@@ -214,13 +216,16 @@ def geturls(self, url):
     cookies[data["idEl"]] = data["elid"]
     data["elid"] = urllib.quote(data["elid"])
     for name, value in cookies.iteritems():
-        header["cookie"] += "%s=%s;" % (name, value)
+        header["Cookie"] += "%s=%s;" % (name, value)
     data["nopop"] = ""
+    """
     js = "%s/templates/cartoonhd/assets/scripts/videojs-flixanity.js" % domain
     js = self.download(js, referer=domain)
     js = re.search('gett\(epData\.epId\).*?baseurl\s*?\+\s*?"(.+?)"', js, re.DOTALL)
-    embeds = self.download(domain + js.group(1), data=data, headers=header,
-                           referer="https://www.cartoonhd.cz/movie/quiet-storm-the-ron-artest-story", method="POST")
+    print js.group(1)
+    """
+    embeds = self.download("%s/ajax/vsozrflxcw.php" % domain, data=data, headers=header,
+                           referer=url, method="POST")
     embeds = json.loads(embeds)
     videos = []
     if not isinstance(embeds, dict):
@@ -241,6 +246,8 @@ def geturls(self, url):
             videos.append([link, qual])
     videos.sort(key=itemgetter(1), reverse=True)
     for vid, qual in videos:
+        vid = tokodiurl(vid, None, {"Referer": url})
+        print vid
         yield vid
 
 
