@@ -54,7 +54,7 @@ class Server(addon.blockingloop):
     def onloop(self):
         self.check_pvr()
         if self.pvrenabled:
-            if not base.config.update_running and (time.time() - base.config.lastupdate > common.check_timeout or not len(base.config.channels)):
+            if not base.config.update_running and (time.time() - base.config.lastupdate > common.check_timeout):
                 Thread(target=self.update_thread).start()
             if not xbmc.Player().isPlaying() and base.config.update_pvr:
                 self.reload_pvr()
@@ -75,6 +75,11 @@ class Server(addon.blockingloop):
                 m3uurl = "http://localhost:%s" % base.config.port
                 if not pvr_settings.getstr("m3uUrl") == m3uurl:
                     pvr_settings.set("m3uUrl", m3uurl)
+                if not pvr_settings.getint("epgPathType") == 1:
+                    pvr_settings.set("epgPathType", 1)
+                epgurl = "http://localhost:%s/?epg=1" % base.config.port
+                if not pvr_settings.getstr("epgUrl") == epgurl:
+                    pvr_settings.set("epgUrl", epgurl)
                 self.reload_pvr()
 
     def onclose(self):

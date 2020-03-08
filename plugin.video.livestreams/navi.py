@@ -43,8 +43,6 @@ class Navi(Base):
                 result = self.config.add_to_playlist(playlist, index)
                 if not result:
                     gui.warn("ERROR", "Can not add channel to playlist %s. Channel is already in the list" % playlist)
-                else:
-                    update = True
                 
         if removefrom:
             result = self.config.remove_from_playlist(oldname, index)
@@ -72,14 +70,15 @@ class Navi(Base):
             playlist = self.config.playlists.get(playlistname)
         else:
             playlist = None
-        if self.config.validate or not len(self.config.channels):
+        channels = self.config.channels
+        if self.config.validate or not len(channels):
             self.do_validate()
             self.config.validate = False
         if not ((cat is None) ^ (playlist is None)):
             self.item("Categories", method="cats").dir()
             self.item("Playlists", method="playlists").dir()
         
-        for icon, title, index, cats in self.config.channels:
+        for icon, title, index, cats in channels:
             cats = [x.title() for x in cats]
             if "Broken" in cats and not (cat == "Broken" or playlist is not None):
                 continue

@@ -13,6 +13,7 @@ class config(object):
     def __init__(self):
         self.setting = addon.kodisetting(common.addon_id)
         self.hay = hay.stack(common.hay_chan, aid=common.addon_id)
+        self.phay = hay.stack(common.hay_playlist, aid=common.addon_id)
         
     @property
     def update_pvr(self):
@@ -110,7 +111,7 @@ class config(object):
         
     @property
     def playlists(self):
-        return self.hay.find("playlists").data
+        return self.phay.find("playlists").data
     
     def iterplaylists(self, playlists=None):
         if not playlists:
@@ -139,8 +140,8 @@ class config(object):
             if cat == playlist or playlist == "Broken":
                 return False
         playlists[playlist] = []
-        self.hay.throw("playlists", playlists)
-        self.hay.snapshot()
+        self.phay.throw("playlists", playlists)
+        self.phay.snapshot()
         return True
         
     def delete_playlist(self, playlist):
@@ -149,8 +150,8 @@ class config(object):
         if playlist not in playlists:
             return False
         playlists.pop(playlist)
-        self.hay.throw("playlists", playlists)
-        self.hay.snapshot()
+        self.phay.throw("playlists", playlists)
+        self.phay.snapshot()
         return True
 
     def add_to_playlist(self, playlist, index):
@@ -161,8 +162,8 @@ class config(object):
         if index in playlists[playlist]:
             return False
         playlists[playlist].append(index)
-        self.hay.throw("playlists", playlists)
-        self.hay.snapshot()
+        self.phay.throw("playlists", playlists)
+        self.phay.snapshot()
         return True
         
     def remove_from_playlist(self, playlist, index):
@@ -170,8 +171,8 @@ class config(object):
         playlists = self.playlists
         if playlist in playlists and index in playlists[playlist]:
             playlists[playlist].remove(index)
-            self.hay.throw("playlists", playlists)
-            self.hay.snapshot()
+            self.phay.throw("playlists", playlists)
+            self.phay.snapshot()
             return True
 
     def rename_playlist(self, playlist_old, playlist_new):
@@ -183,6 +184,6 @@ class config(object):
         playlists = self.playlists
         if playlist_new not in playlists:
             playlists[playlist_new] = playlists.pop(playlist_old)
-            self.hay.throw("playlists", playlists)
-            self.hay.snapshot()
+            self.phay.throw("playlists", playlists)
+            self.phay.snapshot()
             return True

@@ -18,18 +18,33 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from liblivechannels import scraper, scrapers
+from liblivechannels import scraper, scrapers, programme
 import re
+import datetime
 import htmlement
+
 from tinyxbmc import net
+from tinyxbmc import tools
+
 
 ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
 domain = "https://www.ecanlitvizle.live"
+tz_tr = tools.tz_utc()
+tz_tr.settimezone(3)
+
+localdate = datetime.datetime.now()
+tr_now = datetime.datetime(localdate.year, localdate.month, localdate.day,
+                            localdate.hour, localdate.minute, localdate.second, tzinfo=tools.tz_local()).astimezone(tz_tr)
+
 
 class ecanli_channel(scraper):
     subchannel = True
     tree = None
-        
+    
+    def gettree(self):
+        if not self.tree:
+            self.tree = htmlement.fromstring(self.download(self.channel, referer=domain))
+    
     def _check(self):
         linkcache = [self.channel]
 
@@ -47,8 +62,8 @@ class ecanli_channel(scraper):
                         m3u8 = net.tokodiurl(m3u8url, None, headers)
                         yield m3u8
                     break
-        if not self.tree:
-            self.tree = htmlement.fromstring(self.download(self.channel, referer=domain))
+
+        self.gettree()
         for yayin in extract(self.tree):
             yield yayin
         for yayin in self.tree.findall(".//div[@class='alternatif']/.//a"):
@@ -63,7 +78,26 @@ class ecanli_channel(scraper):
     def get(self):
         for yayin in self._check():
             yield yayin
-
+        self.tree = None
+            
+    def makedate(self, txt, nextday=0):
+        hour, minute = txt.split(":")
+        return datetime.datetime(tr_now.year, tr_now.month, tr_now.day + nextday,
+                                 int(hour), int(minute), tzinfo=tz_tr)
+            
+    def iterprogrammes(self):
+        self.gettree()
+        olddate = None
+        oldtitle = None
+        for yayin in self.tree.iterfind(".//ul[@class='yayinakisi']/li/b"):
+            date = self.makedate(yayin.text.strip())
+            if olddate:
+                yield programme(oldtitle, olddate, date)
+            oldtitle = yayin.tail.strip()
+            olddate = date
+        if olddate is not None:
+            yield programme(oldtitle, olddate, self.makedate("00:00", 1))
+        self.tree = None
 
 
 class ecanli(scrapers):

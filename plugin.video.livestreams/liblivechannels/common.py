@@ -6,7 +6,7 @@ Created on Feb 22, 2020
 import os
 
 hay_chan = "channels"
-hay_playlist = "channels"
+hay_playlist = "playlists"
 addon_id = "plugin.video.livestreams"
 query_timeout = 2
 playlist_timeout = 10
