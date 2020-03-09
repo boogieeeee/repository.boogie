@@ -18,33 +18,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from liblivechannels import scraper, scrapers, programme
+from liblivechannels import scraper, scrapers
 import re
-import datetime
 import htmlement
 
 from tinyxbmc import net
-from tinyxbmc import tools
+
+import scrapertools
 
 
 ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
 domain = "https://www.ecanlitvizle.live"
-tz_tr = tools.tz_utc()
-tz_tr.settimezone(3)
 
-localdate = datetime.datetime.now()
-tr_now = datetime.datetime(localdate.year, localdate.month, localdate.day,
-                            localdate.hour, localdate.minute, localdate.second, tzinfo=tools.tz_local()).astimezone(tz_tr)
+customchannels = {u"CNN Türk": domain + "/cnn-turk-canli",
+                  u"Haber Türk": domain + "/haberturk-canli-yayin",
+                  u"Show TV": domain + "/show-tv-canli",
+                  u"Bloomberg HT": domain + "/bloomberg-ht-canli-yayin",
+                  u"Tv 8": domain + "/tv-8-canli-yayin",
+                  }
 
 
 class ecanli_channel(scraper):
     subchannel = True
     tree = None
-    
+
     def gettree(self):
         if not self.tree:
             self.tree = htmlement.fromstring(self.download(self.channel, referer=domain))
-    
+
     def _check(self):
         linkcache = [self.channel]
 
@@ -79,25 +80,17 @@ class ecanli_channel(scraper):
         for yayin in self._check():
             yield yayin
         self.tree = None
-            
-    def makedate(self, txt, nextday=0):
-        hour, minute = txt.split(":")
-        return datetime.datetime(tr_now.year, tr_now.month, tr_now.day + nextday,
-                                 int(hour), int(minute), tzinfo=tz_tr)
-            
+
     def iterprogrammes(self):
         self.gettree()
-        olddate = None
-        oldtitle = None
+        datepsr = scrapertools.dateparser(3)
+        pitr = scrapertools.makeprograms(datepsr.datefromhour(0, 0, 0, 1))
         for yayin in self.tree.iterfind(".//ul[@class='yayinakisi']/li/b"):
-            date = self.makedate(yayin.text.strip())
-            if olddate:
-                yield programme(oldtitle, olddate, date)
-            oldtitle = yayin.tail.strip()
-            olddate = date
-        if olddate is not None:
-            yield programme(oldtitle, olddate, self.makedate("00:00", 1))
+            hour, minute = yayin.text.strip().split(":")
+            date = datepsr.datefromhour(hour, minute)
+            yield pitr.add(yayin.tail.strip(), date)
         self.tree = None
+        yield pitr.flush()
 
 
 class ecanli(scrapers):
@@ -109,24 +102,41 @@ class ecanli(scrapers):
             for chan in tree.iterfind(".//ul[@class='kanallar']/.//a"):
                 cname = chan.get("title")
                 url = chan.get("href")
+                iscustom = False
+                for customlink in customchannels.values():
+                    # the scraped url may have some seo trailing values so check if custom is contained
+                    if customlink in url:
+                        iscustom = True
+                        break
+                if iscustom:
+                    continue
                 subchan = self.makechannel(url, ecanli_channel,
-                                          channel=url,
-                                          title=cname,
-                                          categories=["ecanlitv", cat.get("title")],
-                                          icon=chan.find(".//img").get("src"))
-                yield subchan        
+                                           channel=url,
+                                           title=cname,
+                                           categories=["ecanlitv", cat.get("title")],
+                                           icon=chan.find(".//img").get("src"))
+                yield subchan
 
-    def getchannel(self, cid):
+    def getchannel(self, cid, custom=None):
+        if custom:
+            cid = customchannels.get(custom)
+            if not cid:
+                return
         tree = htmlement.fromstring(self.download(cid))
         cname = tree.find(".//div[@class='kanaldetay']/h1").text
-        categories=["ecanlitv"]
+        categories = ["ecanlitv"]
         icon = tree.find(".//div[@class='kanaldetay']/img").get("src")
         subchan = self.makechannel(cid, ecanli_channel,
-                          channel=cid,
-                          title=cname,
-                          categories=categories,
-                          icon=icon,
-                          tree=tree)
+                                   channel=cid,
+                                   title=cname,
+                                   categories=categories,
+                                   icon=icon,
+                                   tree=tree)
         return subchan
 
-        
+
+def iterexternal(download, cid):
+    ecanli_channel = ecanli(download).getchannel(None, cid)
+    if ecanli_channel:
+        for media in ecanli_channel(download).get():
+            yield media

@@ -2,6 +2,7 @@ from liblivechannels import scrapers, scraper
 from liblivechannels import config
 
 from tinyxbmc import net
+from tinyxbmc import tools
 
 import re
 import htmlement
@@ -11,28 +12,22 @@ cfg = config.config()
 
 class chan(scraper):
     subchannel = True
-    tree = None
+    cpage = None
 
     def get(self):
-        if not self.tree:
-            cpage = self.download(self.url, referer=cfg.cdnlive)
-            self.tree = htmlement.fromstring(cpage)
-        for iframe in self.tree.findall(".//iframe"):
-            src = iframe.get("src")
-            if "/channel/watch" in src:
-                ipage = self.download(src, referer=self.url)
-                b64 = re.search(r'eval\(atob\("(.+?)"\)\)', ipage)
-                if b64:
-                    code = b64.group(1).decode("base64")
-                    for source in re.findall("source:\s*?(?:'|\")(http.+?)(?:'|\")", code):
-                        if ".m3u8" in source:
-                            yield net.tokodiurl(source, None, {"Referer": src})
-                            break
-                        break
+        if not self.cpage:
+            self.cpage = self.download(self.url, referer=cfg.cdnlive)
+        pframe = re.search("playerFrame\:\s?(?:\"|')(.+?)(?:\"|')", self.cpage)
+        src = self.download(pframe.group(1), referer=self.url)
+        b64 = re.search("eval\(atob\((?:\"|')(.+?)(?:\"|')\)", src)
+        source = re.search("src\:\s?(?:\"|')(.+?)(?:\"|')", b64.group(1).decode("base64"))
+        yield net.tokodiurl(source.group(1), None, {"Referer": pframe.group(1)})
+
 
 class cdnlive(scrapers):
     def getitems(self):
-        xpath = ".//div[@id='channel-list']/.//a"
+        # find the domain name automatically, this domain keeps changing
+        xpath = ".//div[@id='channel-list']/div/div"
         domain = cfg.cdnlive
         chunks = re.findall("([A-Za-z\.]+)([0-9]+)(.+)", domain)
         if len(chunks):
@@ -59,19 +54,20 @@ class cdnlive(scrapers):
             page = self.download("https://" + domain)
             tree = htmlement.fromstring(page)
             return tree.findall(xpath)
-    
+
     def iteratechannels(self):
         for channel in self.getitems():
-            live = channel.find('.//span[@class="live"]')
-            if live is None:
+            if "live" not in channel.get("class"):
+                # ignore events get only channels
                 continue
-            url = channel.get("href")
-            title = channel.get("title")
+            a = channel.find(".//a")
+            url = a.get("href")
+            title = a.get("title")
             if title is not None and url is not None:
                 yield self.makechannel(url, chan, title=title, url=url, categories=["cdnlive"])
-                
+
     def getchannel(self, url):
         cpage = self.download(url, referer=cfg.cdnlive)
         tree = htmlement.fromstring(cpage)
-        title = tree.find(".//h1[@class='match-title']").text.strip()
-        return self.makechannel(url, chan, url=url, title=title, tree=tree, categories=["cdnlive"])
+        title = tools.elementsrc(tree.find(".//a[@class='text-white']")).strip()
+        return self.makechannel(url, chan, url=url, title=title, cpage=cpage, categories=["cdnlive"])

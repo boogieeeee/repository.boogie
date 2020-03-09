@@ -26,10 +26,12 @@ from tinyxbmc import gui
 from tinyxbmc import extension
 
 import time
+import traceback
 
 import liblivechannels
 from liblivechannels import common
 from liblivechannels import config
+from liblivechannels import epg
 
 from thirdparty import m3u8
 
@@ -40,15 +42,15 @@ _chanins = {}
 class Base(container.container):
     def init(self):
         self.config = config.config()
-        
-    def proxy_get(self, url, headers,method="GET"):
+
+    def proxy_get(self, url, headers, method="GET"):
         for retry in range(3):
             if "user-agent" not in [x.lower() for x in headers.keys()]:
                 headers[u"User-agent"] = const.USERAGENT
             try:
                 resp = self.download(url, headers=headers, text=False,
                                      timeout=common.query_timeout, cache=None, method=method)
-                if not resp.status_code in [200, 206]:
+                if resp.status_code not in [200, 206]:
                     if retry == 2:
                         return resp
                     else:
@@ -56,7 +58,7 @@ class Base(container.container):
                 else:
                     return resp
             except Exception, e:
-                if retry == 2: 
+                if retry == 2:
                     return e
 
     def healthcheck(self, url, headers=None):
@@ -71,16 +73,16 @@ class Base(container.container):
         if m3u.is_variant:
             for playlist in m3u.playlists:
                 response = self.proxy_get(playlist.absolute_uri, headers, "HEAD")
-                if response is None or isinstance(response, Exception) or not response.status_code in [200, 206]:
+                if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
                     response = self.proxy_get(playlist.absolute_uri, headers)
                     if response is not None and not isinstance(response, Exception) and response.status_code in [200, 206]:
-                        return # Successfull GET
-                else: # Successfull HEAD
+                        return  # Successfull GET
+                else:  # Successfull HEAD
                     return
             return "M3U8 File has no available variant"
         elif not len(m3u.segments):
             return "M3U8 File has no available segment"
-    
+
     def do_validate(self, silent=False, is_closed=None):
         if self.config.update_running:
             if not silent:
@@ -99,6 +101,8 @@ class Base(container.container):
                 break
             valid = False
             c = self.loadchannel(chan)
+            if not c:
+                continue
             index += 1
             error = "No links"
             if c.checkerrors is not None:
@@ -129,9 +133,10 @@ class Base(container.container):
         self.config.lastupdate = int(time.time())
         self.config.update_running = False
         self.config.update_pvr = True
+        epg.write(self).start()
         if not silent:
             pg.close()
-    
+
     def iterchannels(self, *cats):
         def _iterobjs():
             for mod, cls in extension.getobjects(common.dpath, parents=[liblivechannels.scraper]):
@@ -146,7 +151,7 @@ class Base(container.container):
                     if not cls_sub.index:
                         cls_sub.index = "%s:%s:%s" % (mod.__name__, cls.__name__, cls_sub.__name__)
                     yield cls_sub
-    
+
         for cls in _iterobjs():
             found = False
             for c in cats:
@@ -158,7 +163,7 @@ class Base(container.container):
             if cls.index not in _chancls:
                 _chancls[cls.index] = cls
             yield cls
-        
+
     def loadchannel(self, chan):
         try:
             iscls = issubclass(chan, liblivechannels.scraper)
@@ -183,7 +188,11 @@ class Base(container.container):
                 else:
                     for mod, cls in extension.getobjects(common.dpath, m, c, parents=[liblivechannels.scrapers]):
                         if cls.__name__ == c and mod.__name__ == m:
-                            subcls = cls(self.download)._getchannel(subc)
+                            try:
+                                subcls = cls(self.download)._getchannel(subc)
+                            except Exception:
+                                print traceback.format_exc()
+                                continue
                             subcls.index = "%s:%s:%s" % (mod.__name__, cls.__name__, subcls.__name__)
                             _chanins[chanid] = subcls(self.download)
-        return _chanins[chanid]
+        return _chanins.get(chanid)

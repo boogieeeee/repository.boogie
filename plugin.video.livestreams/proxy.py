@@ -37,12 +37,12 @@ class Server(addon.blockingloop):
                     port += 1
                 if not port == base.config.port:
                     base.config.port = port
-                    
+
     def check_pvr(self):
         iptv = addon.addon_details("pvr.iptvsimple")
         if iptv:
             self.pvrenabled = iptv.get("enabled")
-            
+
     def reload_pvr(self):
         self.check_pvr()
         if self.pvrenabled:
@@ -50,7 +50,7 @@ class Server(addon.blockingloop):
             addon.toggle_addon("pvr.iptvsimple")
             time.sleep(1)
             addon.toggle_addon("pvr.iptvsimple")
-                    
+
     def onloop(self):
         self.check_pvr()
         if self.pvrenabled:
@@ -59,7 +59,7 @@ class Server(addon.blockingloop):
             if not xbmc.Player().isPlaying() and base.config.update_pvr:
                 self.reload_pvr()
                 base.config.update_pvr = False
-            
+
     def update_thread(self):
         base.do_validate(True, self.isclosed())
 
@@ -75,11 +75,10 @@ class Server(addon.blockingloop):
                 m3uurl = "http://localhost:%s" % base.config.port
                 if not pvr_settings.getstr("m3uUrl") == m3uurl:
                     pvr_settings.set("m3uUrl", m3uurl)
-                if not pvr_settings.getint("epgPathType") == 1:
-                    pvr_settings.set("epgPathType", 1)
-                epgurl = "http://localhost:%s/?epg=1" % base.config.port
-                if not pvr_settings.getstr("epgUrl") == epgurl:
-                    pvr_settings.set("epgUrl", epgurl)
+                if not pvr_settings.getint("epgPathType") == 0:
+                    pvr_settings.set("epgPathType", 0)
+                if not pvr_settings.getstr("epgPath") == common.epath:
+                    pvr_settings.set("epgPath", common.epath)
                 self.reload_pvr()
 
     def onclose(self):

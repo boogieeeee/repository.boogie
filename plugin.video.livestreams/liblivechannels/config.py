@@ -14,7 +14,7 @@ class config(object):
         self.setting = addon.kodisetting(common.addon_id)
         self.hay = hay.stack(common.hay_chan, aid=common.addon_id)
         self.phay = hay.stack(common.hay_playlist, aid=common.addon_id)
-        
+
     @property
     def update_pvr(self):
         data = self.hay.find("update_pvr").data
@@ -22,7 +22,7 @@ class config(object):
             return False
         else:
             return data
-        
+
     @update_pvr.setter
     def update_pvr(self, value):
         self.hay.throw("update_pvr", bool(value))
@@ -35,12 +35,11 @@ class config(object):
             return False
         else:
             return data
-        
+
     @update_running.setter
     def update_running(self, value):
         self.hay.throw("update_running", bool(value))
         self.hay.snapshot()
-        
 
     @property
     def lastupdate(self):
@@ -58,11 +57,11 @@ class config(object):
     @property
     def validate(self):
         return self.setting.getbool("validate")
-    
+
     @validate.setter
     def validate(self, value):
         self.setting.set("validate", value)
-        
+
     @property
     def cdnlive(self):
         up = urlparse.urlparse(self.setting.getstr("cdnlive"))
@@ -72,31 +71,31 @@ class config(object):
             domain = up.netloc
         domain = domain.replace("/", "")
         return "https://" + domain
-    
+
     @cdnlive.setter
     def cdnlive(self, value):
         self.setting.set("cdnlive", value)
-        
+
     @property
     def channels(self):
         data = self.hay.find("channels").data
         if data == {}:
             data = []
         return data
-    
+
     @channels.setter
     def channels(self, value):
         self.hay.throw("channels", list(value))
-        self.hay.snapshot()        
-    
+        self.hay.snapshot()
+
     @property
     def pvr(self):
         return self.setting.getbool("pvr")
-    
+
     @property
     def port(self):
         return self.setting.getint("port")
-    
+
     @property
     def resolve_mode(self):
         modes = {"First highest quality variant in first alive stream": 0,
@@ -108,21 +107,21 @@ class config(object):
     @port.setter
     def port(self, val):
         self.setting.set("port", val)
-        
+
     @property
     def playlists(self):
         return self.phay.find("playlists").data
-    
+
     def iterplaylists(self, playlists=None):
         if not playlists:
             playlists = self.playlists
         for playlist in playlists:
             yield playlist.title(), playlists[playlist]
-            
+
     def iterchannels(self):
         for icon, title, index, cats in self.channels:
             yield icon, title, index, cats
-            
+
     def itercats(self):
         cats = []
         for _icon, _title, _index, chancats in self.iterchannels():
@@ -143,7 +142,7 @@ class config(object):
         self.phay.throw("playlists", playlists)
         self.phay.snapshot()
         return True
-        
+
     def delete_playlist(self, playlist):
         playlist = playlist.title()
         playlists = self.playlists

@@ -27,7 +27,7 @@ loc_tz = tz_local()
 
 
 class programme(object):
-    def __init__(self, title,  start, end, airdate=None, desc=None, categories=None, subtitle=None,
+    def __init__(self, title, start, end, airdate=None, desc=None, categories=None, subtitle=None,
                  episode=None, directors=None, writers=None, actors=None, icon=None):
         self.__dateformat1 = "%Y%m%d%H%M%S %z"
         self.title = title
@@ -54,17 +54,17 @@ class programme(object):
         else:
             self.actors = []
         self.icon = icon
-        
+
     @property
     def start(self):
         if self._start:
             return self._start.astimezone(loc_tz).strftime(self.__dateformat1)
-    
+
     @property
     def end(self):
         if self._end:
             return self._end.astimezone(loc_tz).strftime(self.__dateformat1)
-        
+
     @property
     def airdate(self):
         pass
@@ -87,7 +87,7 @@ class scraper(object):
 
     def get(self):
         pass
-    
+
     def iterprogrammes(self):
         raise StopIteration
         yield
@@ -96,7 +96,7 @@ class scraper(object):
 class scrapers(object):
     def __init__(self, download):
         self.download = download
-        
+
     def makechannel(self, cid, base, **kwargs):
         return type("ch_" + cid.encode("hex"), (base,), kwargs)
 

@@ -7,12 +7,14 @@ from addon import Base
 from tinyxbmc import container
 from tinyxbmc import gui
 
+from liblivechannels import epg
+
 
 class Navi(Base):
     def cats(self):
         for cat in self.config.itercats():
             self.item(cat, method="index").dir(cat)
-            
+
     def edit_playlist(self, add=False, rename=False, delete=False, addto=False, removefrom=False, oldname=None, index=None):
         update = False
 
@@ -43,18 +45,18 @@ class Navi(Base):
                 result = self.config.add_to_playlist(playlist, index)
                 if not result:
                     gui.warn("ERROR", "Can not add channel to playlist %s. Channel is already in the list" % playlist)
-                
+
         if removefrom:
             result = self.config.remove_from_playlist(oldname, index)
             if not result:
                 gui.warn("ERROR", "Can not remove channel from playlist %s" % oldname)
             else:
                 update = True
-            
+
         if update:
             self.config.update_pvr = True
             container.refresh()
-            
+
     def playlists(self):
         self.item("Add Playlist", method="edit_playlist").call(add=True)
         for playlist, _ in self.config.iterplaylists():
@@ -77,7 +79,7 @@ class Navi(Base):
         if not ((cat is None) ^ (playlist is None)):
             self.item("Categories", method="cats").dir()
             self.item("Playlists", method="playlists").dir()
-        
+
         for icon, title, index, cats in channels:
             cats = [x.title() for x in cats]
             if "Broken" in cats and not (cat == "Broken" or playlist is not None):
@@ -107,6 +109,8 @@ class Navi(Base):
             if not cindex == index:
                 continue
             chan = self.loadchannel(cindex)
+            if not channel:
+                continue
             for url in chan.get():
                 msg = self.healthcheck(url)
                 if msg is None:
@@ -123,10 +127,12 @@ class Navi(Base):
             self.config.hay.snapshot()
             container.refresh()
             self.config.update_pvr = True
-            break
+            epg.write(self).start()
 
     def geturls(self, cid):
         chan = self.loadchannel(cid)
         for url in chan.get():
             yield url
+
+
 Navi()
