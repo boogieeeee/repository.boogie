@@ -49,7 +49,7 @@ class Base(container.container):
                 headers[u"User-agent"] = const.USERAGENT
             try:
                 resp = self.download(url, headers=headers, text=False,
-                                     timeout=common.query_timeout, cache=None, method=method)
+                                     timeout=common.query_timeout, stream=True, cache=None, method=method)
                 if resp.status_code not in [200, 206]:
                     if retry == 2:
                         return resp

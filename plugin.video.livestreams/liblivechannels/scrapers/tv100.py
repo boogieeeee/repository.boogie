@@ -12,5 +12,5 @@ class tv100(scraper):
     yid = "9NMCgLjGVRU"
 
     def get(self):
-        for media in youtube.ydl().geturls("https://www.youtube.com/watch?v=%s" % self.yid):
+        for media in youtube.iteryoutube(self, "https://www.youtube.com/watch?v=%s" % self.yid):
             yield media

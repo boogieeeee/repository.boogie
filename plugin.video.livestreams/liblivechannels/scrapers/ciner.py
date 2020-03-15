@@ -27,7 +27,7 @@ class ciner(object):
     def get(self):
         if self.yid:
             with tools.ignoreexception():
-                for media in youtube.ydl().geturls("https://www.youtube.com/watch?v=%s" % self.yid):
+                for media in youtube.iteryoutube(self, "https://www.youtube.com/watch?v=%s" % self.yid):
                     yield media
         with tools.ignoreexception():
             if not self.m3u8:

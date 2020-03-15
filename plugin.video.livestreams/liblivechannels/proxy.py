@@ -74,7 +74,8 @@ class Handler(BaseHTTPRequestHandler):
                 if m3file:
                     self.wfile.write(m3file.dumps())
                 else:
-                    self.wfile.write(resp.content)
+                    for chunk in resp.iter_content(None, False):
+                        self.wfile.write(chunk)
         elif qplaylist:
             chan = self.base.loadchannel(qplaylist)
             if not chan:
