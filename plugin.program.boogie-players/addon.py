@@ -21,11 +21,8 @@
 from tinyxbmc import container
 from tinyxbmc import addon
 
-addons = (
-          ("Plexus", "program.plexus", "Plays Acestream and Sopcast"),
+addons = (("Plexus", "program.plexus", "Plays Acestream and Sopcast"),
           ("Quasar", "plugin.video.quasar", "Plays torrents"),
-          ("StreamLink", "script.module.ghub", "Resolves Various Streams"),
-          ("Streams", "script.module.libstreams", "Resolves Various Streams"),
           )
 
 
