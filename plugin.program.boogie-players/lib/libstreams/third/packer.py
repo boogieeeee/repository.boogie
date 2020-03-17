@@ -14,6 +14,7 @@
 
 import re
 
+
 class UnpackingError(Exception):
     """Badly packed source or general error. Argument is a
     meaningful description."""

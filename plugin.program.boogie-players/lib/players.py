@@ -20,39 +20,9 @@
 
 from tinyxbmc import addon
 
-from vods import linkplayerextension
 from vods import addonplayerextension
 
-from libplayer import getconfig
-
-import ghub
 import urllib
-import sys
-
-
-class streamlink(linkplayerextension):
-    title = "StreamLink Link Extension"
-
-    def init(self):
-        self.title = "StreamLink Link Resolver"
-        uname, branch, commit = getconfig("sl")
-        update = 24 * 30
-        ghub.load("minrk", "backports.shutil_which", None, None, [], update)
-        ghub.load("gweis", "isodate", None, None, ["src"], update)
-        ghub.load("beardypig", "script.module.streamlink.crypto", "master", None, ["streamlink.crypto", "src"], update)
-        ghub.load("beardypig", "script.module.pycountry", "master", None, ["pycountry", "src"], update)
-        ghub.load("minrk", "backports.shutil_which", None, None, [], update)
-        ghub.load("ambv", "singledispatch", None, None, [], update)
-        ghub.load("agronholm", "pythonfutures", None, None, [], update)
-        ghub.load(uname, "streamlink", branch, commit, ["src"], update)
-        import streamlink
-        self.sl = streamlink
-
-    def geturls(self, link, headers=None):
-        try:
-            streams = self.sl.streams(link)
-        except StopIteration:  # bug in sl
-            yield
 
 
 class plexus(addonplayerextension):
