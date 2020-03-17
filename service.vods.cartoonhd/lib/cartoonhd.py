@@ -26,13 +26,6 @@ import libflix
 class base(object):
     ismovie = False
 
-    def init(self):
-        sitelogo = "https://%s/templates/cartoonhd/assets/images/logochd.png" % self.setting.getstr("domain")
-        self.art = {
-           "icon": sitelogo,
-           "thumb": sitelogo
-           }
-
     def getcategories(self):
         libflix.getcategories(self)
 
@@ -42,9 +35,7 @@ class base(object):
 
 
 class cartoonhdmovies(base, vods.movieextension):
-    info = {
-        "title": "Flixanity Movies"
-        }
+    info = {"title": "Flixanity Movies"}
     ismovie = True
 
     def init(self):
@@ -62,9 +53,7 @@ class cartoonhdmovies(base, vods.movieextension):
 
 
 class cartoonhdseries(base, vods.showextension):
-    info = {
-        "title": "Flixanity Series"
-        }
+    info = {"title": "Flixanity Series"}
     ismovie = False
 
     def init(self):

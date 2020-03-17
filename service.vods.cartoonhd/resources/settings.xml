@@ -1,7 +1,7 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
 		<setting default="flixanity.app" id="domain" label="Domain" type="text"/>
-		<setting default="Date" id="sortm" label="Sort Movies" type="select" values="Trending|Favorites|Imdb Rating|Rating|Most Watched Movies|Highest Gross At The Box Office Movies|Release Date|Date"/>
-		<setting default="Currently Airing" id="sorts" label="Sort Series" type="select" values="Trending|Currently Airing|Favorites|Imdb Rating|Rating|Most Watch Shows"/>
+		<setting default="Trending" id="sortm" label="Sort Movies" type="select" values="Trending|Popular|Imdb Rating|Rating|Most Watched|Highest Grossing|Release Date"/>
+		<setting default="Currently Airing" id="sorts" label="Sort Series" type="select" values="Trending|Currently Airing|Favorites|Imdb Rating|Rating|Most Watched"/>
 	</category>
 </settings>

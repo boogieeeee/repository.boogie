@@ -68,12 +68,13 @@ def srapegrid(self, cat=None):
     if not cat:
         cat = ""
     else:
-        cat = "category/" + cat
+        cat = "category/%s/" % cat
     if self.ismovie:
-        u = domain + "/movies/%s/%s/%d" % (cat, self.sort, n)
+        u = domain + "/films/%s%s/%d" % (cat, self.sort, n)
     else:
-        u = domain + "/shows/%s/%s/%d" % (cat, self.sort, n)
+        u = domain + "/shows/%s%s/%d" % (cat, self.sort, n)
     n = n + 1
+    print u
     page = self.download(u, referer=domain)
     movies = re.findall('<div class="front">.*?<img src="(.*?)" alt="(.*?)".*?<div class="back" data-ajax="true" data-id="(.*?)".*?<a href="(.*?)"', page, re.DOTALL)
     for movie in movies:
