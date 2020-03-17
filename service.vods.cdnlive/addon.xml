@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
-<addon id="service.vods.cdnlive" name="CDNLive module for VODS" provider-name="boogie" version="0.0.2">
+<addon id="service.vods.cdnlive" name="CDNLive module for VODS" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
@@ -13,6 +13,7 @@
 		<description lang="en">CDNLive module for VODS</description>
 		<license>GNU General Public License, v2</license>
 		<language/>
+		<broken>maintained under livestreams</broken>
 		<forum>https://github.com/boogieeeee/repository.biyik/issues</forum>
 		<source/>
 		<website>https://github.com/boogieeeee/repository.biyik</website>
