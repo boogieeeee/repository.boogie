@@ -89,7 +89,10 @@ class Navi(Base):
             if playlist is not None and index not in playlist:
                 continue
             info = {"title": title}
-            art = {"icon": icon, "thumb": icon, "poster": icon}
+            if icon:
+                art = {"icon": icon, "thumb": icon, "poster": icon}
+            else:
+                art = {}
             item = self.item(title, info, art, method="geturls")
             if playlist is not None:
                 cntx_plist = self.item("Remove From Playlist", method="edit_playlist")

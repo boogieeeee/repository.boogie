@@ -2,7 +2,6 @@ from liblivechannels import scrapers, scraper
 from liblivechannels import config
 
 from tinyxbmc import net
-from tinyxbmc import tools
 
 import re
 import htmlement
@@ -15,21 +14,23 @@ class chan(scraper):
     cpage = None
 
     def get(self):
-        if not self.cpage:
-            self.cpage = self.download(self.url, referer=cfg.cdnlive)
-        pframe = re.search("playerFrame\:\s?(?:\"|')(.+?)(?:\"|')", self.cpage)
-        src = self.download(pframe.group(1), referer=self.url)
-        b64 = re.search("eval\(atob\((?:\"|')(.+?)(?:\"|')\)", src)
-        source = re.search("src\:\s?(?:\"|')(.+?)(?:\"|')", b64.group(1).decode("base64"))
-        yield net.tokodiurl(source.group(1), None, {"Referer": pframe.group(1)})
+        player = self.cpage.find('.//div[@class="live-player"]')
+        loadbalancer = player.get("data-loadbalancerdomain")
+        loadbalancerdata = player.get("data-loadbalancer")
+        url = "https://check.nlivecdn.com/d/%s/%s/%s/1" % (loadbalancerdata,
+                                                           self.datastream,
+                                                           loadbalancer,
+                                                           )
+        link = net.tokodiurl(url, None, {"referer": cfg.cdnlive,
+                                         "Origin": cfg.cdnlive})
+        yield link
 
 
 class cdnlive(scrapers):
-    def getitems(self):
+    def getitems(self, url):
         # find the domain name automatically, this domain keeps changing
-        xpath = ".//div[@id='channel-list']/div/div"
-        domain = cfg.cdnlive
-        chunks = re.findall("([A-Za-z\.]+)([0-9]+)(.+)", domain)
+        xpath = ".//div[@data-channel='true']"
+        chunks = re.findall("([A-Za-z\.]+)([0-9]+)(.+)", url)
         if len(chunks):
             pre, num, post = chunks[0]
             num = int(num)
@@ -39,8 +40,8 @@ class cdnlive(scrapers):
                     break
                 print "trying %s" % dom2
                 try:
-                    page = self.download(dom2)
-                    tree = htmlement.fromstring(page)
+                    page = self.download(dom2, text=False)
+                    tree = htmlement.fromstring(page.content)
                     channels = tree.findall(xpath)
                 except Exception:
                     num += 1
@@ -48,26 +49,50 @@ class cdnlive(scrapers):
                 if not len(channels):
                     num += 1
                 else:
-                    cfg.cdnlive = dom2
-                    return channels
+                    url = page.url
+                    if url.endswith("/"):
+                        url = url[:-1]
+                    cfg.cdnlive = url
+                    print "url is %s" % cfg.cdnlive
+                    return tree, channels
         else:
-            page = self.download("https://" + domain)
+            page = self.download(url)
             tree = htmlement.fromstring(page)
-            return tree.findall(xpath)
+            return tree, tree.findall(xpath)
+
+    def getmeta(self, channel):
+        datastream = channel.get("data-stream")
+        title = channel.get("data-name")
+        img = channel.find(".//img")
+        if img is not None:
+            img = img.get("src")
+        else:
+            img = "DefaultFolder.png"
+        return datastream, title, img
 
     def iteratechannels(self):
-        for channel in self.getitems():
-            if "live" not in channel.get("class"):
-                # ignore events get only channels
-                continue
-            a = channel.find(".//a")
-            url = a.get("href")
-            title = a.get("title")
-            if title is not None and url is not None:
-                yield self.makechannel(url, chan, title=title, url=url, categories=["cdnlive"])
+        cpage, channels = self.getitems(cfg.cdnlive)
+        for channel in channels:
+            datastream, title, img = self.getmeta(channel)
+            url = cfg.cdnlive + "/canli-izle/" + datastream
+            yield self.makechannel(url, chan,
+                                   url=url,
+                                   title=title,
+                                   icon=img,
+                                   cpage=cpage,
+                                   datastream=datastream,
+                                   categories=["cdnlive"])
 
     def getchannel(self, url):
-        cpage = self.download(url, referer=cfg.cdnlive)
-        tree = htmlement.fromstring(cpage)
-        title = tools.elementsrc(tree.find(".//a[@class='text-white']")).strip()
-        return self.makechannel(url, chan, url=url, title=title, cpage=cpage, categories=["cdnlive"])
+        cpage, channels = self.getitems(url)
+        for channel in channels:
+            cls = channel.get("class")
+            if cls and "active" in cls:
+                datastream, title, img = self.getmeta(channel)
+                return self.makechannel(url, chan,
+                                        url=url,
+                                        title=title,
+                                        cpage=cpage,
+                                        icon=img,
+                                        datastream=datastream,
+                                        categories=["cdnlive"])

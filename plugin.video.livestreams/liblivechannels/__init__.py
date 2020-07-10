@@ -98,6 +98,8 @@ class scrapers(object):
         self.download = download
 
     def makechannel(self, cid, base, **kwargs):
+        if "icon" in kwargs and not isinstance(kwargs["icon"], (str, unicode)):
+            kwargs.pop("icon")
         return type("ch_" + cid.encode("hex"), (base,), kwargs)
 
     def _getchannel(self, cid):
