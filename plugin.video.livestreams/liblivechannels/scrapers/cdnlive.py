@@ -17,11 +17,17 @@ class chan(scraper):
         player = self.cpage.find('.//div[@class="live-player"]')
         loadbalancer = player.get("data-loadbalancerdomain")
         loadbalancerdata = player.get("data-loadbalancer")
-        url = "https://check.nlivecdn.com/d/%s/%s/%s/1" % (loadbalancerdata,
-                                                           self.datastream,
-                                                           loadbalancer,
-                                                           )
-        link = net.tokodiurl(url, None, {"referer": cfg.cdnlive,
+        try:
+            data_d = self.cpage.find(".//body").get("data-d")
+        except Exception:
+            data_d = "d"
+        url = "https://check.nlivecdn.com/%s/%s/%s/%s/1" % (data_d,
+                                                            loadbalancerdata,
+                                                            self.datastream,
+                                                            loadbalancer,
+                                                            )
+
+        link = net.tokodiurl(url, None, {"referer": cfg.cdnlive + "/",
                                          "Origin": cfg.cdnlive})
         yield link
 
