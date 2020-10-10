@@ -17,7 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-"""
+
 from liblivechannels import scraper, scrapers
 import re
 import htmlement
@@ -140,4 +140,3 @@ def iterexternal(download, cid):
     if ecanli_channel:
         for media in ecanli_channel(download).get():
             yield media
-"""
