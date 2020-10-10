@@ -4,6 +4,7 @@ from liblivechannels import common
 
 from threading import Thread
 from tinyxbmc import addon
+from tinyxbmc import gui
 
 from addon import Base
 
@@ -38,6 +39,10 @@ class Server(addon.blockingloop):
                 if not port == base.config.port:
                     base.config.port = port
 
+    @property
+    def isplaying(self):
+        return xbmc.Player().isPlaying()
+
     def check_pvr(self):
         iptv = addon.addon_details("pvr.iptvsimple")
         if iptv:
@@ -53,12 +58,14 @@ class Server(addon.blockingloop):
 
     def onloop(self):
         self.check_pvr()
-        if self.pvrenabled:
-            if not base.config.update_running and (time.time() - base.config.lastupdate > common.check_timeout):
+        if self.pvrenabled and not self.isplaying:
+            if not base.config.update_running and ((time.time() - base.config.lastupdate > common.check_timeout) or base.config.validate):
                 Thread(target=self.update_thread).start()
-            if not xbmc.Player().isPlaying() and base.config.update_pvr:
+            if base.config.update_pvr:
                 self.reload_pvr()
                 base.config.update_pvr = False
+            if base.config.validate:
+                base.config.validate = False
 
     def update_thread(self):
         base.do_validate(True, self.isclosed())

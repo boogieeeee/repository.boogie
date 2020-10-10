@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 '''
     Author    : Huseyin BIYIK <husenbiyik at hotmail>
     Year      : 2016
@@ -18,6 +18,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
+
 from liblivechannels import scraper
 from tinyxbmc import tools
 import re
@@ -35,12 +36,7 @@ class tv8(scraper):
     icon = "https://img.tv8.com.tr/s/template/v2/img/tv8-logo.png"
 
     def get(self):
-        with tools.ignoreexception():
-            url = "%s/canli-yayin" % self.domain
-            page = self.download(url, referer=self.domain)
-            chk1 = re.search("push\(\{\'src\'\:\s+\"(.+?)\"", page)
-            if chk1:
-                yield chk1.group(1)
+        yield "https://tv8.personamedia.tv/tv8hls?fmt=hls"
         for media in ecanli.iterexternal(self.download, self.title):
             yield media
 

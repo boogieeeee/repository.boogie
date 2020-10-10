@@ -1,8 +1,8 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
-		<setting default="false" id="validate" label="Validate Channels before showing up" type="bool"/>
+		<setting default="false" id="validate" label="Validate Channels on next run" type="bool"/>
 		<setting default="8010" id="port" label="Proxy Server Port" type="number"/>
-		<setting default="false" id="pvr" label="Configure IPTV Simple on start up" type="bool"/>
+		<setting default="false" id="pvr" label="Configure IPTV Simple On Startup" type="bool"/>
 		<setting default="First highest quality variant in first alive stream" id="pvr_resolve_mode" type="select" label="Resolve Mode for PVR Proxy" values="First highest quality variant in first alive stream|First alive stream with all variants|All streams with all variants redundantly" />
 	</category>
 	<category id="Scrapers" label="Scrapers">

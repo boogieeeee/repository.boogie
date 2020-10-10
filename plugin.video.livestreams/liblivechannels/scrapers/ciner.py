@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 
 
 from liblivechannels import scraper
@@ -81,6 +81,7 @@ class showtv(ciner, scraper):
     m3u8 = None
     xpath = xpath = './/div[@class="htplay"]'
 
+    """
     def iterprogrammes(self):
         datepsr = scrapertools.dateparser(3, shiftdate=False)
         piter = scrapertools.makeprograms()
@@ -99,6 +100,7 @@ class showtv(ciner, scraper):
                 dayshift += 1
             oldhour = hour
             yield piter.add(title, datepsr.datefromhour(hour, minute, daydelta=dayshift), icon=img, desc=desc)
+    """
 
 
 class bloobmberght(ciner, scraper):
@@ -109,6 +111,7 @@ class bloobmberght(ciner, scraper):
     icon = "http://www.bloomberght.com/images/logo.png"
     m3u8 = None
 
+    """
     def iterprogrammes(self):
         datepsr = scrapertools.dateparser(3, shiftdate=False)
         piter = scrapertools.makeprograms()
@@ -125,3 +128,4 @@ class bloobmberght(ciner, scraper):
             title = unicode(figure.find(".//h4").text)
             desc = unicode(tools.strip(figure.find(".//div[@class='detail']/p").text, True))
             yield piter.add(title, datepsr.datefromhour(hour, minute.strip(), daydelta=dayshift), icon=img, desc=desc)
+    """

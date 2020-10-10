@@ -83,59 +83,51 @@ class Base(container.container):
         elif not len(m3u.segments):
             return "M3U8 File has no available segment"
 
-    def do_validate(self, silent=False, is_closed=None):
-        if self.config.update_running:
-            if not silent:
+    def do_validate(self, background=False, is_closed=None):
+        if self.config.update_running and False:
+            if not background:
                 gui.ok("Update Running", "A current update of channels is in progress in background")
                 self.config.validate = False
             return
         self.config.update_running = True
         chans = list(tools.safeiter(self.iterchannels()))
         channels = []
-        if not silent:
+        pgname = "Updating Channels"
+        if background:
+            pg = gui.bgprogress(pgname)
+        else:
             pg = gui.progress("Checking")
-            pg.update(0, "Loading Channels")
+            pg.update(0, pgname)
         index = 0
         for chan in chans:
-            if is_closed or not silent and pg.iscanceled():
+            if is_closed or background and hasattr(pg, "iscanceled") and pg.iscanceled():
                 break
-            valid = False
             c = self.loadchannel(chan)
             if not c:
                 continue
             index += 1
-            error = "No links"
+            error = None
             if c.checkerrors is not None:
                 error = c.checkerrors()
-                if error is None:
-                    error = "UP"
-                else:
-                    c.categories = ["Broken"]
+            if error is None:
+                for url in tools.safeiter(c.get()):
+                    error = self.healthcheck(url)
+                    if error is None:
+                        # at least one url is enough
+                        break
+            if error is None:
                 channels.append([c.icon, c.title, c.index, c.categories])
-                if not silent:
-                    pg.update(100 * index / len(chans), c.title, error, c.index)
-                continue
-            for url in tools.safeiter(c.get()):
-                error = self.healthcheck(url)
-                if error is None:
-                    valid = True
-                    if not silent:
-                        pg.update(100 * index / len(chans), c.title, "UP", c.index)
-                    break
-            if not valid:
-                c.categories = ["Broken"]
-                if not silent:
-                    pg.update(100 * index / len(chans), c.title, error, c.index)
-            channels.append([c.icon, c.title, c.index, c.categories])
+                error = "UP"
+            pg.update(100 * index / len(chans), c.title, "%s: %s" % (error, c.index))
             if index == 200000:
                 break
         self.config.channels = channels
+        pg.update(100, "Updating EPG", "Updating EPG")
+        epg.write(self)
         self.config.lastupdate = int(time.time())
         self.config.update_running = False
         self.config.update_pvr = True
-        epg.write(self).start()
-        if not silent:
-            pg.close()
+        pg.close()
 
     def iterchannels(self, *cats):
         def _iterobjs():

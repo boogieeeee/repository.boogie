@@ -21,12 +21,16 @@ class chan(scraper):
             data_d = self.cpage.find(".//body").get("data-d")
         except Exception:
             data_d = "d"
-        url = "https://check.nlivecdn.com/%s/%s/%s/%s/1" % (data_d,
-                                                            loadbalancerdata,
-                                                            self.datastream,
-                                                            loadbalancer,
-                                                            )
-
+        try:
+            url = self.cpage.find(".//meta[@name='rd']").get("content")
+        except Exception:
+            url = "https://check.nlivecdn.com"
+        url = "%s/%s/%s/%s/%s/1" % (url,
+                                    data_d,
+                                    loadbalancerdata,
+                                    self.datastream,
+                                    loadbalancer,
+                                    )
         link = net.tokodiurl(url, None, {"referer": cfg.cdnlive + "/",
                                          "Origin": cfg.cdnlive})
         yield link
@@ -40,20 +44,21 @@ class cdnlive(scrapers):
         if len(chunks):
             pre, num, post = chunks[0]
             num = int(num)
+            extra = 0
             while True:
-                dom2 = "https://" + pre + str(num) + post
-                if num >= 100:
+                if extra > 3:
                     break
+                dom2 = "https://" + pre + str(num + extra) + post
                 print "trying %s" % dom2
                 try:
                     page = self.download(dom2, text=False)
                     tree = htmlement.fromstring(page.content)
                     channels = tree.findall(xpath)
                 except Exception:
-                    num += 1
+                    extra += 1
                     continue
                 if not len(channels):
-                    num += 1
+                    extra += 1
                 else:
                     url = page.url
                     if url.endswith("/"):

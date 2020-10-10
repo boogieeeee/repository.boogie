@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# -*- encoding: utf-8 -*-
 '''
     Author    : Huseyin BIYIK <husenbiyik at hotmail>
     Year      : 2016
