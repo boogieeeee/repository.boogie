@@ -77,8 +77,6 @@ class Base(container.container):
                     response = self.proxy_get(playlist.absolute_uri, headers)
                     if response is not None and not isinstance(response, Exception) and response.status_code in [200, 206]:
                         if response.content[:7] == "#EXTM3U":
-                            return "Too recursive m3u"
-                        else:
                             return  # Successfull GET
                 else:  # Successfull HEAD
                     return
@@ -100,7 +98,7 @@ class Base(container.container):
             pg.update(0, pgname)
         index = 0
         for chan in chans:
-            if is_closed or background and hasattr(pg, "iscanceled") and pg.iscanceled():
+            if is_closed or hasattr(pg, "iscanceled") and pg.iscanceled():
                 self.config.update_running = False
                 break
             c = self.loadchannel(chan)
@@ -118,7 +116,7 @@ class Base(container.container):
                         # at least one url is enough
                         found = True
                         break
-            if not found:
+            if not error and not found:
                 error = "No playlist"
             if error is None:
                 channels.append([c.icon, c.title, c.index, c.categories])
