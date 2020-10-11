@@ -64,8 +64,6 @@ class Server(addon.blockingloop):
             if base.config.update_pvr:
                 self.reload_pvr()
                 base.config.update_pvr = False
-            if base.config.validate:
-                base.config.validate = False
 
     def update_thread(self):
         base.do_validate(True, self.isclosed())

@@ -76,7 +76,10 @@ class Base(container.container):
                 if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
                     response = self.proxy_get(playlist.absolute_uri, headers)
                     if response is not None and not isinstance(response, Exception) and response.status_code in [200, 206]:
-                        return  # Successfull GET
+                        if response.content[:7] == "#EXTM3U":
+                            return "Too recursive m3u"
+                        else:
+                            return  # Successfull GET
                 else:  # Successfull HEAD
                     return
             return "M3U8 File has no available variant"
@@ -84,10 +87,7 @@ class Base(container.container):
             return "M3U8 File has no available segment"
 
     def do_validate(self, background=False, is_closed=None):
-        if self.config.update_running and False:
-            if not background:
-                gui.ok("Update Running", "A current update of channels is in progress in background")
-                self.config.validate = False
+        if self.config.update_running:
             return
         self.config.update_running = True
         chans = list(tools.safeiter(self.iterchannels()))
@@ -101,12 +101,14 @@ class Base(container.container):
         index = 0
         for chan in chans:
             if is_closed or background and hasattr(pg, "iscanceled") and pg.iscanceled():
+                self.config.update_running = False
                 break
             c = self.loadchannel(chan)
             if not c:
                 continue
             index += 1
             error = None
+            found = False
             if c.checkerrors is not None:
                 error = c.checkerrors()
             if error is None:
@@ -114,7 +116,10 @@ class Base(container.container):
                     error = self.healthcheck(url)
                     if error is None:
                         # at least one url is enough
+                        found = True
                         break
+            if not found:
+                error = "No playlist"
             if error is None:
                 channels.append([c.icon, c.title, c.index, c.categories])
                 error = "UP"
@@ -126,6 +131,8 @@ class Base(container.container):
         epg.write(self)
         self.config.lastupdate = int(time.time())
         self.config.update_running = False
+        if self.config.validate:
+            self.config.validate = False
         self.config.update_pvr = True
         pg.close()
 

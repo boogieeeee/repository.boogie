@@ -75,7 +75,6 @@ class Navi(Base):
         channels = self.config.channels
         if self.config.validate or not len(channels):
             self.do_validate()
-            self.config.validate = False
         if not ((cat is None) ^ (playlist is None)):
             self.item("Categories", method="cats").dir()
             self.item("Playlists", method="playlists").dir()
