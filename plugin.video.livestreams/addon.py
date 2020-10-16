@@ -27,6 +27,7 @@ from tinyxbmc import extension
 
 import time
 import traceback
+import socket
 
 import liblivechannels
 from liblivechannels import common
@@ -98,6 +99,17 @@ class Base(container.container):
             pg.update(0, pgname)
         index = 0
         for chan in chans:
+            try:
+                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+                s.connect((self.config.internetaddress, 80))
+                s.close()
+            except Exception:
+                gui.warn("No Connection", "Skipping Channel Update")
+                self.config.lastupdate = int(time.time())
+                self.config.validate = False
+                self.config.update_running = False
+                pg.close()
+                return
             if is_closed or hasattr(pg, "iscanceled") and pg.iscanceled():
                 self.config.update_running = False
                 break

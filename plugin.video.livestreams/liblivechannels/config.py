@@ -58,6 +58,13 @@ class config(object):
     def validate(self):
         return self.setting.getbool("validate")
 
+    @property
+    def internetaddress(self):
+        url = self.setting.getstr("internetaddress")
+        if "://" in url:
+            url = url.split("://")[1]
+        return url
+
     @validate.setter
     def validate(self, value):
         self.setting.set("validate", value)
