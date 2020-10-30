@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 from liblivechannels import scrapers, scraper
 from liblivechannels import config
 
@@ -9,9 +10,12 @@ import htmlement
 cfg = config.config()
 
 
+cats = [u"Türkçe", u"Spor", "cdnlive"]
+
 class chan(scraper):
     subchannel = True
     cpage = None
+    usehlsproxy = True
 
     def get(self):
         player = self.cpage.find('.//div[@class="live-player"]')
@@ -92,7 +96,7 @@ class cdnlive(scrapers):
                                    icon=img,
                                    cpage=cpage,
                                    datastream=datastream,
-                                   categories=["cdnlive"])
+                                   categories=cats)
 
     def getchannel(self, url):
         cpage, channels = self.getitems(url)
@@ -106,4 +110,4 @@ class cdnlive(scrapers):
                                         cpage=cpage,
                                         icon=img,
                                         datastream=datastream,
-                                        categories=["cdnlive"])
+                                        categories=cats)

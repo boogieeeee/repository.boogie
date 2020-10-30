@@ -12,6 +12,7 @@ import socket
 from thirdparty import m3u8
 from tinyxbmc import net
 from tinyxbmc import tools
+from tinyxbmc import const
 
 from liblivechannels import log
 from liblivechannels import hls
@@ -80,23 +81,29 @@ class Handler(BaseHTTPRequestHandler):
             chan = self.base.loadchannel(qplaylist)
             if not chan:
                 return
-            pgen = hls.PlaylistGenerator(self.base)
             self.send_response(200)
             self.end_headers()
+            pgen = hls.PlaylistGenerator(self.base)
             for url in tools.safeiter(chan.get()):
-                url, headers = net.fromkodiurl(url)
-                if not headers:
-                    headers = {}
-                resp = self.base.proxy_get(url, headers)
-                if resp is not None and not isinstance(resp, Exception):
-                    if resp.content[:7] == "#EXTM3U":
-                        m3file = m3u8.loads(resp.content, uri=url)
-                        m3file.full_uri = url
-                        pgen.add(m3file, headers)
-                        if self.base.config.resolve_mode in [0, 1]:
-                            pgen.wait()
-                            if pgen.playlists.qsize():
-                                break
+                if isinstance(url, net.mpdurl) and url.inputstream:
+                    pass
+                    # skip mpds for now
+                else:
+                    url, headers = net.fromkodiurl(url)
+                    if not headers:
+                        headers = {}
+                    if not chan.usehlsproxy and "user-agent" not in [x.lower() for x in headers]:
+                        headers["User-Agent"] = const.USERAGENT
+                    resp = self.base.proxy_get(url, headers)
+                    if resp is not None and not isinstance(resp, Exception):
+                        if resp.content[:7] == "#EXTM3U":
+                            m3file = m3u8.loads(resp.content, uri=url)
+                            m3file.full_uri = url
+                            pgen.add(m3file, headers, "hlsproxy" if chan.usehlsproxy else "hls")
+                            if self.base.config.resolve_mode in [0, 1]:
+                                pgen.wait()
+                                if pgen.playlists.qsize():
+                                    break
             self.wfile.write(pgen.m3file.dumps())
         elif qepg:
             self.send_response(200)

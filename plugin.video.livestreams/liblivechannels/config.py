@@ -79,6 +79,17 @@ class config(object):
         domain = domain.replace("/", "")
         return "https://" + domain
 
+    @property
+    def sports24(self):
+        up = urlparse.urlparse(self.setting.getstr("sports24"))
+        if up.netloc == "":
+            domain = up.path
+        else:
+            domain = up.netloc
+        domain = domain.replace("/", "")
+        return "https://" + domain
+
+
     @cdnlive.setter
     def cdnlive(self, value):
         self.setting.set("cdnlive", value)

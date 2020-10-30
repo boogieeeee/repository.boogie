@@ -30,13 +30,11 @@ import scrapertools
 ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.86 Safari/537.36"
 domain = "https://www.ecanlitvizle.live"
 
-customchannels = {u"CNN Türk": domain + "/cnn-turk-canli",
-                  u"Haber Türk": domain + "/haberturk-canli-yayin",
-                  u"Show TV": domain + "/show-tv-canli",
-                  u"Bloomberg HT": domain + "/bloomberg-ht-canli-yayin",
-                  u"Tv 8": domain + "/tv-8-canli-yayin",
+allowedchannels = {u"DMAX": {"url": "d-max-canli", "categories": [u"Türkçe", u"Realiti"]},
+                   u"TLC": {"url": "tlc-tv-canli", "categories": [u"Türkçe", u"Realiti"]}
                   }
 
+chans = {y["url"]: x for x, y in allowedchannels.iteritems()}
 
 class ecanli_channel(scraper):
     subchannel = True
@@ -94,49 +92,48 @@ class ecanli_channel(scraper):
 
 
 class ecanli(scrapers):
-    def iteratechannels(self):
+    def iteratechannels(self, fltr=None):
         page = self.download(domain, referer=domain)
         mtree = htmlement.fromstring(page)
         for cat in mtree.findall(".//li[2]/ul[@class='sub-menu']/li/a"):
             tree = htmlement.fromstring(self.download(cat.get("href"), referer=domain))
             for chan in tree.iterfind(".//ul[@class='kanallar']/.//a"):
-                cname = chan.get("title")
                 url = chan.get("href")
-                iscustom = False
-                for customlink in customchannels.values():
-                    # the scraped url may have some seo trailing values so check if custom is contained
-                    if customlink in url:
-                        iscustom = True
+                isallowed = False
+                isfiltered = False
+                title = ""
+                categories = []
+                for u in chans:
+                    if u in url:
+                        isallowed = True
+                        title = chans[u]
+                        categories = allowedchannels[title]["categories"]
+                        categories.append("cdnlive")
                         break
-                if iscustom:
-                    continue
-                subchan = self.makechannel(url, ecanli_channel,
-                                           channel=url,
-                                           title=cname,
-                                           categories=["ecanlitv", cat.get("title")],
+                if fltr and fltr in url:
+                    isfiltered = True
+                if isallowed or isfiltered:
+                    subchan = self.makechannel(url, ecanli_channel,
+                                               channel=url,
+                                               title=title,
+                                               categories=categories,
                                            icon=chan.find(".//img").get("src"))
-                yield subchan
+                    yield subchan
 
-    def getchannel(self, cid, custom=None):
-        if custom:
-            cid = customchannels.get(custom)
-            if not cid:
-                return
+    def getchannel(self, cid):
         tree = htmlement.fromstring(self.download(cid))
         cname = tree.find(".//div[@class='kanaldetay']/h1").text
-        categories = ["ecanlitv"]
         icon = tree.find(".//div[@class='kanaldetay']/img").get("src")
         subchan = self.makechannel(cid, ecanli_channel,
                                    channel=cid,
                                    title=cname,
-                                   categories=categories,
                                    icon=icon,
                                    tree=tree)
         return subchan
 
 
-def iterexternal(download, cid):
-    ecanli_channel = ecanli(download).getchannel(None, cid)
+def iterexternal(download, fltr):
+    ecanli_channel = list(ecanli(download).iteratechannels(fltr))[0]
     if ecanli_channel:
         for media in ecanli_channel(download).get():
             yield media

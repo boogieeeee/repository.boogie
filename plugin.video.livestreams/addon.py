@@ -63,6 +63,20 @@ class Base(container.container):
                     return e
 
     def healthcheck(self, url, headers=None):
+        if isinstance(url, net.mpdurl):
+            if not url.inputstream:
+                if url.kodilurl:
+                    return "Inputstream.adaptive cant play encrypted streams"
+                else:
+                    return "Inputstream.adaptive not available"
+            response = self.proxy_get(url.url, url.headers)
+            if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
+                return "MPD url is inaccessable"
+            if url.lurl and False:
+                response = self.proxy_get(url.lurl, url.lheaders)
+                if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
+                    return "MPD license url is inaccessable"
+            return
         if headers is None:
             url, headers = net.fromkodiurl(url)
         if not headers:

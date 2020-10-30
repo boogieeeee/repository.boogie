@@ -77,6 +77,7 @@ class scraper(object):
     index = None
     checkerrors = None
     subchannel = False
+    usehlsproxy  = True
 
     def __init__(self, download):
         self.download = download
@@ -106,7 +107,7 @@ class scrapers(object):
         return self.getchannel(cid[3:].decode("hex"))
 
     def iteratechannels(self):
-        yield
+        yield scraper
 
     def getchannel(self, cid):
         pass

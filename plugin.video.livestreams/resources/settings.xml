@@ -8,5 +8,6 @@
 	</category>
 	<category id="Scrapers" label="Scrapers">
 		<setting label="CDN Live address" type="text" id="cdnlive" default="safirbet55.tv"/>
+		<setting label="Sports24 address" type="text" id="sports24" default="sports24.club"/>
 	</category>
 </settings>
