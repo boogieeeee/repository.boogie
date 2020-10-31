@@ -25,7 +25,6 @@ import re
 
 import htmlement
 
-import ecanli
 import scrapertools
 
 
@@ -35,11 +34,11 @@ class tv8(scraper):
     title = u"Tv 8"
     icon = "https://img.tv8.com.tr/s/template/v2/img/tv8-logo.png"
     categories = [u"Türkçe", u"Realiti"]
+    ushlsproxy = False
 
     def get(self):
         yield "https://tv8.personamedia.tv/tv8hls?fmt=hls"
-        for media in ecanli.iterexternal(self.download, "tv-8-canli"):
-            yield media
+
 
     def iterprogrammes(self):
         piter = scrapertools.makeprograms()
