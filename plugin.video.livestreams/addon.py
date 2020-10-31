@@ -98,6 +98,15 @@ class Base(container.container):
             return "M3U8 File has no available variant"
         elif not len(m3u.segments):
             return "M3U8 File has no available segment"
+        
+    def checkinternet(self):
+        try:
+            s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            s.connect((self.config.internetaddress, 80))
+            s.close()
+            return True
+        except Exception:
+            return False
 
     def do_validate(self, background=False, is_closed=None):
         if self.config.update_running:
@@ -113,11 +122,7 @@ class Base(container.container):
             pg.update(0, pgname)
         index = 0
         for chan in chans:
-            try:
-                s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-                s.connect((self.config.internetaddress, 80))
-                s.close()
-            except Exception:
+            if not self.checkinternet():
                 gui.warn("No Connection", "Skipping Channel Update")
                 self.config.lastupdate = int(time.time())
                 self.config.validate = False
