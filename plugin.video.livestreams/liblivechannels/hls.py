@@ -49,7 +49,7 @@ class PlaylistGenerator(object):
                                             m3file.url), headers), pltype)
         elif len(m3file.playlists):
             for playlist in sorted(m3file.playlists, key=self.sorter, reverse=True):
-                if self.base.config.resolve_mode == 0:
+                if self.base.config.resolve_mode == 0 and pltype == "hlsproxy":
                     self.headcheck(playlist, headers, pltype)
                     if self.playlists.qsize():
                         break

@@ -41,8 +41,12 @@ class chan(scraper):
 
     def get(self):
         page = self.download("https://www.youtube.com/watch?v=%s" % self.vid, useragent=ua)
-        js = json.loads(re.search('ytInitialPlayerConfig = (\{.+?\})\;', page).group(1))
-        response = json.loads(js["args"]["player_response"])
+        pconfig1 = re.search('ytInitialPlayerConfig = (\{.+?\})\;', page)
+        if pconfig1:
+            js = json.loads(pconfig1.group(1))
+            response = json.loads(js["args"]["player_response"])
+        else:
+            response = json.loads(re.search('ytInitialPlayerResponse\s*?\=\s*?(\{.+?\})\;', page).group(1))
         yield response["streamingData"]["hlsManifestUrl"]
 
 

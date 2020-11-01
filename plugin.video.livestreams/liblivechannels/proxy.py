@@ -100,10 +100,11 @@ class Handler(BaseHTTPRequestHandler):
                             m3file = m3u8.loads(resp.content, uri=url)
                             m3file.full_uri = url
                             pgen.add(m3file, headers, "hlsproxy" if chan.usehlsproxy else "hls")
-                            if self.base.config.resolve_mode in [0, 1]:
+                            if self.base.config.resolve_mode in [0, 1] and chan.usehlsproxy:
                                 pgen.wait()
                                 if pgen.playlists.qsize():
                                     break
+            pgen.wait()
             self.wfile.write(pgen.m3file.dumps())
         elif qepg:
             self.send_response(200)
