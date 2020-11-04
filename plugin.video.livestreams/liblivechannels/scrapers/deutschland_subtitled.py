@@ -19,6 +19,7 @@
 '''
 
 
+from tinyxbmc import net
 from liblivechannels import scraper
 import re
 import json
@@ -42,6 +43,7 @@ class daserste(scraper):
     categories = ["Deutschland", "Subtitled"]
     title = u"Das Erste [ÜT]"
     icon = domain + "/mediasrc/img/tv/ard/ard-daserste-logo.png"
+    usehlsproxy = False
 
     def get(self):
         page = self.download(self.domain)
@@ -49,3 +51,16 @@ class daserste(scraper):
         js = re.search(r'url(?:\'|\")\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")', js).group(1)
         jsdata = json.loads(self.download(self.domain + js, referer=self.domain))
         yield jsdata["mc"]["_alternativeMediaArray"][0]["_mediaArray"][0]["_mediaStreamArray"][0]["_stream"][0]
+
+        
+class hrfernsehen(scraper):
+    domain = "https://www.hr-fernsehen.de"
+    categories = ["Deutschland", "Subtitled"]
+    title = u"HR-Fernsehen [ÜT]"
+    icon = domain + "/assets_3.2.0/base/icons/rsslogo/brandlogo--rss.jpg"
+    usehlsproxy = True
+    
+    def get(self):
+        page = self.download(self.domain + "/livestream/index.html")
+        yield re.search("streamUrlSublines(?:\"|\')\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", page).group(1)
+
