@@ -60,6 +60,7 @@ def patchsmu(smudir):
                 (["lib", "resolveurl", "lib", "log_utils.py"], 1),
                 (["lib", "resolveurl", "lib", "kodi.py"], 1),
                 (["lib", "resolveurl", "common.py"], 2),
+                (["lib", "resolveurl", "lib", "CustomProgressDialog.py"], 1),
                 ]
             for fpaths, patchtype in files:
                 fpath = os.path.join(smudir, *fpaths)
@@ -116,6 +117,7 @@ class smu(linkplayerextension):
     def init(self):
         uname, branch, commit = getconfig("smu")
         ghub.load("bstrdsmkr", "script.module.cryptopy", "master", None, ["lib"])
+        ghub.load("romanvm", "kodi.six", "master", None, ["script.module.kodi-six", "libs"])
         patchsmu(ghub.load(uname, "script.module.resolveurl", branch, commit, ["lib"]))
         from resolveurl import hmf
         self.hmf = hmf.HostedMediaFile
