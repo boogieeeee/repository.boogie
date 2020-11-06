@@ -74,7 +74,6 @@ def srapegrid(self, cat=None):
     else:
         u = domain + "/shows/%s%s/%d" % (cat, self.sort, n)
     n = n + 1
-    print u
     page = self.download(u, referer=domain)
     movies = re.findall('<div class="front">.*?<img src="(.*?)" alt="(.*?)".*?<div class="back" data-ajax="true" data-id="(.*?)".*?<a href="(.*?)"', page, re.DOTALL)
     for movie in movies:
@@ -248,7 +247,6 @@ def geturls(self, url):
     videos.sort(key=itemgetter(1), reverse=True)
     for vid, qual in videos:
         vid = tokodiurl(vid, None, {"Referer": url})
-        print vid
         yield vid
 
 
