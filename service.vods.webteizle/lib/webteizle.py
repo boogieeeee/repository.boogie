@@ -50,7 +50,7 @@ class webteizle(vods.movieextension):
             title = div.find(".//div[@class='filmname']")
             if title is not None:
                 img = div.find(".//img")
-                imgsrc = "https:" + img.get("src")
+                imgsrc = "https:" + img.get("data-src")
                 filmid = re.search("\/a([0-9]+?)\.jpg", imgsrc)
                 href = div.find(".//a").get("href")
                 info = {"tvshowtitle": title.text}
@@ -61,8 +61,6 @@ class webteizle(vods.movieextension):
                 if filmid is not None:
                     filmid = filmid.group(1)
                 args = filmid, href
-                print info
-                print art
                 self.additem(title.text, args, info, art)
 
     def searchmovies(self, keyword):
@@ -70,13 +68,11 @@ class webteizle(vods.movieextension):
         self.getmovies(url)
 
     def geturls(self, args):
-        print args
         bid, url = args
         if not bid:
             tree = self.gettree(url)
             bid = tree.find(".//a[@id='wip']").get("data-id")
         url = self.domain + url
-        print url
         for dil in range(2):
             data = {"filmid": bid, "dil": dil}
             jsdata = self.download(self.domain + "/ajax/dataAlternatif.asp",
@@ -84,17 +80,14 @@ class webteizle(vods.movieextension):
                                    referer=url,
                                    encoding=self.encoding,
                                    method="POST")
-            print jsdata.encode("ascii", "replace")
             js = json.loads(jsdata)
             if js.get("status") == "success":
                 for data in js["data"]:
-                    print 11
                     iframe = self.download(self.domain + "/ajax/dataEmbed.asp",
                                            data={"id": data["id"]},
                                            referer=url,
                                            encoding=self.encoding,
                                            method="POST")
-                    print iframe.encode("ascii", "replace")
                     v_url = self.videourl(iframe)
                     if v_url:
                         yield v_url
@@ -104,7 +97,6 @@ class webteizle(vods.movieextension):
         if v_id:
             v_server = v_id.group(1).lower()
             v_sid = v_id.group(2)
-            v_id2 = v_id.group(3)
             if v_server == "vidmoly":
                 return "https://vidmoly.to/embed-%s.html" % v_sid
             elif v_server == "netu":
@@ -114,5 +106,9 @@ class webteizle(vods.movieextension):
                 return "https://my.mail.ru/%s?autoplay=1" % v_sid
             elif v_server == "uptobox":
                 return "https://uptostream.com/iframe/%s" % v_sid
+            elif v_server == "okru":
+                return "https://odnoklassniki.ru/videoembed/%s" % v_sid
+            elif v_server == "fembed":
+                return "https://fembed.com/v/%s" % v_sid
             else:
                 return iframe
