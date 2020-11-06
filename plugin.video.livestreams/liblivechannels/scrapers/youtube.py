@@ -40,7 +40,9 @@ class chan(scraper):
     usehlsproxy = False
 
     def get(self):
-        page = self.download("https://www.youtube.com/watch?v=%s" % self.vid, useragent=ua)
+        page = self.download("https://www.youtube.com/watch?v=%s" % self.vid,
+                             useragent=ua,
+                             headers={"Cookie":"GPS=1"})
         pconfig1 = re.search('ytInitialPlayerConfig = (\{.+?\})\;', page)
         if pconfig1:
             js = json.loads(pconfig1.group(1))
@@ -54,8 +56,14 @@ class youtube(scrapers):
     def iteratechannels(self):
         for title, channel in channels.iteritems():
             try:
-                page = self.download("https://m.youtube.com/c/%s/videos?view=2&flow=list&live_view=501&" % channel["cid"], useragent=ua)
-                js = json.loads(re.search('<div id="initial-data"><!-- (.+?) -->', page).group(1))
+                page = self.download("https://m.youtube.com/c/%s/videos?view=2&flow=list&live_view=501&" % channel["cid"],
+                                     useragent=ua,
+                                     headers={"Cookie":"GPS=1"})
+                try:
+                    js = json.loads(re.search('<div id="initial-data"><!-- (.+?) -->', page).group(1))
+                except AttributeError:
+                    t = re.search("ytInitialData = '(.+?)'", page).group(1)
+                    js = json.loads(t.encode("utf-8").decode("string-escape"))
                 streams = js["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][1]["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
                 sindex = None
 
