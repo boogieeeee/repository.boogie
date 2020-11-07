@@ -14,7 +14,7 @@ def sorter(obj):
 
 
 class Fembed(StreamsBase):
-    regex = "fembed\.net|fembed\.com|feurl\.com|fplay\.cf"
+    regex = "fembed\.net|fembed\.com|feurl\.com|fplay\.cf|dzynet\.me|femax20\.com"
 
     def resolve(self, url, headers):
         resp = net.http(url, headers=headers, text=False, stream=True)
