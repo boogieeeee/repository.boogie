@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 '''
-    Author    : Huseyin BIYIK <husenbiyik at hotmail>
+    Author    : boogie
     Year      : 2016
     License   : GPL
 
