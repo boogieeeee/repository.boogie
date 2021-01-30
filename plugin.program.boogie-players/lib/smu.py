@@ -91,7 +91,7 @@ def patchsmu(smudir):
             smuhay.throw("smupatch", smupatch)
             tools.builtin("UpdateLocalAddons()")
             gui.ok("URL Resolvers", "SMU has just been updated",
-                   "some changes will be active on kodi restart")
+                   "some changes will be active on the next run")
 
         if not smupatch.get("xmlstat") == xmlstat:
             # merge smu settings.xml with current settings.xml
