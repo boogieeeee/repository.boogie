@@ -26,6 +26,9 @@ import urllib
 
 
 class webteizle(vods.movieextension):
+    usedirect = False
+    useaddonplayers = False
+
     info = {"title": "Webteizle"
             }
 
