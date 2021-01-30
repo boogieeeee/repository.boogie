@@ -25,6 +25,9 @@ import json
 
 
 class dizi(vods.showextension):
+    usedirect = False
+    useaddonplayers = False
+
     info = {"title": "Sezonluk Dizi"
             }
     ismovie = False
@@ -81,26 +84,25 @@ class dizi(vods.showextension):
                 self.additem("%s S%sE%s" % (title, season, epi), args, info, art)
         if seaargs:
             info, art, url = showargs
-            for tr in self.gettree(url).iterfind(".//tr"):
+            seanum = int(seaargs)
+            for tr in self.gettree(url).iterfind(".//div[@data-tab='%s']/.//tr" % seanum):
                 tds = tr.findall(".//td")
                 if len(tds) > 3:
-                    bid = tds[0].find(".//i").get("bid")
-                    s_val = tds[1].text
-                    s_val = re.search("([0-9]+)", s_val)
-                    if s_val:
-                        s_val = int(s_val.group(1))
-                        e_val = tds[2].find(".//a").text
-                        e_val = re.search("([0-9]+)", e_val)
-                        if e_val:
-                            e_val = int(e_val.group(1))
-                            epilink = tds[3].find(".//a")
-                            if seaargs.isdigit() and int(seaargs) == s_val:
-                                e_info = info.copy()
-                                e_info["title"] = epilink.text
-                                e_info["episode"] = e_val
-                                e_info["season"] = s_val
-                                args = (bid, self.domain + epilink.get("href"))
-                                self.additem("S%sE%s: %s" % (s_val, e_val, epilink.text), args, info, art)
+                    i = tds[0].find(".//i")
+                    if i is None:
+                        continue
+                    bid = i.get("bid")
+                    e_val = tds[2].find(".//a").text
+                    e_val = re.search("([0-9]+)", e_val)
+                    if e_val:
+                        e_val = int(e_val.group(1))
+                        epilink = tds[3].find(".//a")
+                        e_info = info.copy()
+                        e_info["title"] = epilink.text
+                        e_info["episode"] = e_val
+                        e_info["season"] = seanum
+                        args = (bid, self.domain + epilink.get("href"))
+                        self.additem("S%sE%s: %s" % (seanum, e_val, epilink.text), args, info, art)
 
     def geturls(self, args):
         bid, url = args
