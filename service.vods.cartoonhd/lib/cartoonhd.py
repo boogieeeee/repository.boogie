@@ -25,6 +25,8 @@ import libflix
 
 class base(object):
     ismovie = False
+    usedirect = False
+    useaddonplayers = False
 
     def getcategories(self):
         libflix.getcategories(self)
