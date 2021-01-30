@@ -31,10 +31,8 @@ from tinyxbmc.net import loadcookies
 from tinyxbmc.net import tokodiurl
 
 
-searchstr = "evokjaqbb3"
-setstr = "huHjVNHSGKomdiqHBMiBpCQYK"
-slkstr = "0A6ru35y"
-slk = slkstr + "yi5yn4THYpJqy0X82tE95btV"
+slkstr = "cautare/nuxt"
+apidomain = "movieshd.tv"
 
 
 def iframe(src):
@@ -198,7 +196,6 @@ def geturls(self, url):
         "Accept": "application/json, text/javascript, */*; q=0.01",
         }
     data = {}
-    
     cookies = {"loggedOut": "4"}
     dom = domain.split("//")[1]
     for cookie in loadcookies():
@@ -252,34 +249,16 @@ def geturls(self, url):
 
 def search(self, keyw):
     domain = "https://%s" % self.setting.getstr("domain")
-    # search is broken on the site
-    page = self.download(domain)
-    token = re.findall("var\s*tok\s*=\s*'(.+?)'", page)[0]
-    # setstr = "".join([random.choice(string.ascii_letters) for k in range(25)])
-    d = {
-        "q": keyw,
-        "limit": 100,
-        "timestamp": int(time.time() * 1000),
-        "verifiedCheck": token,
-        "set": setstr,
-        # "rt": caesar(str(token) + set, 13),
-        "rt": setstr,
-        # "sl": md5.new(slk.encode("base-64")[:-1] + search).hexdigest()
-        "sl": searchstr
-        }
-    page = self.download("https://api.%s/api/v1/%s%s" % (self.setting.getstr("domain"),
-                                                         slkstr,
-                                                         searchstr),
-                         data=d,
-                         referer=domain, method="POST")
+    page = self.download("https://api.%s/api/v1/%s" % (apidomain, slkstr),
+                         params={"q": keyw, "limit": 100, "lo": 0},
+                         referer=domain, method="GET")
     for result in json.loads(page):
         if "movie" not in result["meta"].lower() and self.ismovie or \
                 "tv show" not in result["meta"].lower() and not self.ismovie:
             continue
         result["permalink"] = result["permalink"].replace("/show/", "/series/")
         link = domain + result["permalink"]
-        art = {
-               "icon": domain + result["image"],
+        art = {"icon": domain + result["image"],
                "thumb": domain + result["image"],
                }
         self.additem(result["title"], link, {}, art)
