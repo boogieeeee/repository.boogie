@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.5">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.6">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods" />
@@ -80,7 +80,7 @@
 	</extension>
 </addon>
 
-<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.1">
+<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
@@ -102,7 +102,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.cartoonhd" name="CartoonHD module for VODS" provider-name="boogie" version="0.0.10">
+<addon id="service.vods.cartoonhd" name="CartoonHD module for VODS" provider-name="boogie" version="0.0.11">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
@@ -167,7 +167,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.2">
+<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
