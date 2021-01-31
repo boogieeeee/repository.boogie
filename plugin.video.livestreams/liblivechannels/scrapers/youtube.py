@@ -7,7 +7,7 @@ import traceback
 
 
 def istv100(stream):
-    return not "ekonomi" in stream["compactVideoRenderer"]["title"]["runs"][0]["text"].lower()
+    return "ekonomi" not in stream["compactVideoRenderer"]["title"]["runs"][0]["text"].lower()
 
 
 channels = {u"Haber Türk": {"cid": "haberturktv", "cats": [u"Türkçe", u"Haber"]},
@@ -30,9 +30,8 @@ channels = {u"Haber Türk": {"cid": "haberturktv", "cats": [u"Türkçe", u"Haber
             u"LoFi Channel 2": {"cid": "ChilledCow", "streamindex": 1, "cats": [u"Music"]}
             }
 
-
-
 ua = "Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36"
+
 
 class chan(scraper):
     subchannel = True
@@ -42,7 +41,7 @@ class chan(scraper):
     def get(self):
         page = self.download("https://www.youtube.com/watch?v=%s" % self.vid,
                              useragent=ua,
-                             headers={"Cookie":"GPS=1"})
+                             headers={"Cookie": "GPS=1"})
         pconfig1 = re.search('ytInitialPlayerConfig = (\{.+?\})\;', page)
         if pconfig1:
             js = json.loads(pconfig1.group(1))
@@ -58,7 +57,7 @@ class youtube(scrapers):
             try:
                 page = self.download("https://m.youtube.com/c/%s/videos?view=2&flow=list&live_view=501&" % channel["cid"],
                                      useragent=ua,
-                                     headers={"Cookie":"GPS=1"})
+                                     headers={"Cookie": "GPS=1"})
                 try:
                     js = json.loads(re.search('<div id="initial-data"><!-- (.+?) -->', page).group(1))
                 except AttributeError:
@@ -74,17 +73,18 @@ class youtube(scrapers):
 
                 if not sindex and channel.get("streamindex"):
                     sindex = channel["streamindex"]
-                
+
                 if sindex is None:
                     sindex = 0
-                vid =  streams[sindex]["compactVideoRenderer"]["videoId"]
+                vid = streams[sindex]["compactVideoRenderer"]["videoId"]
                 icon = js["metadata"]["channelMetadataRenderer"]["avatar"]["thumbnails"][0]["url"]
             except Exception:
                 print channel
                 print traceback.format_exc()
                 continue
-            yield self.makechannel(vid, chan, vid=vid, title=title, icon=icon, categories=["youtube"] + channel["cats"])
-            
+            cid = json.dumps([vid, title])
+            yield self.makechannel(cid, chan, vid=vid, title=title, icon=icon, categories=["youtube"] + channel["cats"])
 
-    def getchannel(self, vid):
-        return self.makechannel(vid, chan, vid=vid)
+    def getchannel(self, cid):
+        vid, title = json.loads(cid)
+        return self.makechannel(cid, chan, vid=vid, title=title)

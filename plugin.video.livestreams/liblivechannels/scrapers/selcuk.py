@@ -51,8 +51,9 @@ class selcuk(scrapers):
         for a in xpage.iterfind(".//div[@id='b-tv']/.//a"):
             href = net.absurl(a.get("href").split("#")[0], cfg.selcuk)
             chname = tools.elementsrc(a, exclude=[a.find(".//b")]).strip()
-            print chname.encode("ascii", "replace")
-            yield self.makechannel(href, sel_chan, url=href, title=chname)
+            chid = json.dumps([href, chname])
+            yield self.makechannel(chid, sel_chan, url=href, title=chname)
 
     def getchannel(self, cid):
-        return self.makechannel(cid, sel_chan, url=cid)
+        url, chname = json.loads(cid)
+        return self.makechannel(cid, sel_chan, url=url, title=chname)
