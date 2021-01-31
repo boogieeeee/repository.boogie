@@ -7,7 +7,6 @@
 		<setting default="First highest quality variant in first alive stream" id="pvr_resolve_mode" type="select" label="Resolve Mode for PVR Proxy" values="First highest quality variant in first alive stream|First alive stream with all variants|All streams with all variants redundantly" />
 	</category>
 	<category id="Scrapers" label="Scrapers">
-		<setting label="CDN Live address" type="text" id="cdnlive" default="safirbet55.tv"/>
-		<setting label="Sports24 address" type="text" id="sports24" default="sports24.club"/>
+		<setting label="Selcukspor address" type="text" id="selcuk" default="selcuksportshd63.live"/>
 	</category>
 </settings>

@@ -70,29 +70,18 @@ class config(object):
         self.setting.set("validate", value)
 
     @property
-    def cdnlive(self):
-        up = urlparse.urlparse(self.setting.getstr("cdnlive"))
+    def selcuk(self):
+        up = urlparse.urlparse(self.setting.getstr("selcuk"))
         if up.netloc == "":
             domain = up.path
         else:
             domain = up.netloc
         domain = domain.replace("/", "")
-        return "https://" + domain
+        return "http://" + domain
 
-    @property
-    def sports24(self):
-        up = urlparse.urlparse(self.setting.getstr("sports24"))
-        if up.netloc == "":
-            domain = up.path
-        else:
-            domain = up.netloc
-        domain = domain.replace("/", "")
-        return "https://" + domain
-
-
-    @cdnlive.setter
-    def cdnlive(self, value):
-        self.setting.set("cdnlive", value)
+    @selcuk.setter
+    def selcuk(self, value):
+        self.setting.set("selcuk", value)
 
     @property
     def channels(self):
