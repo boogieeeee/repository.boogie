@@ -58,7 +58,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.0.26">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.0.27">
     <requires>
 		<import addon="xbmc.python" version="2.19.0"/>
 		<import addon="script.module.tinyxbmc"/>
