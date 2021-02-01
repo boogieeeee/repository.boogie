@@ -50,7 +50,7 @@ class Base(container.container):
                 headers[u"User-agent"] = const.USERAGENT
             try:
                 resp = self.download(url, headers=headers, text=False,
-                                     timeout=common.query_timeout, stream=True, cache=None, method=method)
+                                     timeout=common.query_timeout, stream=True, cache=None, method=method, verify=False)
                 if resp.status_code not in [200, 206]:
                     if retry == 2:
                         return resp
@@ -98,7 +98,7 @@ class Base(container.container):
             return "M3U8 File has no available variant"
         elif not len(m3u.segments):
             return "M3U8 File has no available segment"
-        
+
     def checkinternet(self):
         try:
             s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

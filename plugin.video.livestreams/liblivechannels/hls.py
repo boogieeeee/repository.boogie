@@ -69,7 +69,7 @@ class PlaylistGenerator(object):
     def headcheck(self, playlist, headers, pltype):
         if pltype == "hls":
             playlist.uri = net.tokodiurl(playlist.absolute_uri, headers=headers)
-            error  = None
+            error = None
         else:
             error = self.base.healthcheck(playlist.absolute_uri, headers)
         if error is None:
