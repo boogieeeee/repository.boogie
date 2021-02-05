@@ -22,6 +22,7 @@
 from liblivechannels import scraper, scrapers
 from tinyxbmc import tools
 from tinyxbmc import net
+from scrapertools import yayinakisi
 import urlparse
 import json
 import base64
@@ -29,6 +30,15 @@ import base64
 import htmlement
 
 domain = "https://www.sestv.pw/"
+
+namemap = {"sinema17": "Bein Box Office 1",
+           "sinema16": "Dizi TV",
+           "sinema15": "Sinema TV 1001",
+           "sinema14": "Sinema TV Aksiyon",
+           "sinema13": "Sinema TV Aile",
+           "sinema19": u"Bein Movies Turk",
+           "nickeledeon": "Nickelodeon"
+           }
 
 
 class ses_chan(scraper):
@@ -56,12 +66,21 @@ class ses_chan(scraper):
         if url:
             yield net.tokodiurl(url, headers={"referer": domain})
 
+    def iterprogrammes(self):
+        for prog in yayinakisi.iterprogramme(self.title):
+            yield prog
+
 
 class ses(scrapers):
     def iterpage(self, xpage):
         for a in xpage.iterfind(".//div[@class='content container']/div/div/ul/li/a"):
             href = net.absurl(a.get("href").split("#")[0], domain)
-            chname = tools.elementsrc(a).strip()
+            chname = tools.elementsrc(a).lower().strip()
+            if "xxx" in chname.lower():
+                continue
+            normname = yayinakisi.normalize(chname)
+            if normname in namemap:
+                chname = namemap[normname]
             icon = a.find(".//img")
             if icon is not None:
                 icon = net.absurl(icon.get("src"), domain)

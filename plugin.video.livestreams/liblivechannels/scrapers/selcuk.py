@@ -2,6 +2,8 @@
 from liblivechannels import scraper, scrapers
 from tinyxbmc import tools
 from tinyxbmc import net
+
+from scrapertools import yayinakisi
 import urlparse
 import json
 
@@ -23,6 +25,10 @@ class sel_chan(scraper):
         sdomain = json.loads(self.download(jsurl, referer=self.url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
         media = "https://xx.%s/kaynakstreamradarco/%s/strmrdr.m3u8" % (sdomain, chid)
         yield net.tokodiurl(media, headers={"referer": self.url})
+
+    def iterprogrammes(self):
+        for prog in yayinakisi.iterprogramme(self.title):
+            yield prog
 
 
 class selcuk(scrapers):

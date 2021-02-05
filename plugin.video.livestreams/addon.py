@@ -156,8 +156,7 @@ class Base(container.container):
             if index == 200000:
                 break
         self.config.channels = channels
-        pg.update(100, "Updating EPG", "Updating EPG")
-        epg.write(self)
+        epg.write(self, pg)
         self.config.lastupdate = int(time.time())
         self.config.update_running = False
         if self.config.validate:

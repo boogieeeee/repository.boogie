@@ -7,9 +7,10 @@ import codecs
 
 
 class write(addon.blockingloop):
-    def init(self, base):
+    def init(self, base, progress=None):
         self.base = base
         self.wfile = u""
+        self.progress = progress
 
     def oninit(self):
         self.channels = list(self.base.config.channels)
@@ -29,6 +30,7 @@ class write(addon.blockingloop):
         self.index += 1
         if "Broken" in cats:
             return
+        self.progress.update(100 * self.index / len(self.channels), "Updating EPG: %s" % title)
         self.writeline('<channel id="%s">' % index)
         self.writeline('\t<display-name>%s</display-name>' % self.xmlescape(title))
         self.writeline('\t<icon src="%s"/>' % icon)

@@ -1,6 +1,7 @@
 # -*- encoding: utf-8 -*-
 from liblivechannels import scraper
 from tinyxbmc import tools
+from scrapertools import yayinakisi
 import re
 
 import htmlement
@@ -11,7 +12,7 @@ import scrapertools
 class tv8(scraper):
     domain = "https://www.tv8.com.tr"
     m3u8 = None
-    title = u"Tv 8"
+    title = u"S SPORT HD"
     icon = "https://img.tv8.com.tr/s/template/v2/img/tv8-logo.png"
     categories = [u"Türkçe", u"Realiti"]
     ushlsproxy = False
@@ -19,8 +20,11 @@ class tv8(scraper):
     def get(self):
         yield "https://tv8.personamedia.tv/tv8hls?fmt=hls"
 
-
     def iterprogrammes(self):
+        for prog in yayinakisi.iterprogramme(self.title):
+            yield prog
+
+    def iterprogrammes2(self):
         piter = scrapertools.makeprograms()
         page = self.download("%s/yayin-akisi" % self.domain, referer=self.domain, timeout=10)
         tree = htmlement.fromstring(page)

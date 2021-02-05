@@ -5,6 +5,8 @@ import re
 import json
 import traceback
 
+from scrapertools import yayinakisi
+
 
 def istv100(stream):
     return "ekonomi" not in stream["compactVideoRenderer"]["title"]["runs"][0]["text"].lower()
@@ -17,7 +19,7 @@ channels = {u"Haber Türk": {"cid": "haberturktv", "cats": [u"Türkçe", u"Haber
             u"Tele 1": {"cid": "Tele1comtr", "cats": [u"Türkçe", u"Haber"]},
             u"NTV": {"cid": "NTV", "cats": [u"Türkçe", u"Haber"]},
             u"A Haber": {"cid": "ahaber", "cats": [u"Türkçe", u"Haber"]},
-            u"A Halk TV": {"cid": "Halktvkanali", "cats": [u"Türkçe", u"Haber"]},
+            u"Halk TV": {"cid": "Halktvkanali", "cats": [u"Türkçe", u"Haber"]},
             u"Haber Global": {"cid": "haberglobal", "cats": [u"Türkçe", u"Haber"]},
             u"TV100": {"cid": "tv100", "isvalid":istv100, "cats": [u"Türkçe", u"Haber"]},
             u"TGRT Haber": {"cid": "tgrthaber", "cats": [u"Türkçe", u"Haber"]},
@@ -49,6 +51,10 @@ class chan(scraper):
         else:
             response = json.loads(re.search('ytInitialPlayerResponse\s*?\=\s*?(\{.+?\})\;', page).group(1))
         yield response["streamingData"]["hlsManifestUrl"]
+
+    def iterprogrammes(self):
+        for prog in yayinakisi.iterprogramme(self.title):
+            yield prog
 
 
 class youtube(scrapers):

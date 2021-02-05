@@ -1,5 +1,6 @@
 # -*- encoding: utf-8 -*-
 from liblivechannels import scraper
+from scrapertools import yayinakisi
 
 
 class trt1(scraper):
@@ -10,3 +11,8 @@ class trt1(scraper):
 
     def get(self):
         yield "https://tv-trt1.live.trt.com.tr/master.m3u8"
+
+    def iterprogrammes(self):
+        for prog in yayinakisi.iterprogramme(self.title):
+            yield prog
+
