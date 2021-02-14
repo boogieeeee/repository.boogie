@@ -5,6 +5,7 @@
 
 from tinyxbmc import addon
 from tinyxbmc import hay
+from tinyxbmc import tools
 import common
 import urlparse
 

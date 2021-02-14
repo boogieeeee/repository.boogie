@@ -1,4 +1,24 @@
 # -*- encoding: utf-8 -*-
+try:
+    import unittest
+    from test import ChannelTest
+
+    class testbr(ChannelTest, unittest.TestCase):
+        index = "deutschland_subtitled:br:"
+        minepg = 0
+
+    class testdaserste(ChannelTest, unittest.TestCase):
+        index = "deutschland_subtitled:daserste:"
+        minepg = 0
+
+    class testhrfernsehen(ChannelTest, unittest.TestCase):
+        index = "deutschland_subtitled:hrfernsehen:"
+        minepg = 0
+
+except ImportError:
+    pass
+
+
 from tinyxbmc import net
 from liblivechannels import scraper
 import re
@@ -32,14 +52,14 @@ class daserste(scraper):
         jsdata = json.loads(self.download(self.domain + js, referer=self.domain))
         yield jsdata["mc"]["_alternativeMediaArray"][0]["_mediaArray"][0]["_mediaStreamArray"][0]["_stream"][0]
 
-        
+
 class hrfernsehen(scraper):
     domain = "https://www.hr-fernsehen.de"
     categories = ["Deutschland", "Subtitled"]
     title = u"HR-Fernsehen [ÜT]"
     icon = domain + "/assets_3.2.0/base/icons/rsslogo/brandlogo--rss.jpg"
     usehlsproxy = True
-    
+
     def get(self):
         page = self.download(self.domain + "/livestream/index.html")
         yield re.search("streamUrlSublines(?:\"|\')\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", page).group(1)

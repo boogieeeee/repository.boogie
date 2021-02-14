@@ -7,54 +7,19 @@ Created on Feb 1, 2021
 import re
 import json
 import htmlement
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from tinyxbmc import net
 from tinyxbmc import tools
 
 from liblivechannels import programme
+from liblivechannels.chexts.scrapertools import normalize
 
 
 domain = "https://www.tvyayinakisi.com/"
 TZ = 3
 trtz = tools.tz_utc()
 trtz.settimezone(TZ)
-
-
-accents = {u"ü": "u",
-           u"Ü": "u",
-           u"Ş": "s", 
-           u"ş": "s",
-           u"I": "i",
-           u"ı": "i",
-           u"ğ": "g",
-           u"Ğ": "g",
-           u"Ç": "c",
-           u"ç": "c",
-           u"Ö": "o",
-           u"ö": "o"}
-
-abbrevations = (("national", "nat"),
-                ("geographic", "geo"),
-                ("international", "int"),
-                ("tv", ""),
-                ("channel", "")
-                )
-
-spams = ["hd", "sd", "canli", "full", "fullhd", "yedek", "backup", "izle", "sports"]
-
-
-def normalize(txt):
-    for k, v in accents.iteritems():
-        txt = txt.replace(k, v)
-    txt = txt.strip().lower()
-    for k, v in abbrevations:
-        txt = txt.replace(k, v)
-    ntxt = ""
-    for word in txt.split(" "):
-        if word not in spams:
-            ntxt += word
-    return re.sub(r'\W+', '', ntxt)
 
 
 def find(chname):
@@ -82,15 +47,17 @@ def todate(txt):
     print "unknown time: %s" % txt
 
 
-def iterprogramme(chname):
-    link = find(chname)
+def iterprogramme(chname=None, chid=None):
+    link = None
+    if chid:
+        link = "%s%s-yayin-akisi" % (domain, chid)
+    elif chname:
+        link = find(chname)
     if link:
         subpage = net.http(link, referer=domain, cache=5)
         apilink = re.search("kanal_detay\:\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
         dslug = re.search("data-slug\=\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
         if apilink and dslug:
-            print chname.encode("ascii", "replace")
-            print apilink.group(1) + dslug.group(1)
             js = json.loads(net.http(apilink.group(1) + dslug.group(1), referer=domain))
             for i in range(len(js["content"])):
                 try:
@@ -107,3 +74,12 @@ def iterprogramme(chname):
                                     end,
                                     categories=[js["content"][i]["type"], js["content"][i]["type2"]]
                                     )
+
+
+class yayinakisi(object):
+    yayin_name = None
+    yayin_id = None
+
+    def iterprogrammes(self):
+        for prog in iterprogramme(self.yayin_name, self.yayin_id):
+            yield prog

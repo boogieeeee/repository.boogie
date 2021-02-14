@@ -28,6 +28,7 @@ from tinyxbmc import extension
 import time
 import traceback
 import socket
+import urllib3
 
 import liblivechannels
 from liblivechannels import common
@@ -39,13 +40,15 @@ from thirdparty import m3u8
 _chancls = {}
 _chanins = {}
 
+urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
+
 
 class Base(container.container):
     def init(self):
         self.config = config.config()
 
     def proxy_get(self, url, headers, method="GET"):
-        for retry in range(3):
+        for retry in range(5):
             if "user-agent" not in [x.lower() for x in headers.keys()]:
                 headers[u"User-agent"] = const.USERAGENT
             try:

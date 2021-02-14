@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import datetime
+import re
 from liblivechannels import programme
 from tinyxbmc import tools
 
@@ -69,3 +70,40 @@ class makeprograms(object):
             return programme(self.title, self.date, self.enddate, *self.args, **self.kwargs)
         else:
             raise StopIteration
+
+
+accents = {u"ü": "u",
+           u"Ü": "u",
+           u"Ş": "s", 
+           u"ş": "s",
+           u"I": "i",
+           u"ı": "i",
+           u"ğ": "g",
+           u"Ğ": "g",
+           u"Ç": "c",
+           u"ç": "c",
+           u"Ö": "o",
+           u"ö": "o"}
+
+abbrevations = (("national", "nat"),
+                ("geographic", "geo"),
+                ("international", "int"),
+                ("tv", ""),
+                ("channel", "")
+                )
+
+spams = ["hd", "sd", "canli", "full", "fullhd", "yedek", "backup", "izle", "sports"]
+
+
+def normalize(txt):
+    for k, v in accents.iteritems():
+        txt = txt.replace(k, v)
+    txt = txt.strip().lower()
+    for k, v in abbrevations:
+        txt = txt.replace(k, v)
+    ntxt = ""
+    for word in txt.split(" "):
+        if word not in spams:
+            ntxt += word
+    return re.sub(r'\W+', '', ntxt)
+

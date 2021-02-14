@@ -21,7 +21,7 @@ channels = {u"Haber Türk": {"cid": "haberturktv", "cats": [u"Türkçe", u"Haber
             u"A Haber": {"cid": "ahaber", "cats": [u"Türkçe", u"Haber"]},
             u"Halk TV": {"cid": "Halktvkanali", "cats": [u"Türkçe", u"Haber"]},
             u"Haber Global": {"cid": "haberglobal", "cats": [u"Türkçe", u"Haber"]},
-            u"TV100": {"cid": "tv100", "isvalid":istv100, "cats": [u"Türkçe", u"Haber"]},
+            u"TV100": {"cid": "tv100", "isvalid": istv100, "cats": [u"Türkçe", u"Haber"]},
             u"TGRT Haber": {"cid": "tgrthaber", "cats": [u"Türkçe", u"Haber"]},
             u"TRT Haber": {"cid": "trthaber", "cats": [u"Türkçe", u"Haber"]},
             # u"A Spor": {"cid": "ASpor", "cats": [u"Türkçe", u"Haber"]},
@@ -35,7 +35,7 @@ channels = {u"Haber Türk": {"cid": "haberturktv", "cats": [u"Türkçe", u"Haber
 ua = "Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36"
 
 
-class chan(scraper):
+class chan(object):
     subchannel = True
     vid = None
     usehlsproxy = False
@@ -57,7 +57,7 @@ class chan(scraper):
             yield prog
 
 
-class youtube(scrapers):
+class youtube(object):
     def iteratechannels(self):
         for title, channel in channels.iteritems():
             try:
