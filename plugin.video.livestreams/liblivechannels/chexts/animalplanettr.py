@@ -17,7 +17,7 @@ from scrapertools.multi import multi
 
 class animalplanet(multi, scraper):
     title = u"Animal Planet Turkiye"
-    icon = "https://i.pinimg.com/originals/ad/2e/57/ad2e57aa2d71eee1f79fb1b8fcb932da.png"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/0/07/Animal_Planet_logo.svg/1200px-Animal_Planet_logo.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "animalplanet"
     ses_id = "animal-planet-izle"
