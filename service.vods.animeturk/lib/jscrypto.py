@@ -4,6 +4,9 @@ Created on Feb 16, 2021
 @author: boogie
 '''
 import hashlib
+import ghub
+
+ghub.load("ricmoo", "pyaes", None)
 import pyaes
 
 
