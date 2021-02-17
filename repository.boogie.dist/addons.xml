@@ -139,7 +139,7 @@
     </extension>
 </addon>
 
-<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.3">
+<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.4">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
