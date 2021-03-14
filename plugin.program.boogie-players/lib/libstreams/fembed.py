@@ -6,7 +6,8 @@ Created on Nov 21, 2019
 from streams import StreamsBase
 from tinyxbmc import net
 import json
-import urlparse
+
+from six.moves.urllib.parse import urlparse
 
 
 def sorter(obj):
@@ -18,7 +19,7 @@ class Fembed(StreamsBase):
 
     def resolve(self, url, headers):
         resp = net.http(url, headers=headers, text=False, stream=True)
-        up = urlparse.urlparse(resp.url)
+        up = urlparse(resp.url)
         api_url = up.scheme + "://" + up.netloc + "/api/source/" + up.path.split("/")[-1]
         data = {"r": "", "d": up.netloc}
         jsdata = net.http(api_url, referer=resp.url, data=data, method="POST")

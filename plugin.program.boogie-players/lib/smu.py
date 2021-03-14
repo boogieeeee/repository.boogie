@@ -54,14 +54,13 @@ def patchsmu(smudir):
         except Exception:
             xmlstat = None
         pldir = addon.get_addon("plugin.program.vods-players").getAddonInfo("path")
-        if not smupatch.get("versioncommit") == versioncommit: 
+        if not smupatch.get("versioncommit") == versioncommit:
             # first remove xbmcaddon referenced to script.module.urlresolver
-            files = [
-                (["lib", "resolveurl", "lib", "log_utils.py"], 1),
-                (["lib", "resolveurl", "lib", "kodi.py"], 1),
-                (["lib", "resolveurl", "common.py"], 2),
-                (["lib", "resolveurl", "lib", "CustomProgressDialog.py"], 1),
-                ]
+            files = [(["lib", "resolveurl", "lib", "log_utils.py"], 1),
+                     (["lib", "resolveurl", "lib", "kodi.py"], 1),
+                     (["lib", "resolveurl", "common.py"], 2),
+                     (["lib", "resolveurl", "lib", "CustomProgressDialog.py"], 1),
+                     ]
             for fpaths, patchtype in files:
                 fpath = os.path.join(smudir, *fpaths)
                 with open(fpath, "r") as f:
@@ -86,12 +85,11 @@ def patchsmu(smudir):
                     tfile = os.path.join(pldir, relfolder, f)
                     with tools.File(sfile) as sfileo:
                         with tools.File(tfile, "w") as tfileo:
-                            tfileo.write(sfileo.read())
+                            tfileo.write(sfileo.readBytes())
             smupatch["versioncommit"] = versioncommit
             smuhay.throw("smupatch", smupatch)
             tools.builtin("UpdateLocalAddons()")
-            gui.ok("URL Resolvers", "SMU has just been updated",
-                   "some changes will be active on the next run")
+            gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
 
         if not smupatch.get("xmlstat") == xmlstat:
             # merge smu settings.xml with current settings.xml
@@ -107,7 +105,7 @@ def patchsmu(smudir):
                             plxml.write('<?xml version="1.0" ?><settings>%s%s</settings>' %
                                         (getstr(plxmlo.read()), getstr(smuxml.read())))
                         except Exception:
-                            print traceback.format_exc()
+                            print(traceback.format_exc())
                             shutil.copyfile(plxmlop, plxmlp)
 
 

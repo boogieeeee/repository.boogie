@@ -22,7 +22,8 @@ import vods
 import htmlement
 import re
 import json
-import urllib
+
+from six.moves.urllib import parse
 
 
 class webteizle(vods.movieextension):
@@ -45,7 +46,7 @@ class webteizle(vods.movieextension):
     def getcategories(self):
         for div in self.gettree("/filtre.asp").iterfind(".//div[@class='field'][3]/.//div[@class='item']"):
             cat = div.get("data-value")
-            self.additem(cat, "/filtre.asp?a=&ulke=&tur=%s&yayinlanan=2&minYil=&maxYil=&minImdb=&siralama_tipi=3&siralama_turu=desc&ps=60&uyeliste=0" % urllib.quote(cat.encode("utf8")))
+            self.additem(cat, "/filtre.asp?a=&ulke=&tur=%s&yayinlanan=2&minYil=&maxYil=&minImdb=&siralama_tipi=3&siralama_turu=desc&ps=60&uyeliste=0" % parse.quote(cat.encode("utf8")))
 
     def getmovies(self, cat=None):
         tree = self.gettree(cat)
@@ -67,7 +68,7 @@ class webteizle(vods.movieextension):
                 self.additem(title.text, args, info, art)
 
     def searchmovies(self, keyword):
-        url = "/filtre.asp?a=%s&ulke=&tur=&yayinlanan=2&minYil=&maxYil=&minImdb=&siralama_tipi=3&siralama_turu=desc&ps=60&uyeliste=" % urllib.quote(keyword.encode("utf8"))
+        url = "/filtre.asp?a=%s&ulke=&tur=&yayinlanan=2&minYil=&maxYil=&minImdb=&siralama_tipi=3&siralama_turu=desc&ps=60&uyeliste=" % parse.quote(keyword.encode("utf8"))
         self.getmovies(url)
 
     def geturls(self, args):

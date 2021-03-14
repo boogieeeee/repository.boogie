@@ -21,8 +21,7 @@
 from tinyxbmc import addon
 
 from vods import addonplayerextension
-
-import urllib
+from six.moves.urllib_parse import urlencode
 
 
 class plexus(addonplayerextension):
@@ -38,7 +37,7 @@ class plexus(addonplayerextension):
             if not mode:
                 yield
             query = {"url": link, "mode": mode, "name": "Acestream"}
-            yield "plugin://program.plexus/?" + urllib.urlencode(query)
+            yield "plugin://program.plexus/?" + urlencode(query)
 
 
 class elementum(addonplayerextension):

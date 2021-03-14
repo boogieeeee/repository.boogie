@@ -12,14 +12,14 @@ import pyaes
 
 def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md5"):
     target_key_size = key_size + iv_size
-    derived_bytes = ""
+    derived_bytes = b""
     number_of_derived_words = 0
     block = None
     hasher = hashlib.new(hash_algorithm)
     while number_of_derived_words < target_key_size:
         if block is not None:
             hasher.update(block)
-        hasher.update(passwd)
+        hasher.update(passwd.encode())
         hasher.update(salt)
         block = hasher.digest()
         hasher = hashlib.new(hash_algorithm)
