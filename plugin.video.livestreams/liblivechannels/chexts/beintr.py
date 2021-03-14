@@ -5,31 +5,31 @@ try:
 
     class testbein1(ChannelTest, unittest.TestCase):
         index = "beintr:bein1:"
-        minlinks = 2
+        minlinks = 1
 
     class testbein2(ChannelTest, unittest.TestCase):
         index = "beintr:bein2:"
-        minlinks = 2
+        minlinks = 1
 
     class testbein3(ChannelTest, unittest.TestCase):
         index = "beintr:bein3:"
-        minlinks = 2
+        minlinks = 1
 
     class testbein4(ChannelTest, unittest.TestCase):
         index = "beintr:bein4:"
-        minlinks = 2
+        minlinks = 1
 
     class testbeinmax1(ChannelTest, unittest.TestCase):
         index = "beintr:beinmax1:"
-        minlinks = 2
+        minlinks = 1
 
     class testbeinmax2(ChannelTest, unittest.TestCase):
         index = "beintr:beinmax2:"
-        minlinks = 2
+        minlinks = 1
 
     class testbeinhaber(ChannelTest, unittest.TestCase):
         index = "beintr:beinhaber:"
-        minlinks = 2
+        minlinks = 1
 except ImportError:
     pass
 

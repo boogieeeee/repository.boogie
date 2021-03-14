@@ -63,7 +63,7 @@ def itermedias(chfilter):
                 if not media:
                     chid = chdict.get("id")
                     kourl = "%s://%s/keslanorospucocugu.js" % (up.scheme, up.netloc)
-                    subpath = re.search("dmz\+(?:\'|\")(.+?)(?:\'|\")", net.http(kourl, referer=cfg.selcuk)).group(1)
+                    subpath = re.search("dmz[a-zA-Z0-9]+?\+(?:\'|\")(.+?)(?:\'|\")", net.http(kourl, referer=cfg.selcuk)).group(1)
                     jsurl = "%s://%s/dmzjsn.json" % (up.scheme, up.netloc)
                     sdomain = json.loads(net.http(jsurl, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
                     media = "https://xxx.%s%s%s/strmrdr.m3u8" % (sdomain, subpath, chid)
@@ -73,4 +73,8 @@ def itermedias(chfilter):
                 jsurl = "%s://%s/dmzjsn.json" % (up.scheme, up.netloc)
                 sdomain = json.loads(net.http(jsurl, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
                 media = "https://srvb.%s/kaynakstreamradarco/%s/strmrdr.m3u8" % (sdomain, strid)
+            else:
+                # this may not happen always
+                subpage = net.http(links[0], referer=cfg.selcuk)
+                media = re.findall("window.mainSource\s*?\=\s*?\[(?:\'|\")(.+?)(?:\'|\")", subpage)[0]
             yield net.tokodiurl(media, headers={"referer": url})
