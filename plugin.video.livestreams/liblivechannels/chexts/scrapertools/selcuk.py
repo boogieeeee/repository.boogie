@@ -24,9 +24,13 @@ def iteratechannels():
     domnum = int(re.search("[0-9]+", up.netloc).group(0))
     for linkcnt in range(maxlink):
         netloc = re.sub("[0-9]+", str(domnum + linkcnt), up.netloc)
-        url = "%s://%s" % (up.scheme, netloc)
-        xpage = htmlement.fromstring(net.http(url, cache=10))
-        links = xpage.findall(".//div[@id='b-tv']/.//a")
+        links = None
+        try:
+            url = "%s://%s" % (up.scheme, netloc)
+            xpage = htmlement.fromstring(net.http(url, cache=10))
+            links = xpage.findall(".//div[@id='b-tv']/.//a")
+        except Exception:
+            pass
         if links:
             found = True
             break

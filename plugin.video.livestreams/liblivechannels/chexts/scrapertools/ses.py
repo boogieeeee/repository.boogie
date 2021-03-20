@@ -65,7 +65,7 @@ def itermedias(chid, chids=None):
             except Exception:
                 continue
         if url:
-            yield net.tokodiurl(url.replace("_", "-"), headers={"referer": domain})
+            yield net.tokodiurl(url, headers={"referer": domain})
 
 
 def iterpage(xpage):

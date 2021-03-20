@@ -7,6 +7,6 @@
 		<setting default="First highest quality variant in first alive stream" id="pvr_resolve_mode" label="Resolve Mode for PVR Proxy" type="select" values="First highest quality variant in first alive stream|First alive stream with all variants|All streams with all variants redundantly"/>
 	</category>
 	<category id="Scrapers" label="Scrapers">
-		<setting default="http://selcuksportshd72.live" id="selcuk" label="Selcukspor address" type="text"/>
+		<setting default="http://selcuksportshd3.com" id="selcuk" label="Selcukspor address" type="text"/>
 	</category>
 </settings>
