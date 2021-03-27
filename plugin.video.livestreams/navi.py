@@ -100,6 +100,8 @@ class Navi(Base):
                 cntx_plist = self.item("Add to Playlist", method="edit_playlist")
                 cntx_plist_kwargs = {"addto": True, "index": index}
             cntx_validate = self.item("Validate", method="validate_single")
+            cntx_select = self.item("Select Source", method="select_source")
+            item.context(cntx_select, True, index)
             item.context(cntx_validate, False, index)
             item.context(cntx_plist, False, **cntx_plist_kwargs)
             item.resolve(index)
@@ -131,10 +133,20 @@ class Navi(Base):
             self.config.update_pvr = True
             epg.write(self).start()
 
-    def geturls(self, cid):
+    def select_source(self, cid):
         chan = self.loadchannel(cid)
+        art = {"icon": chan.icon, "thumb": chan.icon, "poster": chan.icon}
         for url in chan.get():
-            yield url
+            item = self.item("%s:%s" % (chan.title, url), art=art)
+            item.resolve(url)
+
+    def geturls(self, cid):
+        if cid.startswith("http://") or cid.startswith("https://"):
+            yield cid
+        else:
+            chan = self.loadchannel(cid)
+            for url in chan.get():
+                yield url
 
 
 Navi()
