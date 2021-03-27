@@ -17,11 +17,11 @@ class multi(yayinakisi, youtube):
     ses_ids = None
 
     def get(self):
-        if self.selcuk_name:
-            for yayin in selcuk.itermedias(self.selcuk_name):
-                yield yayin
         if self.ses_id or self.ses_ids:
             for yayin in ses.itermedias(self.ses_id, self.ses_ids):
+                yield yayin
+        if self.selcuk_name:
+            for yayin in selcuk.itermedias(self.selcuk_name):
                 yield yayin
         if self.youtube_chanid:
             for yayin in self.iteryoutube():
