@@ -17,6 +17,6 @@
 		<email>boogiepop@gmx.com</email>
 	</extension>
 	<tinyxbmc>
-	  	<plugin path="lib" id="vodsshow" module="webteizle" instance="webteizle"/>
+	  	<plugin path="lib" id="vodsmovie" module="webteizle" instance="webteizle"/>
 	</tinyxbmc>
 </addon>
