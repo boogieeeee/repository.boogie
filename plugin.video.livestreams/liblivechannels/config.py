@@ -71,20 +71,6 @@ class config(object):
         self.setting.set("validate", value)
 
     @property
-    def selcuk(self):
-        up = urlparse.urlparse(self.setting.getstr("selcuk"))
-        if up.netloc == "":
-            domain = up.path
-        else:
-            domain = up.netloc
-        domain = domain.replace("/", "")
-        return "http://" + domain
-
-    @selcuk.setter
-    def selcuk(self, value):
-        self.setting.set("selcuk", value)
-
-    @property
     def channels(self):
         data = self.hay.find("channels").data
         if data == {}:
