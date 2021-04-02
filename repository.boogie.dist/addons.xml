@@ -139,7 +139,7 @@
     </extension>
 </addon>
 
-<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.4">
+<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.5">
 	<requires>
 		<import addon="xbmc.python" version="2.1.0" />
 		<import addon="plugin.video.vods"/>
@@ -157,7 +157,7 @@
 		<email>boogiepop@gmx.com</email>
 	</extension>
 	<tinyxbmc>
-	  	<plugin path="lib" id="vodsshow" module="webteizle" instance="webteizle"/>
+	  	<plugin path="lib" id="vodsmovie" module="webteizle" instance="webteizle"/>
 	</tinyxbmc>
 </addon>
 </addons>
