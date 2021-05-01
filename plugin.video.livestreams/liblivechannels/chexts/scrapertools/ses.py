@@ -28,7 +28,7 @@ import base64
 
 import htmlement
 
-domain = "https://www.sestv.pw/"
+domain = "https://www.sestv.xyz/"
 
 namemap = {"sinema17": "Bein Box Office 1",
            "sinema16": "Dizi TV",

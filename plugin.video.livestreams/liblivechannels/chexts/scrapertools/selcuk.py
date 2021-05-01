@@ -23,7 +23,7 @@ import htmlement
 
 maxlink = 5
 subpath = None
-girisurl = "https://giris2.selcuksportshdgiris2.com/"
+girisurl = "https://giris1.selcuksportshdgiris9.com/"
 
 
 def iteratechannels():
@@ -34,6 +34,19 @@ def iteratechannels():
     for link in links:
         chname = tools.elementsrc(link, exclude=[link.find(".//b")]).strip()
         yield url, link.get("href"), chname
+
+
+def method1(page, subpath, chid):
+    for embed in re.findall("window.atob\(\"(.*?)\"\)", page):
+        jsdata = json.loads(embed.decode("base64"))
+        yield "https://xxx.%s%s%s/strmrdr.m3u8" % (jsdata["d"], subpath, chid)
+        break
+
+
+def method2(up, url, chid):
+    jsurl = "%s://%s/dmzjsn.json" % (up.scheme, up.netloc)
+    sdomain = json.loads(net.http(jsurl, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
+    yield "https://xxx.%s%s%s/strmrdr.m3u8" % (sdomain, subpath, chid)
 
 
 def itermedias(chfilter):
@@ -60,9 +73,13 @@ def itermedias(chfilter):
                     chid = chdict.get("id")
                     kourl = "%s://%s/keslanorospucocugu.js" % (up.scheme, up.netloc)
                     subpath = re.search("dmz[a-zA-Z0-9]+?\+(?:\'|\")(.+?)(?:\'|\")", net.http(kourl, referer=selcukurl)).group(1)
-                    jsurl = "%s://%s/dmzjsn.json" % (up.scheme, up.netloc)
-                    sdomain = json.loads(net.http(jsurl, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
-                    media = "https://xxx.%s%s%s/strmrdr.m3u8" % (sdomain, subpath, chid)
+                    found = False
+                    for method in method1(subpage, subpath, chid), method2(up, url, chid):
+                        for vid in tools.safeiter(method):
+                            media = vid
+                            break
+                        if media:
+                            break
             elif "stream" in chdict:
                 strid = chdict.get("stream")
                 up = urlparse.urlparse(links[1])

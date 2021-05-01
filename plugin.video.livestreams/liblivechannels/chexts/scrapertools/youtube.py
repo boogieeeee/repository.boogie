@@ -1,9 +1,11 @@
 import json
 import re
 import traceback
-
+import random
 
 ua = "Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36"
+
+COOKIE = 'CONSENT=YES+cb-m.20210328-17-p0.en+FX+%s' % random.randint(100, 999)
 
 
 class youtube(object):
@@ -12,9 +14,10 @@ class youtube(object):
 
     def iteryoutube(self):
         try:
-            page = self.download("https://m.youtube.com/c/%s/videos?view=2&flow=list&live_view=501&" % self.youtube_chanid,
+            u = "https://m.youtube.com/c/%s/videos?view=2&flow=list&live_view=501&" % self.youtube_chanid
+            page = self.download(u,
                                  useragent=ua,
-                                 headers={"Cookie": "GPS=1"})
+                                 headers={"Cookie": COOKIE})
             try:
                 js = json.loads(re.search('<div id="initial-data"><!-- (.+?) -->', page).group(1))
             except AttributeError:
@@ -38,9 +41,9 @@ class youtube(object):
         except Exception:
             print traceback.format_exc()
             return
-        page = self.download("https://www.youtube.com/watch?v=%s" % vid,
+        page = self.download("https://m.youtube.com/watch?v=%s" % vid,
                              useragent=ua,
-                             headers={"Cookie": "GPS=1"})
+                             headers={"Cookie": COOKIE})
         pconfig1 = re.search('ytInitialPlayerConfig = (\{.+?\})\;', page)
         if pconfig1:
             js = json.loads(pconfig1.group(1))
