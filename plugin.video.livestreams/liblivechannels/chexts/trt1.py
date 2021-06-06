@@ -6,6 +6,14 @@ try:
     class testtrt1(ChannelTest, unittest.TestCase):
         index = "trt1:trt1:"
 
+    class testtrtspor(ChannelTest, unittest.TestCase):
+        index = "trt1:trtspor:"
+
+    class testtrtsporyildiz(ChannelTest, unittest.TestCase):
+        minepg = 0
+        index = "trt1:trtsporyildiz:"
+
+
 except ImportError:
     pass
 
@@ -26,3 +34,19 @@ class trt1(multi, scraper):
         yield "https://tv-trt1.live.trt.com.tr/master.m3u8"
         for stream in multi.get(self):
             yield stream
+
+
+class trtspor(multi, scraper):
+    title = u"TRT Spor"
+    icon = "https://www.trtspor.com.tr/static/img/trtspor-logo-yeni.png"
+    categories = [u"Türkçe", u"Spor"]
+    yayin_id = "trt-3"
+    ses_id = "trt3-spor-izle"
+    selcuk_name = "trtspor"
+
+
+class trtsporyildiz(multi, scraper):
+    title = u"TRT Spor Yildiz"
+    icon = "https://www.trtspor.com.tr/static/img/trt-spor-yildiz-logo-beyaz-zemin.png"
+    categories = [u"Türkçe", u"Spor"]
+    kolay_id = "/trt-spor-2/1"
