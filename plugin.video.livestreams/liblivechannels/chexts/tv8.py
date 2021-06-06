@@ -20,6 +20,7 @@ class tv8(multi, scraper):
     yayin_id = "tv-8"
     selcuk_name = "8"
     ses_id = "tv8-izle"
+    kolay_id = "/tv8-canli-hd"
 
     def get(self):
         yield "https://tv8.personamedia.tv/tv8hls?fmt=hls"
