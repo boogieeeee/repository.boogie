@@ -43,6 +43,7 @@ class trtspor(multi, scraper):
     yayin_id = "trt-3"
     ses_id = "trt3-spor-izle"
     selcuk_name = "trtspor"
+    kolay_id = "/trt-spor/3"
 
 
 class trtsporyildiz(multi, scraper):
