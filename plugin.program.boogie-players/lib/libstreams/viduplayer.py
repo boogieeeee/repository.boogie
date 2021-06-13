@@ -5,7 +5,7 @@ Created on Nov 21, 2019
 '''
 from streams import StreamsBase
 from tinyxbmc import net
-from third import packer
+from libstreams.third import packer
 import re
 
 
@@ -17,6 +17,6 @@ class Vidsrc(StreamsBase):
         if packer.detect(page):
             page = packer.unpack(page)
         for vid in re.findall("file\s*?\:\s*?(?:'|\")(.+?)(?:'|\")", page):
-            if vid.endswith(".m3u8") or vid.endswith(".mp4") :
+            if vid.endswith(".m3u8") or vid.endswith(".mp4"):
                 headers = {"referer": url}
                 yield net.tokodiurl(vid, headers=headers)

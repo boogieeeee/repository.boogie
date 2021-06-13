@@ -24,6 +24,8 @@ import re
 import json
 import traceback
 import jscrypto
+import base64
+import binascii
 
 from tinyxbmc import net
 from tinyxbmc import tools
@@ -102,13 +104,13 @@ class animeturk(vods.showextension):
                                      referer=domain)
             iframe2 = json.loads(re.search("var\s*?iframe\s*?\=\s*?(?:\'|\")(.+)(?:\'|\")", iframesrc).group(1))
             password = re.search("var\s*?pass\s*?\=\s*?(?:\'|\")(.+)(?:\'|\")", iframesrc).group(1)
-            link = jscrypto.decrypt(iframe2["ct"].decode("base64"),
+            link = jscrypto.decrypt(base64.b64decode(iframe2["ct"]),
                                     password,
-                                    iframe2["s"].decode("hex"))
+                                    binascii.unhexlify(iframe2["s"]))
             link = json.loads(link)
             return net.absurl(link, domain)
         except Exception:
-            print traceback.format_exc()
+            print(traceback.format_exc())
 
     def iterajaxlink(self, xpage, xpath=None):
         xpath = xpath or ".//button"

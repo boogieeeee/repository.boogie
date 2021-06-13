@@ -21,10 +21,10 @@
 import re
 import json
 import time
-import urllib
-import string
-import urlparse
+import base64
 from operator import itemgetter
+
+from six.moves.urllib import parse
 
 import htmlement
 from tinyxbmc.net import loadcookies
@@ -49,14 +49,6 @@ def iframe(src):
     return ret
 
 
-def caesar(plaintext, shift):
-    lower = string.ascii_lowercase
-    lower_trans = lower[shift:] + lower[:shift]
-    alphabet = lower + lower.upper()
-    shifted = lower_trans + lower_trans.upper()
-    return plaintext.translate(string.maketrans(alphabet, shifted))
-
-
 def srapegrid(self, cat=None):
     domain = "https://%s" % self.setting.getstr("domain")
     if self.page:
@@ -76,8 +68,7 @@ def srapegrid(self, cat=None):
     movies = re.findall('<div class="front">.*?<img src="(.*?)" alt="(.*?)".*?<div class="back" data-ajax="true" data-id="(.*?)".*?<a href="(.*?)"', page, re.DOTALL)
     for movie in movies:
         img, name, _, link = movie
-        art = {
-               "icon": img,
+        art = {"icon": img,
                "thumb": img,
                "poster": img,
                }
@@ -101,7 +92,7 @@ def scrapeinfo(self, url):
         info["tvshowtitle"] = js.get("name", "")
     info["plot"] = info["plotoutline"] = js.get("description", "")
     try:
-        for _key in ["dateCreated", "datePublished"]: 
+        for _key in ["dateCreated", "datePublished"]:
             if _key in js:
                 info["year"] = int(js[_key].split("-")[0])
     except Exception:
@@ -188,13 +179,12 @@ def cacheepisodes(self, url):
 def geturls(self, url):
     domain = "https://%s" % self.setting.getstr("domain")
     page = self.download(url)
-    header = {
-        'X-Requested-With': 'XMLHttpRequest',
-        "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
-        "Cookie": "",
-        "Authorization": "Bearer false",
-        "Accept": "application/json, text/javascript, */*; q=0.01",
-        }
+    header = {'X-Requested-With': 'XMLHttpRequest',
+              "Content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+              "Cookie": "",
+              "Authorization": "Bearer false",
+              "Accept": "application/json, text/javascript, */*; q=0.01",
+              }
     data = {}
     cookies = {"loggedOut": "4"}
     dom = domain.split("//")[1]
@@ -207,12 +197,12 @@ def geturls(self, url):
         data["action"] = "getMovieEmb"
     else:
         data["action"] = "getEpisodeEmb"
-    data["elid"] = urllib.quote(str(int(time.time())).encode("base-64")[:-1])
+    data["elid"] = parse.quote(base64.b64encode(str(int(time.time())).encode()))
     data["token"] = re.findall("var\s*tok\s*\=\s*'(.*?)'", page)[0]
     data["idEl"] = re.findall('elid\s*=\s*"(.*?)"', page)[0]
     cookies[data["idEl"]] = data["elid"]
-    data["elid"] = urllib.quote(data["elid"])
-    for name, value in cookies.iteritems():
+    data["elid"] = parse.quote(data["elid"])
+    for name, value in cookies.items():
         header["Cookie"] += "%s=%s;" % (name, value)
     data["nopop"] = ""
     """
@@ -227,7 +217,7 @@ def geturls(self, url):
     videos = []
     if not isinstance(embeds, dict):
         return
-    for vid, source in embeds.iteritems():
+    for vid, source in embeds.items():
         link = iframe(source.get("embed", ""))
         if not link:
             continue
@@ -273,5 +263,5 @@ def getcategories(self):
     page = self.download(domain + path, referer=domain)
     tree = htmlement.fromstring(page)
     for node in tree.findall(".//select[@name='categories']/option"):
-        cat = urlparse.urlparse(node.get("value")).path.split("/")[-1]
+        cat = parse.urlparse(node.get("value")).path.split("/")[-1]
         self.additem(node.text, cat)
