@@ -1,7 +1,8 @@
 from tinyxbmc import tools
 from tinyxbmc import addon
 
-import common
+from liblivechannels import common
+from six import PY2
 
 import codecs
 
@@ -30,7 +31,7 @@ class write(addon.blockingloop):
         self.index += 1
         if "Broken" in cats:
             return
-        self.progress.update(100 * self.index / len(self.channels), "Updating EPG: %s" % title)
+        self.progress.update(int(100 * self.index / len(self.channels)), "Updating EPG: %s" % title)
         self.writeline('<channel id="%s">' % index)
         self.writeline('\t<display-name>%s</display-name>' % self.xmlescape(title))
         self.writeline('\t<icon src="%s"/>' % icon)
@@ -66,7 +67,7 @@ class write(addon.blockingloop):
             self.writeline('</programme>')
 
     def writeline(self, txt):
-        if isinstance(txt, unicode):
+        if PY2 and isinstance(txt, unicode):
             txt.encode("utf-8")
         self.wfile += txt + "\n"
 
@@ -74,4 +75,3 @@ class write(addon.blockingloop):
         for rep, char in [("&", "&amp;"), ("\"", "&quot;"), ("'", "&apos;"), ("<", "&lt;"), (">", "&gt;")]:
             txt = txt.replace(rep, char)
         return txt
-

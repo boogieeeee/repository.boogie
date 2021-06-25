@@ -19,6 +19,7 @@
 '''
 import os
 import datetime
+from six import string_types
 from tinyxbmc import tools
 from tinyxbmc.tools import tz_utc, tz_local
 
@@ -99,7 +100,7 @@ class scrapers(object):
         self.download = download
 
     def makechannel(self, cid, base, **kwargs):
-        if "icon" in kwargs and not isinstance(kwargs["icon"], (str, unicode)):
+        if "icon" in kwargs and not isinstance(kwargs["icon"], string_types):
             kwargs.pop("icon")
         return type("ch_" + cid.encode("hex"), (base,), kwargs)
 

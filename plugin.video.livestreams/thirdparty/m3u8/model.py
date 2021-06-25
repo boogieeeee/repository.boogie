@@ -7,9 +7,9 @@ import os
 import errno
 import math
 
-from protocol import ext_x_start, ext_x_key, ext_x_session_key, ext_x_map
-from parser import parse, format_date_time
-from mixins import BasePathMixin, GroupedBasePathMixin
+from thirdparty.m3u8.protocol import ext_x_start, ext_x_key, ext_x_session_key, ext_x_map
+from thirdparty.m3u8.parser import parse, format_date_time
+from thirdparty.m3u8.mixins import BasePathMixin, GroupedBasePathMixin
 
 
 class MalformedPlaylistError(Exception):

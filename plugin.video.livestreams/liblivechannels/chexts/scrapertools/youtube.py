@@ -22,7 +22,7 @@ class youtube(object):
                 js = json.loads(re.search('<div id="initial-data"><!-- (.+?) -->', page).group(1))
             except AttributeError:
                 t = re.search("ytInitialData = '(.+?)'", page).group(1)
-                js = json.loads(t.encode("utf-8").decode("string-escape"))
+                js = json.loads(t.encode("utf-8").decode("unicode-escape"))
             streams = js["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][1]["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
             sindex = None
 
@@ -39,7 +39,7 @@ class youtube(object):
             vid = streams[sindex]["compactVideoRenderer"]["videoId"]
             # icon = js["metadata"]["channelMetadataRenderer"]["avatar"]["thumbnails"][0]["url"]
         except Exception:
-            print traceback.format_exc()
+            print(traceback.format_exc())
             return
         page = self.download("https://m.youtube.com/watch?v=%s" % vid,
                              useragent=ua,

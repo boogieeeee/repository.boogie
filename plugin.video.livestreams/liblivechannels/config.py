@@ -5,9 +5,8 @@
 
 from tinyxbmc import addon
 from tinyxbmc import hay
-from tinyxbmc import tools
-import common
-import urlparse
+
+from liblivechannels import common
 
 
 class config(object):
@@ -158,7 +157,7 @@ class config(object):
         self.phay.throw("playlists", playlists)
         self.phay.snapshot()
         return True
-        
+
     def remove_from_playlist(self, playlist, index):
         playlist = playlist.title()
         playlists = self.playlists
@@ -170,7 +169,7 @@ class config(object):
 
     def rename_playlist(self, playlist_old, playlist_new):
         playlist_old = playlist_old.title()
-        playlist_new = playlist_new.title() 
+        playlist_new = playlist_new.title()
         for cat in self.itercats():
             if cat.lower() == playlist_new.lower():
                 return False

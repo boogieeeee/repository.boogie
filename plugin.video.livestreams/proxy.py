@@ -4,7 +4,6 @@ from liblivechannels import common
 
 from threading import Thread
 from tinyxbmc import addon
-from tinyxbmc import gui
 
 from addon import Base
 
@@ -15,7 +14,7 @@ import xbmc
 
 PORT = 8000
 
-base = Base(addon=common.addon_id)
+base = Base(addonid=common.addon_id)
 proxy.Handler.base = base
 logger = log.Logger(20)
 

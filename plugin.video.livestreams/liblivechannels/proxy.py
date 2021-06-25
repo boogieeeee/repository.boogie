@@ -3,11 +3,10 @@ Created on Jan 31, 2020
 
 @author: z0042jww
 '''
+from six.moves.BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
+from six.moves.socketserver import ThreadingMixIn
 
-from BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from SocketServer import ThreadingMixIn
 import socket
-
 
 from thirdparty import m3u8
 from tinyxbmc import net
@@ -27,7 +26,7 @@ def handle_client_disconnect(callback):
     def wrapper(*args, **kwargs):
         try:
             return callback(*args, **kwargs)
-        except socket.error, e:
+        except socket.error as e:
             if e.errno in [32, 104]:
                 logger.info("Connection reset by peer: %s" % e.strerror)
             else:
@@ -43,11 +42,15 @@ class ThreadedProxy(ThreadingMixIn, HTTPServer):
 class Handler(BaseHTTPRequestHandler):
     def writeline(self, txt):
         self.wfile.write(txt.encode("utf-8"))
-        self.wfile.write("\r\n")
+        self.wfile.write("\r\n".encode())
 
-    def render_m3(self, content, url, headers):
-        if content[:7] == "#EXTM3U":
-            m3file = m3u8.loads(content, uri=url)
+    def render_m3(self, resp, url, headers):
+        try:
+            header = resp.content[:7]
+        except Exception as e:
+            return e
+        if header in ("#EXTM3U", b"#EXTM3U"):
+            m3file = m3u8.loads(resp.content.decode(), uri=url)
             for components in [m3file.playlists, m3file.segments, m3file.media]:
                 for component in components:
                     component.uri = hls.encodeurl(url=component.absolute_uri, headers=headers)
@@ -69,11 +72,14 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_response(500, str(resp))
                 self.end_headers()
             else:
+                m3file = self.render_m3(resp, qurl, qheaders)
+                if isinstance(m3file, Exception):
+                    self.send_response(500, str(m3file))
+                    return
                 self.send_response(resp.status_code)
                 self.end_headers()
-                m3file = self.render_m3(resp.content, qurl, qheaders)
                 if m3file:
-                    self.wfile.write(m3file.dumps())
+                    self.wfile.write(m3file.dumps().encode())
                 else:
                     for chunk in resp.iter_content(None, False):
                         self.wfile.write(chunk)
@@ -96,8 +102,9 @@ class Handler(BaseHTTPRequestHandler):
                         headers["User-Agent"] = const.USERAGENT
                     resp = self.base.proxy_get(url, headers)
                     if resp is not None and not isinstance(resp, Exception):
-                        if resp.content[:7] == "#EXTM3U":
-                            m3file = m3u8.loads(resp.content, uri=url)
+                        content = resp.content.decode()
+                        if content[:7] == "#EXTM3U":
+                            m3file = m3u8.loads(content, uri=url)
                             m3file.full_uri = url
                             pgen.add(m3file, headers, "hlsproxy" if chan.usehlsproxy else "hls")
                             if self.base.config.resolve_mode in [0, 1] and chan.usehlsproxy:
@@ -105,7 +112,7 @@ class Handler(BaseHTTPRequestHandler):
                                 if pgen.playlists.qsize():
                                     break
             pgen.wait()
-            self.wfile.write(pgen.m3file.dumps())
+            self.wfile.write(pgen.m3file.dumps().encode())
         elif qepg:
             self.send_response(200)
             self.end_headers()

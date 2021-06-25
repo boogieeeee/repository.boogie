@@ -1,9 +1,9 @@
 import threading
-import Queue
 import time
-import urlparse
-import urllib
 import json
+
+from six.moves.urllib import parse
+from six.moves import queue
 
 from liblivechannels import common
 from thirdparty.m3u8 import model
@@ -33,7 +33,7 @@ class MPDPlaylist(model.Playlist):
 class PlaylistGenerator(object):
     def __init__(self, base):
         self.base = base
-        self.playlists = Queue.Queue()
+        self.playlists = queue.Queue()
         self.__threads = []
         self.index = 10
 
@@ -92,21 +92,21 @@ class PlaylistGenerator(object):
                 if pltype == "hlsproxy":
                     playlist.uri = encodeurl(url=playlist.absolute_uri, headers=headers)
                 m3file.add_playlist(playlist)
-            except Queue.Empty:
+            except queue.Empty:
                 break
         return m3file
 
 
 def decodeurl(path):
-    query = urlparse.urlparse(path)
-    kwargs = dict(urlparse.parse_qsl(query.query))
+    query = parse.urlparse(path)
+    kwargs = dict(parse.parse_qsl(query.query))
     for kwarg in kwargs:
-        kwargs[kwarg] = json.loads(urllib.unquote_plus(kwargs[kwarg]))
+        kwargs[kwarg] = json.loads(parse.unquote_plus(kwargs[kwarg]))
     return kwargs
 
 
 def encodeurl(**kwargs):
     port = addon.kodisetting(common.addon_id).getstr("port")
     for kwarg in kwargs:
-        kwargs[kwarg] = urllib.quote_plus(json.dumps(kwargs[kwarg]))
-    return "http://localhost:%s/?%s" % (port, urllib.urlencode(kwargs))
+        kwargs[kwarg] = parse.quote_plus(json.dumps(kwargs[kwarg]))
+    return "http://localhost:%s/?%s" % (port, parse.urlencode(kwargs))

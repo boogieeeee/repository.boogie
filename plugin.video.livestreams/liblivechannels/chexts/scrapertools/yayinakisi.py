@@ -44,7 +44,7 @@ def todate(txt):
             return dt.replace(tzinfo=trtz)
         except ValueError:
             pass
-    print "unknown time: %s" % txt
+    print("unknown time: %s" % txt)
 
 
 def iterprogramme(chname=None, chid=None):

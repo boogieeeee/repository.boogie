@@ -35,7 +35,7 @@ except ImportError:
 
 
 from liblivechannels import scraper
-from scrapertools.multi import multi
+from liblivechannels.chexts.scrapertools.multi import multi
 
 
 class bein1(multi, scraper):

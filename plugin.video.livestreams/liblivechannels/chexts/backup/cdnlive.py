@@ -53,7 +53,7 @@ class cdnlive(scrapers):
                 if extra > 3:
                     break
                 dom2 = "https://" + pre + str(num + extra) + post
-                print "trying %s" % dom2
+                print("trying %s" % dom2)
                 try:
                     page = self.download(dom2, text=False)
                     tree = htmlement.fromstring(page.content)
@@ -68,7 +68,7 @@ class cdnlive(scrapers):
                     if url.endswith("/"):
                         url = url[:-1]
                     cfg.cdnlive = url
-                    print "url is %s" % cfg.cdnlive
+                    print("url is %s" % cfg.cdnlive)
                     return tree, channels
         else:
             page = self.download(url)

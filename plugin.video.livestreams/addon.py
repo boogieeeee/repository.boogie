@@ -61,7 +61,7 @@ class Base(container.container):
                         continue
                 else:
                     return resp
-            except Exception, e:
+            except Exception as e:
                 if retry == 2:
                     return e
 
@@ -85,16 +85,16 @@ class Base(container.container):
         if not headers:
             headers = {}
         response = self.proxy_get(url, headers)
-        if response is None or isinstance(response, Exception) or not response.content[:7] == "#EXTM3U":
+        if response is None or isinstance(response, Exception) or not response.content[:7].decode() == "#EXTM3U":
             return "M3U8 File does not have correct header"
-        m3u = m3u8.loads(response.content, url)
+        m3u = m3u8.loads(response.content.decode(), url)
         if m3u.is_variant:
             for playlist in m3u.playlists:
                 response = self.proxy_get(playlist.absolute_uri, headers, "HEAD")
                 if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
                     response = self.proxy_get(playlist.absolute_uri, headers)
                     if response is not None and not isinstance(response, Exception) and response.status_code in [200, 206]:
-                        if response.content[:7] == "#EXTM3U":
+                        if response.content[:7].decode() == "#EXTM3U":
                             return  # Successfull GET
                 else:  # Successfull HEAD
                     return
@@ -155,7 +155,7 @@ class Base(container.container):
             if error is None:
                 channels.append([c.icon, c.title, c.index, c.categories])
                 error = "UP"
-            pg.update(100 * index / len(chans), c.title, "%s: %s" % (error, c.index))
+            pg.update(int(100 * index / len(chans)), "%s\n%s: %s" % (c.title, error, c.index))
             if index == 200000:
                 break
         self.config.channels = channels
@@ -221,7 +221,7 @@ class Base(container.container):
                             try:
                                 subcls = cls(self.download)._getchannel(subc)
                             except Exception:
-                                print traceback.format_exc()
+                                print(traceback.format_exc())
                                 continue
                             subcls.index = "%s:%s:%s" % (mod.__name__, cls.__name__, subcls.__name__)
                             _chanins[chanid] = subcls(self.download)

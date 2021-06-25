@@ -14,11 +14,12 @@ except ImportError:
 from tinyxbmc import tools
 from tinyxbmc import net
 
+from six.moves.urllib import parse
 from liblivechannels.chexts.scrapertools import normalize
-import urlparse
 import json
 import re
 import htmlement
+import base64
 
 
 maxlink = 5
@@ -38,7 +39,7 @@ def iteratechannels():
 
 def method1(page, subpath, chid):
     for embed in re.findall("window.atob\(\"(.*?)\"\)", page):
-        jsdata = json.loads(embed.decode("base64"))
+        jsdata = json.loads(base64.b64decode(embed).decode())
         yield "https://xxx.%s%s%s/strmrdr.m3u8" % (jsdata["d"], subpath, chid)
         break
 
@@ -58,15 +59,15 @@ def itermedias(chfilter):
                 break
         if found:
             links = url.split("#")
-            up = urlparse.urlparse(links[0])
-            chdict = dict(urlparse.parse_qsl(up.query))
+            up = parse.urlparse(links[0])
+            chdict = dict(parse.parse_qsl(up.query))
             if "id" in chdict:
                 subpage = net.http(links[0], referer=selcukurl)
                 embeds = re.findall("window\[\\'atob\\']\(\"(.+?)\"\)", subpage)
                 media = None
                 if len(embeds) == 2 and len(embeds[1]) > 10:
                     try:
-                        media = embeds[1].decode("base64")
+                        media = base64.b64decode(embeds[1]).decode()
                     except Exception:
                         pass
                 if not media:
@@ -82,7 +83,7 @@ def itermedias(chfilter):
                             break
             elif "stream" in chdict:
                 strid = chdict.get("stream")
-                up = urlparse.urlparse(links[1])
+                up = parse.urlparse(links[1])
                 jsurl = "%s://%s/dmzjsn.json" % (up.scheme, up.netloc)
                 sdomain = json.loads(net.http(jsurl, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
                 media = "https://srvb.%s/kaynakstreamradarco/%s/strmrdr.m3u8" % (sdomain, strid)

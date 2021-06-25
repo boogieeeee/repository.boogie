@@ -96,7 +96,7 @@ spams = ["hd", "sd", "canli", "full", "fullhd", "yedek", "backup", "izle", "spor
 
 
 def normalize(txt):
-    for k, v in accents.iteritems():
+    for k, v in accents.items():
         txt = txt.replace(k, v)
     txt = txt.strip().lower()
     for k, v in abbrevations:

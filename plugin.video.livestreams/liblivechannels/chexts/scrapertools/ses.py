@@ -22,7 +22,7 @@
 from liblivechannels.chexts.scrapertools import normalize
 from tinyxbmc import tools
 from tinyxbmc import net
-import urlparse
+from six.moves.urllib import parse
 import json
 import base64
 
@@ -45,7 +45,7 @@ def itermedias(chid, chids=None):
         chids = [chid]
     for chid in chids:
         url = domain + chid
-        up = urlparse.urlparse(url)
+        up = parse.urlparse(url)
         chid = up.path.split("/")[-1]
         subpage = htmlement.fromstring(net.http(url, referer=domain))
         embedlink = subpage.find(".//iframe").get("src")
@@ -65,6 +65,7 @@ def itermedias(chid, chids=None):
             except Exception:
                 continue
         if url:
+            url = url.decode()
             url = url.replace("_", "_")
             url = url.replace("-", "-")
             yield net.tokodiurl(url, headers={"referer": domain})
@@ -82,7 +83,7 @@ def iterpage(xpage):
         icon = a.find(".//img")
         if icon is not None:
             icon = net.absurl(icon.get("src"), domain)
-        meta = json.dumps([href, chname, icon])
+        _meta = json.dumps([href, chname, icon])
         yield href, chname, icon
 
 
