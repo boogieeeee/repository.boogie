@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.0">
     <requires>
-		<import addon="xbmc.python" version="2.14.0" optional="true"/>
-		<import addon="xbmc.python" version="3.0.0" optional="true"/>
-		import addon="script.module.six"/>
+		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.htmlement"/>
 	</requires>
