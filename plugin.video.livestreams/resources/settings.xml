@@ -1,0 +1,13 @@
+<?xml version="1.0" ?><settings>
+	<category id="Common" label="Common">
+		<setting default="false" id="validate" label="Validate Channels on next run" type="bool"/>
+		<setting default="8010" id="port" label="Proxy Server Port" type="number"/>
+		<setting default="false" id="pvr" label="Auto-Configure IPTV Simple On Startup (Requires Restart)" type="bool" enable="System.HasAddon(pvr.iptvsimple)"/>
+		<setting default="false" id="record" label="Record IPTVSimple PVR reminder timers" type="bool" enable="System.HasAddon(pvr.iptvsimple)"/>
+		<setting id="pvrlocation" source="auto" option="writeable" label="Location of PVR records" type="folder" enable="eq(-1,true)"/>
+		<setting default="false" id="pvrusetemp" label="Specify Temp Storage Location" type="bool" enable="eq(-2,true)"/>
+		<setting id="pvrtemplocation" source="local" option="writeable" label="Location of Tempdir for PVR records" type="folder" enable="eq(-1,true)+eq(-3,true)"/>
+		<setting default="1.1.1.1" id="internetaddress" label="Address to check if internet is available" type="text"/>
+		<setting id="is1" label="Inputstream adaptive is not installed! You can't watch dash streams" type="text" visible="!System.HasAddon(inputstream.adaptive)" enable="System.HasAddon(inputstream.adaptive"/>
+	</category>
+</settings>

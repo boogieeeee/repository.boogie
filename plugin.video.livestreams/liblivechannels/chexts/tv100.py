@@ -1,0 +1,29 @@
+# -*- encoding: utf-8 -*-
+'''
+Created on Feb 13, 2021
+
+@author: boogie
+'''
+try:
+    import unittest
+    from test import ChannelTest
+
+    class testtv100(ChannelTest, unittest.TestCase):
+        index = "tv100:tv100:"
+except ImportError:
+    pass
+
+
+from liblivechannels import scraper
+from liblivechannels.chexts.scrapertools.multi import multi
+
+
+class tv100(multi, scraper):
+    title = u"TV 100"
+    icon = "https://upload.wikimedia.org/wikipedia/tr/0/0f/TV100_logo.png"
+    youtube_chanid = "tv100"
+    categories = [u"Türkçe", u"Haber"]
+    yayin_name = "100"
+
+    def youtube_stream(self, stream):
+        return "ekonomi" not in stream["compactVideoRenderer"]["title"]["runs"][0]["text"].lower()
