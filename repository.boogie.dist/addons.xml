@@ -32,7 +32,7 @@
 	  </tinyxbmc>
 </addon>
 
-<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.1">
+<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.2">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -50,8 +50,8 @@
 		<email>boogiepop@gmx.com</email>
 	</extension>
 	<tinyxbmc>
-	  	<plugin path="lib" id="vodsmovie" module="primewire" instance="pwseries"/>
-	  	<plugin path="lib" id="vodsshow" module="primewire" instance="pwmovies"/>
+	  	<plugin path="lib" id="vodsmovie" module="primewire" instance="pwmovies"/>
+	  	<plugin path="lib" id="vodsshow" module="primewire" instance="pwseries"/>
 	</tinyxbmc>
 </addon>
 
