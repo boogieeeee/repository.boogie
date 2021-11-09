@@ -33,8 +33,8 @@ class programme(object):
                  episode=None, directors=None, writers=None, actors=None, icon=None):
         self.__dateformat1 = "%Y%m%d%H%M%S %z"
         self.title = title
-        self._start = start
-        self._end = end
+        self.start = start.astimezone(loc_tz).strftime(self.__dateformat1)
+        self.end = end.astimezone(loc_tz).strftime(self.__dateformat1)
         self._airdate = airdate
         self.desc = desc
         if categories:
@@ -56,16 +56,6 @@ class programme(object):
         else:
             self.actors = []
         self.icon = icon
-
-    @property
-    def start(self):
-        if self._start:
-            return self._start.astimezone(loc_tz).strftime(self.__dateformat1)
-
-    @property
-    def end(self):
-        if self._end:
-            return self._end.astimezone(loc_tz).strftime(self.__dateformat1)
 
     @property
     def airdate(self):

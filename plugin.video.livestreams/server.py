@@ -4,6 +4,7 @@ from liblivechannels import common
 
 from threading import Thread
 from tinyxbmc import addon
+from tinyxbmc import const
 
 from addon import Base
 
@@ -21,6 +22,9 @@ logger = log.Logger(20)
 class Server(addon.blockingloop):
     def init(self):
         self.wait = 3
+        self.dropboxtoken = const.DB_TOKEN
+
+    def oninit(self):
         base.config.update_running = False
         # start server on a free port
         while True:
