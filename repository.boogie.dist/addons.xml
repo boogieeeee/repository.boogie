@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.8">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.9">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -32,7 +32,7 @@
 	  </tinyxbmc>
 </addon>
 
-<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.2">
+<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -55,7 +55,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.f1full" name="F1full module for VODS" provider-name="boogie" version="0.0.1">
+<addon id="service.vods.f1full" name="F1full module for VODS" provider-name="boogie" version="0.0.2">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -77,7 +77,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.5">
+<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.6">
 	<requires>
 
 		<import addon="plugin.video.vods"/>
@@ -99,7 +99,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.17">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.18">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -136,7 +136,7 @@
 	</extension>
 </addon>
 
-<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.5">
+<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.6">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -196,7 +196,7 @@
     </extension>
 </addon>
 
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.0.3">
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.0.4">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -217,7 +217,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.7">
+<addon id="service.vods.webteizle" name="WebteIZLE module for VODS" provider-name="boogie" version="0.0.8">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.six"/>
