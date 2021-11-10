@@ -22,8 +22,11 @@ import vods
 import htmlement
 import re
 
+from tinyxbmc import const
+
 
 class dizi(vods.showextension):
+    dropboxtoken = const.DB_TOKEN
     usedirect = False
     useaddonplayers = False
 

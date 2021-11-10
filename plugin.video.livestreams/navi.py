@@ -13,6 +13,8 @@ from liblivechannels import epg
 
 
 class Navi(Base):
+    dropboxtoken = const.DB_TOKEN
+
     def cats(self):
         for cat in self.config.itercats():
             self.item(cat, method="index").dir(cat)

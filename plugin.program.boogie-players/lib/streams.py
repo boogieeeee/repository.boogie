@@ -6,6 +6,7 @@ Created on Nov 21, 2019
 from vods import linkplayerextension
 from tinyxbmc import extension
 from tinyxbmc import tools
+from tinyxbmc import const
 import re
 import os
 
@@ -21,6 +22,7 @@ class StreamsBase(object):
 
 class streams(linkplayerextension):
     title = "Streams Link Extension"
+    dropboxtoken = const.DB_TOKEN
 
     def init(self):
         self.providers = [x[1] for x in extension.getobjects(ppath, parents=[StreamsBase])]

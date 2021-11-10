@@ -5,6 +5,7 @@ import re
 import htmlement
 from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
+from tinyxbmc import const
 from js2py import EvalJs
 import os
 
@@ -142,6 +143,7 @@ class pwseries(vods.showextension, base):
     section = "tv"
     usedirect = False
     useaddonplayers = False
+    dropboxtoken = const.DB_TOKEN
 
     def searchshows(self, keyword=None):
         self.scrapegrid(keyword)
@@ -177,6 +179,7 @@ class pwmovies(vods.movieextension, base):
     section = "movie"
     usedirect = False
     useaddonplayers = False
+    dropboxtoken = const.DB_TOKEN
 
     def searchmovies(self, keyword=None):
         self.scrapegrid(keyword)

@@ -12,7 +12,7 @@ COOKIE = 'CONSENT=YES+cb-m.20210328-17-p0.en+FX+%s' % random.randint(100, 999)
 
 def itermedias(youtube_chanid, youtube_stream, youtube_sindex):
     try:
-        u = "https://m.youtube.com/c/%s/videos?view=2&flow=list&live_view=501&" % youtube_chanid
+        u = "https://m.youtube.com/%s/videos?view=2&flow=list&live_view=501&" % youtube_chanid
         page = net.http(u,
                         useragent=ua,
                         headers={"Cookie": COOKIE})

@@ -22,6 +22,7 @@ from tinyxbmc import addon
 from tinyxbmc import tools
 from tinyxbmc import hay
 from tinyxbmc import gui
+from tinyxbmc import const
 
 from vods import linkplayerextension
 
@@ -111,6 +112,7 @@ def patchsmu(smudir):
 
 class smu(linkplayerextension):
     builtin = "PlayMedia(%s)"
+    dropboxtoken = const.DB_TOKEN
 
     def init(self):
         uname, branch, commit = getconfig("smu")

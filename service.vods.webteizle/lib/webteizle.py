@@ -24,9 +24,11 @@ import re
 import json
 
 from six.moves.urllib import parse
+from tinyxbmc.const import DB_TOKEN
 
 
 class webteizle(vods.movieextension):
+    dropboxtoken = DB_TOKEN
     usedirect = False
     useaddonplayers = False
 

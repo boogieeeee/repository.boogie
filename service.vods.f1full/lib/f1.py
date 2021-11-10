@@ -4,6 +4,7 @@ import vods
 import htmlement
 import re
 from tinyxbmc import net
+from tinyxbmc import const
 from chromium import Browser
 
 
@@ -14,7 +15,8 @@ class full(vods.showextension):
     info = {"title": "f1 Full Races"}
     usedirect = False
     useaddonplayers = False
-    loadtimeout = 1
+    loadtimeout = 3
+    dropboxtoken = const.DB_TOKEN
 
     def getcategories(self):
         pass

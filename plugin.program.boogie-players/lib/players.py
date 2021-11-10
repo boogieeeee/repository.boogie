@@ -19,6 +19,7 @@
 '''
 
 from tinyxbmc import addon
+from tinyxbmc import const
 
 from vods import addonplayerextension
 from six.moves.urllib_parse import urlencode
@@ -26,6 +27,7 @@ from six.moves.urllib_parse import urlencode
 
 class plexus(addonplayerextension):
     title = "PlexusAddon Extension"
+    dropboxtoken = const.DB_TOKEN
 
     def geturls(self, link, headers=None):
         if addon.has_addon('program.plexus'):
@@ -42,6 +44,7 @@ class plexus(addonplayerextension):
 
 class elementum(addonplayerextension):
     title = "Elementum Extension"
+    dropboxtoken = const.DB_TOKEN
 
     def geturls(self, link, headers=None):
         if not addon.has_addon('plugin.video.elementum'):

@@ -30,6 +30,7 @@ import binascii
 from tinyxbmc import net
 from tinyxbmc import tools
 from tinyxbmc import gui
+from tinyxbmc import const
 
 
 domain = "https://www.turkanime.net/"
@@ -39,6 +40,7 @@ ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chr
 class animeturk(vods.showextension):
     usedirect = False
     useaddonplayers = False
+    dropboxtoken = const.DB_TOKEN
 
     info = {"title": u"Türk Anime TV"
             }
