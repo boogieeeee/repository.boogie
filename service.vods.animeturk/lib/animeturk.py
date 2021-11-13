@@ -31,10 +31,10 @@ from tinyxbmc import net
 from tinyxbmc import tools
 from tinyxbmc import gui
 from tinyxbmc import const
+from chromium import Browser
 
 
 domain = "https://www.turkanime.net/"
-ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/93.0.4577.82 Safari/537.36"
 
 
 class animeturk(vods.showextension):
@@ -46,29 +46,31 @@ class animeturk(vods.showextension):
             }
     ismovie = False
 
-    def getpage(self, *args, **kwargs):
-        kwargs["timeout"] = 30
-        kwargs["http2"] = False
-        pg = self.download(*args, **kwargs)
-        return pg
+    def ispagevalid(self, page):
+        if re.search(u"<span class=\"copyText\">. [0-9]+ Türk Anime TV", page, re.UNICODE):
+            return page
 
     def getcategories(self):
-        xpage = htmlement.fromstring(self.getpage("%sajax/turler" % domain,
-                                                  headers={"x-requested-with": "XMLHttpRequest"},
-                                                  referer=domain))
+        u = "%sajax/turler" % domain
+        with Browser() as browser:
+            page = browser.navigate(u, domain, headers={"x-requested-with": "XMLHttpRequest"})
+        # page = self.download(u, headers=headers, referer=domain)
+        xpage = htmlement.fromstring(page)
         for a in xpage.iterfind(".//a"):
             self.additem(a.get("title"), net.absurl(a.get("href"), domain))
 
     def getshows(self, catargs=None):
         if catargs:
-            self.scrapegrid(htmlement.fromstring(self.getpage(catargs)))
+            with Browser() as browser:
+                page = browser.navigate(catargs, referer=domain, validate=self.ispagevalid)
+            self.scrapegrid(htmlement.fromstring(page))
 
     def scrapegrid(self, xpage):
         for div in xpage.iterfind(".//div[@class='panel panel-visible']"):
             a = div.find(".//a[@class='baloon']")
             img = net.absurl(div.find(".//img").get("data-src"), domain)
             art = {"icon": img, "thumb": img, "poster": img}
-            title = a.get("title").replace("izle", "").strip()
+            title = a.get("data-original-title").replace("izle", "").strip()
             url = net.absurl(a.get("href"), domain)
             if "/anime/" in url:
                 imgid = re.search("([0-9]+)", img)
@@ -78,13 +80,19 @@ class animeturk(vods.showextension):
             self.additem(title, url, art=art)
 
     def searchshows(self, keyword=None):
-        page = self.getpage(domain + "arama", data={"arama": keyword}, method="POST")
+        with Browser(loadtimeout=0) as browser:
+            browser.navigate(domain, validate=self.ispagevalid)
+            browser.elem_setattr("value", "'%s'" % keyword, tag="input")
+            browser.elem_call("submit", tag="form")
+            browser.loadtimeout = 3
+            page = browser.html()
         self.scrapegrid(htmlement.fromstring(page))
         if not len(self.items):
             redirect = re.search("window\.location\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", page)
             if "anime/" in redirect.group(1):
                 url = net.absurl(redirect.group(1), domain)
-                page = self.getpage(url, referer=domain)
+                with Browser(loadtimeout=0) as browser:
+                    page = browser.navigate(url, domain, validate=self.ispagevalid)
                 xpage = htmlement.fromstring(page)
                 div = xpage.find(".//div[@class='table-responsive']/")
                 title = div.find(".//tr[2]/td[3]").text
@@ -98,7 +106,8 @@ class animeturk(vods.showextension):
         if showargs:
             aniid, art = showargs
             url = "%sajax/bolumler&animeId=%s" % (domain, aniid)
-            page = self.getpage(url, headers={"x-requested-with": "XMLHttpRequest"})
+            with Browser() as browser:
+                page = browser.navigate(url, domain, headers={"x-requested-with": "XMLHttpRequest"})
             for a in htmlement.fromstring(page).iterfind(".//a"):
                 href = a.get("href")
                 if href and "/video/" in href:
@@ -106,18 +115,20 @@ class animeturk(vods.showextension):
                     url = net.absurl(a.get("href"), domain)
                     self.additem(title, url, art=art)
         else:
-            self.scrapegrid(htmlement.fromstring(self.getpage(domain)))
+            with Browser() as browser:
+                self.scrapegrid(htmlement.fromstring(browser.navigate(domain, None, self.ispagevalid)))
 
     def getlink(self, mirrorlink, xmirrorpage=None):
         try:
             if not xmirrorpage:
-                mirrorpage = self.getpage(mirrorlink,
-                                          headers={"x-requested-with": "XMLHttpRequest"},
-                                          referer=domain)
+                with Browser() as browser:
+                    mirrorpage = browser.navigate(mirrorlink,
+                                                  domain,
+                                                  headers={"x-requested-with": "XMLHttpRequest"})
                 xmirrorpage = htmlement.fromstring(mirrorpage)
             iframe = net.absurl(xmirrorpage.find(".//iframe").get("src"), domain)
-            iframesrc = self.getpage(iframe,
-                                     referer=domain)
+            with Browser() as browser:
+                iframesrc = browser.navigate(iframe, domain)
             iframe2 = json.loads(re.search("var\s*?iframe\s*?\=\s*?(?:\'|\")(.+)(?:\'|\")", iframesrc).group(1))
             password = re.search("var\s*?pass\s*?\=\s*?(?:\'|\")(.+)(?:\'|\")", iframesrc).group(1)
             link = jscrypto.decrypt(base64.b64decode(iframe2["ct"]),
@@ -142,7 +153,9 @@ class animeturk(vods.showextension):
         fansubxpath = ".//div[@class='panel-body']/div[1]/button"
         mirrorxpath = ".//div[@class='panel-body']/div[4]/button"
 
-        xpage = htmlement.fromstring(self.getpage(id, referer=domain))
+        with Browser() as browser:
+            page = browser.navigate(id, domain, self.ispagevalid)
+        xpage = htmlement.fromstring(page)
 
         fansubs = {}
 
@@ -160,9 +173,9 @@ class animeturk(vods.showextension):
             for _fansub, fansublink in fansubs.items():
                 i += 1
                 if fansubselect == -1 or fansubselect == i:
-                    xfansubpage = htmlement.fromstring(self.getpage(fansublink,
-                                                                    headers={"x-requested-with": "XMLHttpRequest"},
-                                                                    referer=id))
+                    with Browser(None, 0) as browser:
+                        page = browser.navigate(fansublink, id, headers={"x-requested-with": "XMLHttpRequest"})
+                    xfansubpage = htmlement.fromstring(page)
                     mirror = self.getlink(None, xfansubpage)
                     if mirror:
                         yield mirror
