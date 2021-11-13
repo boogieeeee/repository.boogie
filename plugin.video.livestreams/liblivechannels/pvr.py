@@ -64,7 +64,6 @@ class iptv:
         return tools.jsonrpc(data).get("result", {}).get("timers", [])
 
     @staticmethod
-    @property
     def isenabled():
         iptv = addon.addon_details(IPTVSIMPLE)
         if iptv:
@@ -74,7 +73,7 @@ class iptv:
 
     @staticmethod
     def reload_pvr():
-        if iptv.isenabled:
+        if iptv.isenabled():
             time.sleep(1)
             addon.toggle_addon(IPTVSIMPLE)
             time.sleep(1)
@@ -82,7 +81,7 @@ class iptv:
 
     @staticmethod
     def config_pvr():
-        if iptv.isenabled:
+        if iptv.isenabled():
             pvr_settings = addon.kodisetting(IPTVSIMPLE)
             if not pvr_settings.getint("m3uPathType") == 1:
                 pvr_settings.set("m3uPathType", 1)

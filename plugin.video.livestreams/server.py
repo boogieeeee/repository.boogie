@@ -53,7 +53,7 @@ class Server(addon.blockingloop):
 
     def onloop(self):
         # runs each self.wait seconds
-        if base.iptvsimple.isenabled and not xbmc.Player().isPlaying():
+        if base.iptvsimple.isenabled() and not xbmc.Player().isPlaying():
             if not base.config.update_running and ((time.time() - base.config.lastupdate > common.check_timeout) or base.config.validate):
                 Thread(target=base.do_validate, args=(True, self.isclosed())).start()
                 # base.config.validate flag is reset in base.do_validate method
