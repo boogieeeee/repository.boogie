@@ -77,7 +77,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.7">
+<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.8">
 	<requires>
 
 		<import addon="plugin.video.vods"/>
