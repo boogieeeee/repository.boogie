@@ -89,7 +89,7 @@ class animeturk(vods.showextension):
         self.scrapegrid(htmlement.fromstring(page))
         if not len(self.items):
             redirect = re.search("window\.location\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", page)
-            if "anime/" in redirect.group(1):
+            if redirect and "anime/" in redirect.group(1):
                 url = net.absurl(redirect.group(1), domain)
                 with Browser(loadtimeout=0) as browser:
                     page = browser.navigate(url, domain, validate=self.ispagevalid)
