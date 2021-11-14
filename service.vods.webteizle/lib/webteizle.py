@@ -91,7 +91,7 @@ class webteizle(vods.movieextension):
         url = self.domain + url
         for dil in range(2):
             data = {"filmid": bid, "dil": dil, "s": "", "b": ""}
-            jsdata = self.download(self.domain + "/ajax/dataAlternatif2.asp",
+            jsdata = self.download(self.domain + "/ajax/dataAlternatif3.asp",
                                    data=data,
                                    referer=url,
                                    method="POST",
@@ -129,5 +129,7 @@ class webteizle(vods.movieextension):
                 return "https://fembed.com/v/%s" % v_sid
             elif v_server == "streamsb":
                 return "https://streamsb.net/play/%s" % v_sid
+            elif v_server == "userload":
+                return "https://userload.co/embed/%s" % v_sid
             else:
                 return iframe
