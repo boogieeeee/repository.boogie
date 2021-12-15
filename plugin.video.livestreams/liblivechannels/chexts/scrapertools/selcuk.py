@@ -16,8 +16,6 @@ from tinyxbmc import net
 
 from six.moves.urllib import parse
 from liblivechannels.chexts.scrapertools import normalize
-from thirdparty import packed
-import json
 import re
 import htmlement
 import base64
@@ -26,6 +24,12 @@ import base64
 maxlink = 5
 subpath = None
 girisurl = "https://giris1.selcuksportshdgiris13.com/"
+rgx1 = "\s*[a-z]+\s?\:\s?(?:\'|\")(.+?)(?:\'|\")"
+rgx2 = "window\.streamradardomil\s*?\=\s*?(.+?)\;"
+rgx3 = "window\.streamradardomil\s*?\=\s*?(.+?)\;"
+rgx4 = "atob\((?:\"|\')([a-zA-Z0-9\=]+?)(?:\"|\')\)"
+rgx5 = "window._[a-f0-9]+\s*?\=\s*?window\[.atob.\]\((?:\'|\")([A-Za-z0-9\=]+)(?:\'|\")"
+rgx6 = "src\s*?\=\s*?(?:\"|\')(\/keslanorospu.+?)(?:\"|\')"
 
 
 def iteratechannels():
@@ -36,23 +40,6 @@ def iteratechannels():
     for link in links:
         chname = tools.elementsrc(link.find(".//div[@class='name']"), exclude=[link.find(".//b")]).strip()
         yield url, link.get("data-url"), chname
-
-
-def method3(subpage):
-    yield re.search("window\.mainSource[\s\t]*?\=[\s\t]*?\[(?:\"|\')(.+?)(?:\"|\')\]", subpage).group(1)
-
-
-def method1(page, subpath, chid):
-    for embed in re.findall("window.atob\(\"(.*?)\"\)", page):
-        jsdata = json.loads(base64.b64decode(embed).decode())
-        yield "https://xxx.%s%s%s/strmrdr.m3u8" % (jsdata["d"], subpath, chid)
-        break
-
-
-def method2(up, url, chid):
-    jsurl = "%s://%s/dmzjsn.json" % (up.scheme, up.netloc)
-    sdomain = json.loads(net.http(jsurl, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))["d"]
-    yield "https://xxx.%s%s%s/strmrdr.m3u8" % (sdomain, subpath, chid)
 
 
 def itermedias(chfilter, isadaptive=True):
@@ -67,19 +54,16 @@ def itermedias(chfilter, isadaptive=True):
             up = parse.urlparse(links[0])
             chdict = dict(parse.parse_qsl(up.query))
             if "id" in chdict:
-                subpage = net.http(links[0], referer=selcukurl)
-                chid = chdict.get("id")
-                kourl = "%s://%s/keslanorospucocugu.js" % (up.scheme, up.netloc)
-                try:
-                    subpath = re.search("dmz[a-zA-Z0-9]+?\+(?:\'|\")(.+?)(?:\'|\")", net.http(kourl, referer=selcukurl)).group(1)
-                except Exception:
-                    subpath = None
-                found = False
-                media = None
-                for method in method3(subpage), method1(subpage, subpath, chid), method2(up, url, chid):
-                    for vid in tools.safeiter(method):
-                        media = vid
-                        break
-                    if media:
-                        break
-            yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)
+                subpage = net.http(links[0], referer=selcukurl, cache=None)
+                olmusmu = re.findall(rgx1, subpage)
+                if len(olmusmu) == 2:
+                    # olmusmu = [parse.unquote(x) for x in olmusmu]
+                    keslan = re.search(rgx6, subpage)
+                    kourl = "%s://%s/%s" % (up.scheme, up.netloc, keslan.group(1))
+                    kopage = net.http(kourl, referer=selcukurl, cache=None)
+                    bases = [base64.b64decode(x).decode() for x in re.findall(rgx4, kopage)]
+                    _radardom = bases.pop(-1)
+                    selcukdom = bases.pop(-1)
+                    for base in bases:
+                        media = "https://" + base + selcukdom + "/i/" + olmusmu[1] + "/" + chdict["id"] + "/playlist.m3u8" + olmusmu[0]
+                        yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)

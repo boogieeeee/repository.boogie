@@ -1,4 +1,5 @@
-# -*- encoding: utf-8 -*-
+# -*- encoding: utf-8 -*
+"""
 try:
     import unittest
     from test import ChannelTest
@@ -20,3 +21,4 @@ class bbcearth(multi, scraper):
     icon = "https://i.pinimg.com/originals/ad/2e/57/ad2e57aa2d71eee1f79fb1b8fcb932da.png"
     categories = [u"Türkçe", u"Belgesel"]
     # selcuk_name = "bbcearth"
+"""

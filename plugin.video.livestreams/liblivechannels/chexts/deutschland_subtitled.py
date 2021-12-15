@@ -36,6 +36,7 @@ class br(scraper):
 
 class daserste(scraper):
     domain = "https://live.daserste.de/"
+    domain2 = "https://www.daserste.de/live/"
     categories = ["Deutschland", "Subtitled"]
     title = u"Das Erste [ÜT]"
     icon = domain + "/mediasrc/img/tv/ard/ard-daserste-logo.png"
@@ -45,5 +46,5 @@ class daserste(scraper):
         page = self.download(self.domain)
         js = re.search(r'data-ctrl-player="(.+?)"', page).group(1)
         js = re.search(r'url(?:\'|\")\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")', js).group(1)
-        jsdata = json.loads(self.download(self.domain + js, referer=self.domain))
+        jsdata = json.loads(self.download(self.domain2 + js, referer=self.domain2 + "index.html"))
         yield net.hlsurl(jsdata["mc"]["_alternativeMediaArray"][0]["_mediaArray"][0]["_mediaStreamArray"][0]["_stream"][0])

@@ -5,8 +5,7 @@ import re
 
 
 dom = "https://daddylive.me"
-mrgx = "source\s*?\:\s*?(?:\"|\")(.+?)(?:\"|\")"
-
+mrgx = "source\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")"
 ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.114 Safari/537.36"
 
 
@@ -23,6 +22,9 @@ def itermedias(dadyid=None, dadyname=None):
         u = "%s/embed/stream-%s.php" % (dom, dadyid)
     iframeu = htmlement.fromstring(net.http(u)).find(".//iframe").get("src")
     iframe = net.http(iframeu, referer=u)
-    ref = parse.urlparse(iframeu)
+    iframeu2 = re.search("iframe\s*?src=(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
+    iframe = net.http(iframeu2, referer=iframeu)
+    src = re.findall(mrgx, iframe)
+    ref = parse.urlparse(iframeu2)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
-    yield net.hlsurl(re.search(mrgx, iframe).group(1), headers={"Referer": ref, "User-Agent": ua}, adaptive=False)
+    yield net.hlsurl(src[-1], headers={"Referer": ref, "User-Agent": ua}, adaptive=False)

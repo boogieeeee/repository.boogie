@@ -50,6 +50,6 @@ class trtsporyildiz(multi, scraper):
     title = u"TRT Spor Yildiz"
     icon = "https://www.trtspor.com.tr/static/img/trt-spor-yildiz-logo-beyaz-zemin.png"
     categories = [u"Türkçe", u"Spor"]
-    kolay_ids = "trt-spor-yildiz/1", "trt-spor-yildiz/2"
+    kolay_ids = "/trt-spor-yildiz/1", "/trt-spor-yildiz/2"
     canlitv_ids = "trt-spor-yildiz/1", "trt-spor-yildiz/2", "trt-spor-yildiz/3"
-    selcuk_name = "trtspor2"
+    # selcuk_name = "trtspor2"

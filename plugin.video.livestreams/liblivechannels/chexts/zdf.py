@@ -1,4 +1,5 @@
 # -*- encoding: utf-8 -*-
+"""
 try:
     import unittest
     from test import ChannelTest
@@ -41,3 +42,4 @@ class info(multi, scraper):
     icon = multi.iconpath + "tv-zdf-info.png"
     title = "ZDF-info"
     epg = "zinfo"
+"""

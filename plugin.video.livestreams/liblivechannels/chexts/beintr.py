@@ -46,7 +46,7 @@ class bein1(multi, scraper):
     selcuk_name = "bein1"
     ses_ids = ["beinsport-1-yedek-live", "beinsport-1-yedek1-live", "beinsport-1-yedek2-live"]
     selcuk_adaptive = False
-    dady_name = "beinsports1turkey"
+    dady_id = "beinsports1turkey"
 
 
 class bein2(multi, scraper):
