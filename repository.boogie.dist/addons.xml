@@ -100,7 +100,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.19">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.20">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
