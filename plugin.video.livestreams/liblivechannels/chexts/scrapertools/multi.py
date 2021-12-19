@@ -9,6 +9,7 @@ from liblivechannels.chexts.scrapertools import sports24
 
 from liblivechannels.chexts.scrapertools import yayinakisi
 from liblivechannels.chexts.scrapertools import vercel
+from liblivechannels.chexts.scrapertools import mynetyayin
 
 from tinyxbmc.tools import safeiter
 
@@ -50,6 +51,9 @@ class multi:
     # epg: vercel
     vercel_id = None
 
+    # epg: mynet
+    mynet_yayin = None
+
     def get(self):
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_stream, self.youtube_sindex)):
@@ -79,4 +83,7 @@ class multi:
                 yield prog
         if self.vercel_id:
             for prog in vercel.iterprogrammes(self.vercel_id):
+                yield prog
+        if self.mynet_yayin:
+            for prog in mynetyayin.iterprogrammes(self.mynet_yayin):
                 yield prog

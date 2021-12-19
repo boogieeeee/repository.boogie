@@ -10,7 +10,6 @@ try:
         index = "trt1:trtspor:"
 
     class testtrtsporyildiz(ChannelTest, unittest.TestCase):
-        minepg = 0
         index = "trt1:trtsporyildiz:"
 
 
@@ -53,3 +52,4 @@ class trtsporyildiz(multi, scraper):
     kolay_ids = "/trt-spor-yildiz/1", "/trt-spor-yildiz/2"
     canlitv_ids = "trt-spor-yildiz/1", "trt-spor-yildiz/2", "trt-spor-yildiz/3"
     # selcuk_name = "trtspor2"
+    mynet_yayin = "trt-spor-yildiz"
