@@ -60,7 +60,7 @@ class polsatsportnews(multi, scraper):
 def iterprogrammes(polsatname):
     prevargs = {}
     for pagenum in [1, 2]:
-        page = json.loads(net.http(epgu + "page%s" % pagenum, cache=None))
+        page = json.loads(net.http(epgu + "page%s" % pagenum, cache=None, encoding="utf-8"))
         for channel in page["channels"]:
             if channel["title"] == polsatname:
                 for prog in channel["programs"]:
