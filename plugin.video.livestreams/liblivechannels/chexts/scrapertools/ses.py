@@ -59,16 +59,15 @@ def itermedias(chid, chids=None, adaptive=True):
         url = None
         scode = scode.replace("-", "+")
         scode = scode.replace("_", "/")
+        scode = scode[::-1]
         for suffix in ["", "=", "=="]:
             try:
-                url = base64.b64decode(scode[::-1] + suffix)
+                url = base64.b64decode(scode + suffix)
                 break
             except Exception:
                 continue
         if url:
             url = url.decode()
-            url = url.replace("_", "_")
-            url = url.replace("-", "-")
             yield net.hlsurl(url, headers={"referer": domain}, adaptive=adaptive)
 
 

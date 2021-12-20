@@ -44,8 +44,9 @@ class bein1(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "bein1"
     selcuk_name = "bein1"
-    ses_ids = ["beinsport-1-yedek-live", "beinsport-1-yedek1-live", "beinsport-1-yedek2-live"]
+    ses_ids = ["beinsport-1-live", "beinsport-1-yedek-live", "beinsport-1-yedek1-live", "beinsport-1-yedek2-live"]
     selcuk_adaptive = False
+    ses_adaptive = False
     dady_name = "beinsports1turkey"
 
 
@@ -57,6 +58,7 @@ class bein2(multi, scraper):
     selcuk_name = "bein2"
     ses_ids = ["beinsport-2-live", "beinsport-2-yedek-live"]
     selcuk_adaptive = False
+    ses_adaptive = False
     dady_name = "beinsports2turkey"
 
 
@@ -68,6 +70,7 @@ class bein3(multi, scraper):
     selcuk_name = "bein3"
     ses_ids = ["beinsport-3-live"]
     selcuk_adaptive = False
+    ses_adaptive = False
     dady_name = "beinsports3turkey"
 
 
@@ -79,6 +82,7 @@ class bein4(multi, scraper):
     selcuk_name = "bein4"
     ses_ids = ["beinsport-4-live"]
     selcuk_adaptive = False
+    ses_adaptive = False
     dady_name = "beinsports4turkey"
 
 
@@ -90,6 +94,7 @@ class beinmax1(multi, scraper):
     selcuk_name = "beinmax1"
     ses_ids = ["beinsport-max1-live"]
     selcuk_adaptive = False
+    ses_adaptive = False
 
 
 class beinmax2(multi, scraper):
@@ -100,6 +105,7 @@ class beinmax2(multi, scraper):
     selcuk_name = "beinmax2"
     ses_ids = ["beinsport-max2-live"]
     selcuk_adaptive = False
+    ses_adaptive = False
 
 
 class beinhaber(multi, scraper):
@@ -110,3 +116,4 @@ class beinhaber(multi, scraper):
     selcuk_name = "beinhaber"
     ses_ids = ["beinsport-haber-live"]
     selcuk_adaptive = False
+    ses_adaptive = False

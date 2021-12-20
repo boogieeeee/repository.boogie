@@ -31,6 +31,7 @@ class trt1(multi, scraper):
     kolay_ids = ["/trt-1/1", "/trt-1/2", "/trt-1/3", "/trt-1/4"]
     canlitv_ids = ["trt-1/1", "trt-1/2"]
     selcuk_adaptive = False
+    ses_adaptive = False
 
 
 class trtspor(multi, scraper):
