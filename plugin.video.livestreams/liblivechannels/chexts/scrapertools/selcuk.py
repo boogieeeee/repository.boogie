@@ -67,3 +67,14 @@ def itermedias(chfilter, isadaptive=True):
                     for base in bases:
                         media = "https://" + base + selcukdom + "/i/" + olmusmu[1] + "/" + chdict["id"] + "/playlist.m3u8" + olmusmu[0]
                         yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)
+
+
+def mobile_itermedias(chid, isadaptive=True):
+    # https://app.selcuksportsappltf.com/app/belgesel.json
+    mdom = "https://app.selcuksportsappltf.com/app/"
+    jsu = "%skanal/%s.json" % (mdom, chid)
+    js = net.http(jsu, json=True)
+    for result in js.get("results", []):
+        m3u = result.get("m3u8_url")
+        if m3u:
+            yield net.hlsurl(m3u, adaptive=isadaptive)

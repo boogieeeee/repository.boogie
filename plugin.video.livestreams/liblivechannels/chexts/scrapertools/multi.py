@@ -21,6 +21,9 @@ class multi:
 
     # selcuk sports
     selcuk_name = None
+    selcuk_mobile = None
+    selcuk_adaptive = True
+    selcuk_mobile_adaptive = False
 
     # youtube
     youtube_chanid = None
@@ -31,7 +34,6 @@ class multi:
     ses_id = None
     ses_ids = None
     ses_adaptive = True
-    selcuk_adaptive = True
 
     # canlitvcenter
     canlitv_id = None
@@ -69,6 +71,9 @@ class multi:
                 yield yayin
         if self.selcuk_name:
             for yayin in safeiter(selcuk.itermedias(self.selcuk_name, self.selcuk_adaptive)):
+                yield yayin
+        if self.selcuk_mobile:
+            for yayin in safeiter(selcuk.mobile_itermedias(self.selcuk_mobile, self.selcuk_mobile_adaptive)):
                 yield yayin
         if self.ses_id or self.ses_ids:
             for yayin in safeiter(ses.itermedias(self.ses_id, self.ses_ids, self.ses_adaptive)):
