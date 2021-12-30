@@ -97,7 +97,7 @@ class DecryptPayload:
         self.key = key
         self.method = method
         self.iv = iv
-        self.chunksize = None
+        self.chunksize = 2 ** 5
         self.skipdec = method not in ["AES-128"]
         if not self.hasopenssl and method == "AES-128":
             key = binascii.unhexlify(key)
