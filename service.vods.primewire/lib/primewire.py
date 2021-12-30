@@ -6,20 +6,7 @@ import htmlement
 from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
 from tinyxbmc import const
-from js2py import EvalJs
-import os
-
-
-class Decrypt:
-    def __init__(self):
-        with open(os.path.join(os.path.dirname(__file__), "primewire.js")) as f:
-            self.code = f.read()
-        self.jscntx = EvalJs()
-
-    def userdata(self, userdata):
-        self.jscntx.userdata = userdata
-        self.jscntx.execute(self.code)
-        return self.jscntx.r
+import blowfish
 
 
 class base:
@@ -126,8 +113,7 @@ class base:
         domain = "https://%s" % self.setting.getstr("domain")
         page = htmlement.fromstring(self.download(link, referer=domain))
         userdata = page.find(".//span[@id='user-data']").get("v")
-        decryptor = Decrypt()
-        codes = decryptor.userdata(userdata)
+        codes = blowfish.decrypt(userdata)
         for code in codes:
             sublink = "https://%s/links/go/%s?embed=true" % (self.setting.getstr("domain"), code)
             subpage = self.download(sublink, referer=link, json=True)
