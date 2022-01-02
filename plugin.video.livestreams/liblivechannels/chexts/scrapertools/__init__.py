@@ -11,7 +11,7 @@ class dateparser(object):
         self.tz_loc = tools.tz_utc()
         if self.timezone:
             self.tz_loc.settimezone(self.timezone)
-        now = datetime.datetime.now()
+        now = datetime.datetime.now().replace(tzinfo=tools.tz_local())
         if not localday:
             localday = now.day
         if not localmonth:

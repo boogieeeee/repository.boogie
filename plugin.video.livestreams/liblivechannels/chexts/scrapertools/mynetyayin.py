@@ -20,7 +20,7 @@ trtz = tools.tz_utc()
 utctz = tools.tz_utc()
 trtz.settimezone(3)
 
-now = datetime.datetime.now()
+now = datetime.datetime.now().replace(tzinfo=tools.tz_local())
 now = now.astimezone(trtz)
 
 

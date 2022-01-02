@@ -103,7 +103,7 @@ def patchsmu(smudir):
             smupatch["versioncommit"] = versioncommit
             smuhay.throw("smupatch", smupatch)
             tools.builtin("UpdateLocalAddons()")
-            gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
+            # gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
 
 
 class smu(linkplayerextension):
