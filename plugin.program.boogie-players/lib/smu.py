@@ -50,11 +50,7 @@ def patchsmu(smudir):
         with open(os.path.join(smudir, "..", "script.module.resolveurl.json")) as vf:
             versioncommit = json.load(vf)
         versioncommit = versioncommit.get("latest")
-        try:
-            xmlstat = os.path.getsize(os.path.join(smudir, "settings.xml"))
-        except Exception:
-            xmlstat = None
-        pldir = addon.get_addon("plugin.program.vods-players").getAddonInfo("path")
+        pldir = addon.get_addon("plugin.program.boogie-players").getAddonInfo("path")
         if not smupatch.get("versioncommit") == versioncommit:
             # first remove xbmcaddon referenced to script.module.urlresolver
             files = [(["lib", "resolveurl", "lib", "log_utils.py"], 1),
@@ -68,7 +64,7 @@ def patchsmu(smudir):
                     contents = f.read()
                 if patchtype == 1:
                     pattern = "script\.module\.resolveurl"
-                    sub = "plugin.program.vods-players"
+                    sub = "plugin.program.boogie-players"
                 elif patchtype == 2:
                     pattern = "settings_file \= os\.path\.join\(addon_path, 'resources', 'settings.xml'\)"
                     sub = "settings_file = os.path.join(os.path.dirname(__file__), '..', '..', 'settings.xml')"
@@ -87,18 +83,13 @@ def patchsmu(smudir):
                     with tools.File(sfile) as sfileo:
                         with tools.File(tfile, "w") as tfileo:
                             tfileo.write(sfileo.readBytes())
-            smupatch["versioncommit"] = versioncommit
-            smuhay.throw("smupatch", smupatch)
-            tools.builtin("UpdateLocalAddons()")
-            gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
 
-        if not smupatch.get("xmlstat") == xmlstat:
-            # merge smu settings.xml with current settings.xml
-            smuxmlp = os.path.join(smudir, "settings.xml")
+            from resolveurl import _update_settings_xml
+            from resolveurl import common
+            _update_settings_xml()
+            smuxmlp = common.settings_file
             plxmlop = os.path.join(pldir, "resources", "settings_orig.xml")
             plxmlp = os.path.join(pldir, "resources", "settings.xml")
-            smupatch["xmlstat"] = xmlstat
-            smuhay.throw("smupatch", smupatch)
             with tools.File(smuxmlp, "r") as smuxml:
                 with tools.File(plxmlop, "r") as plxmlo:
                     with tools.File(plxmlp, "w") as plxml:
@@ -108,6 +99,11 @@ def patchsmu(smudir):
                         except Exception:
                             print(traceback.format_exc())
                             shutil.copyfile(plxmlop, plxmlp)
+
+            smupatch["versioncommit"] = versioncommit
+            smuhay.throw("smupatch", smupatch)
+            tools.builtin("UpdateLocalAddons()")
+            gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
 
 
 class smu(linkplayerextension):
