@@ -96,7 +96,7 @@ class webteizle(vods.movieextension):
             dilid = x.get("data-dil")
             if dilid is not None and dilid.isdigit():
                 diller[tools.elementsrc(x).strip()] = int(x.get("data-dil"))
-        dilkeys = diller.keys()
+        dilkeys = list(diller.keys())
         if len(dilkeys):
             dil = gui.select("Choose Language", dilkeys)
             if dil == -1:

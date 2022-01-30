@@ -124,7 +124,7 @@ class dizi(vods.showextension):
         tree = self.gettree(url)
         bid = tree.find(".//div[@id='dilsec']").get("data-id")
         diller = dict([(tools.elementsrc(x).strip(), x.get("data-dil")) for x in tree.findall(".//div[@id='dilsec']/a")])
-        dilkeys = diller.keys()
+        dilkeys = list(diller.keys())
         dil = gui.select("Choose Language", dilkeys)
         if dil == -1:
             dilmap = diller.values()
