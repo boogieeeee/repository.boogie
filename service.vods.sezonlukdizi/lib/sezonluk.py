@@ -23,6 +23,9 @@ import htmlement
 import re
 
 from tinyxbmc import const
+from tinyxbmc import net
+from tinyxbmc import tools
+from tinyxbmc import gui
 
 
 class dizi(vods.showextension):
@@ -40,7 +43,7 @@ class dizi(vods.showextension):
         self.encoding = "iso-8859-9"
 
     def gettree(self, url):
-        return htmlement.fromstring(self.download(self.domain + url, encoding=self.encoding, referer=self.domain))
+        return htmlement.fromstring(self.download(net.absurl(url, self.domain), encoding=self.encoding, referer=self.domain))
 
     def getcategories(self):
         for div in self.gettree("").iterfind(".//div"):
@@ -117,12 +120,17 @@ class dizi(vods.showextension):
                         self.additem("S%sE%s: %s" % (seanum, e_val, epilink.text), args, info, art)
 
     def geturls(self, args):
-        bid, url = args
-        if not bid:
-            tree = self.gettree(url)
-            bid = tree.find(".//div[@id='dilsec']").get("data-id")
-            url = self.domain + url
-        for dil in range(2):
+        _, url = args
+        tree = self.gettree(url)
+        bid = tree.find(".//div[@id='dilsec']").get("data-id")
+        diller = dict([(tools.elementsrc(x).strip(), x.get("data-dil")) for x in tree.findall(".//div[@id='dilsec']/a")])
+        dilkeys = diller.keys()
+        dil = gui.select("Choose Language", dilkeys)
+        if dil == -1:
+            dilmap = diller.values()
+        else:
+            dilmap = [diller[dilkeys[dil]]]
+        for dil in dilmap:
             data = {"bid": bid, "dil": dil}
             js = self.download(self.domain + "/ajax/dataAlternatif2.asp",
                                data=data,
