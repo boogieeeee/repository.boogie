@@ -28,7 +28,7 @@ import base64
 
 import htmlement
 
-domain = "https://www.sestv.xyz/"
+domain = "https://www.sestv1.pw/"
 
 namemap = {"sinema17": "Bein Box Office 1",
            "sinema16": "Dizi TV",
@@ -52,8 +52,8 @@ def itermedias(chid, chids=None, adaptive=True):
         embedpage = htmlement.fromstring(net.http(embedlink, referer=url))
         script = embedpage.find(".//script[@id='v']")
         jsurl = "%s://%s/embed/%s" % (up.scheme, up.netloc, chid)
-        data = {"e": 1, "id": script.get("data-i")}
-        scode = net.http(jsurl, referer=embedlink,
+        data = {"e": 1, "id": int(script.get("data-i"))}
+        scode = net.http(jsurl, referer=jsurl,
                          data=data, headers={"x-requested-with": "XMLHttpRequest"},
                          method="POST")
         url = None
