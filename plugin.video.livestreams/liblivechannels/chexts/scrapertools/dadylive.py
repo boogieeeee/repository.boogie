@@ -1,4 +1,4 @@
-from tinyxbmc import net, const
+from tinyxbmc import net, tools
 from six.moves.urllib import parse
 import htmlement
 import re
@@ -10,8 +10,8 @@ ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chr
 
 
 def getchanurl(chname):
-    for a in htmlement.fromstring(net.http("%s/24-hours-channels.php" % dom, cache=60 * 24)).iterfind(".//table/.//tr/td/a"):
-        if a.find(".//i").tail.replace(" ", "").lower().strip() == chname:
+    for a in htmlement.fromstring(net.http("%s/24-hours-channels.php" % dom, cache=60 * 24)).iterfind(".//div[@class='grid-item']/a"):
+        if tools.elementsrc(a).lower().strip().replace(" ", "") == chname:
             return net.absurl(a.get("href"), dom)
 
 
@@ -27,4 +27,4 @@ def itermedias(dadyid=None, dadyname=None):
     src = re.findall(mrgx, iframe)
     ref = parse.urlparse(iframeu2)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
-    yield net.hlsurl(src[-1], headers={"Referer": ref, "User-Agent": ua}, adaptive=False)
+    yield net.hlsurl(src[0], headers={"Referer": ref, "User-Agent": ua}, adaptive=False)
