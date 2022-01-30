@@ -24,15 +24,13 @@ import htmlement
 from tinyxbmc import net
 from tinyxbmc import const
 from tinyxbmc import tools
+from six.moves.urllib import parse
 
 
 # references: "https://poscitech.club/tv/ch1.php, https://daddylive.me/"
 
-sdom = "https://www.eplayer.to/"
-surl = sdom + "poscitech.php?live=%s&vw=100vw&vh=100vh"
-referer = "https://poscitech.club/"
-rgx = "source\s*?\:\s*?(?:\"|\")(.+?)(?:\"|\")"
-ddom = "https://daddylive.me/"
+dom = "https://daddylive.me"
+mrgx = "source\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")"
 
 
 class poscitech(vods.movieextension):
@@ -49,7 +47,7 @@ class poscitech(vods.movieextension):
            }
 
     def getcategories(self):
-        page = self.download(ddom)
+        page = self.download(dom)
         for m in re.finditer("hr\>(.+?)\<(.+?)(?:<\/p|<br\s\/>)", page):
             title = m.group(1)
             txt = m.group(2)
@@ -67,7 +65,7 @@ class poscitech(vods.movieextension):
             for ctxt, cnum in cat:
                 self.additem(ctxt, cnum)
         else:
-            page = self.download(ddom + "/24-hours-channels.php")
+            page = self.download(dom + "/24-hours-channels.php")
             chnames = {}
             for a in htmlement.fromstring(page).iterfind(".//table/.//a"):
                 href = a.get("href")
@@ -80,7 +78,12 @@ class poscitech(vods.movieextension):
                 self.additem("%s (#%s)" % (chname, i), i)
 
     def geturls(self, streamid):
-        url = surl % streamid
-        page = self.download(url, referer=referer)
-        m3 = re.search(rgx, page).group(1)
-        yield net.tokodiurl(m3, headers={"Referer": sdom, "User-Agent": const.USERAGENT})
+        u = "%s/embed/stream-%s.php" % (dom, streamid)
+        iframeu = htmlement.fromstring(net.http(u)).find(".//iframe").get("src")
+        iframe = net.http(iframeu, referer=u)
+        iframeu2 = re.search("iframe\s*?src=(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
+        iframe = net.http(iframeu2, referer=iframeu)
+        src = re.findall(mrgx, iframe)
+        ref = parse.urlparse(iframeu2)
+        ref = "%s://%s/" % (ref.scheme, ref.netloc)
+        yield net.hlsurl(src[0], headers={"Referer": ref}, adaptive=False)
