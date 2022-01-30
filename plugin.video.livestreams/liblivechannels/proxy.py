@@ -58,8 +58,9 @@ class Handler(BaseHTTPRequestHandler):
                 for component in components:
                     key = iv = method = None
                     if hasattr(component, "key") and component.key and component.key.uri:
-                        if (component.key.uri.startswith("http://") or component.key.uri.startswith("https://")) and not \
-                           (component.key.uri.startswith("http://localhost") or component.key.uri.startswith("https://localhost")):
+                        if not component.key.uri.startswith("http"):
+                            component.key.uri = m3file.base_uri + component.key.uri
+                        if not component.key.uri.startswith("http://localhost"):  # always routes key uri through proxy but thats ok.
                             component.key.uri = hls.encodeurl(url=component.key.uri, headers=headers)
                         elif component.key.iv and "base64," in component.key.uri:
                             key = binascii.hexlify(base64.b64decode(re.search("base64,(.+)", component.key.uri).group(1))).decode()
