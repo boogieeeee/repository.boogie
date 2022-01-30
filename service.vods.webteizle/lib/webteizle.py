@@ -25,6 +25,9 @@ import json
 
 from six.moves.urllib import parse
 from tinyxbmc.const import DB_TOKEN
+from tinyxbmc import tools
+from tinyxbmc import gui
+from tinyxbmc import net
 
 
 class webteizle(vods.movieextension):
@@ -43,7 +46,7 @@ class webteizle(vods.movieextension):
     def gettree(self, url):
         if url is None:
             url = ""
-        return htmlement.fromstring(self.download(self.domain + url, encoding=self.encoding, referer=self.domain))
+        return htmlement.fromstring(self.download(net.absurl(url, self.domain), encoding=self.encoding, referer=self.domain))
 
     def getcategories(self):
         for div in self.gettree("/filtre.asp").iterfind(".//div[@class='field'][3]/.//div[@class='item']"):
@@ -84,30 +87,41 @@ class webteizle(vods.movieextension):
             self.additem(title, args, info, art)
 
     def geturls(self, args):
-        bid, url = args
-        if not bid:
-            tree = self.gettree(url)
-            bid = tree.find(".//a[@id='wip']").get("data-id")
-        url = self.domain + url
-        for dil in range(2):
-            data = {"filmid": bid, "dil": dil, "s": "", "b": ""}
-            jsdata = self.download(self.domain + "/ajax/dataAlternatif3.asp",
-                                   data=data,
-                                   referer=url,
-                                   method="POST",
-                                   encoding=self.encoding,
-                                   headers={"x-requested-with": "XMLHttpRequest"})
-            js = json.loads(jsdata)
-            if js.get("status") == "success":
-                for data in js["data"]:
-                    iframe = self.download(self.domain + "/ajax/dataEmbed.asp",
-                                           data={"id": data["id"]},
-                                           referer=url,
-                                           encoding=self.encoding,
-                                           method="POST")
-                    v_url = self.videourl(iframe)
-                    if v_url:
-                        yield v_url
+        _, url = args
+        url = url.replace("/hakkinda/", "/izle/altyazi/")
+        tree = self.gettree(url)
+        bid = tree.find(".//a[@id='wip']").get("data-id")
+        diller = {}
+        for x in tree.findall(".//div[@id='dilsec']/a"):
+            dilid = x.get("data-dil")
+            if dilid is not None and dilid.isdigit():
+                diller[tools.elementsrc(x).strip()] = int(x.get("data-dil"))
+        dilkeys = diller.keys()
+        if len(dilkeys):
+            dil = gui.select("Choose Language", dilkeys)
+            if dil == -1:
+                dilmap = diller.values()
+            else:
+                dilmap = [diller[dilkeys[dil]]]
+            for dil in dilmap:
+                data = {"filmid": int(bid), "dil": dil, "s": "", "b": ""}
+                jsdata = self.download(self.domain + "/ajax/dataAlternatif3.asp",
+                                       data=data,
+                                       referer=url,
+                                       method="POST",
+                                       encoding=self.encoding,
+                                       headers={"x-requested-with": "XMLHttpRequest"})
+                js = json.loads(jsdata)
+                if js.get("status") == "success":
+                    for data in js["data"]:
+                        iframe = self.download(self.domain + "/ajax/dataEmbed.asp",
+                                               data={"id": data["id"]},
+                                               referer=url,
+                                               encoding=self.encoding,
+                                               method="POST")
+                        v_url = self.videourl(iframe)
+                        if v_url:
+                            yield v_url
 
     def videourl(self, iframe):
         v_id = re.search("\<script\>(.+?)\((?:\"|')(.+?)(?:\"|')\s*?\,\s*?(?:\"|')(.+?)(?:\"|')\)", iframe, re.IGNORECASE)
@@ -133,3 +147,10 @@ class webteizle(vods.movieextension):
                 return "https://userload.co/embed/%s" % v_sid
             else:
                 return iframe
+        else:
+            isubframe = re.search('\<iframe.+?src=(?:\"|\')(.+?)(?:\"|\')', iframe)
+            if isubframe:
+                return isubframe.group(1)
+            else:
+                return iframe
+            
