@@ -91,7 +91,7 @@ class iptv:
             if not pvr_settings.getint("epgPathType") == 0:
                 pvr_settings.set("epgPathType", 0)
             if not pvr_settings.getstr("epgPath") == common.epath:
-                pvr_settings.set("epgPath", cfg.epath)
+                pvr_settings.set("epgPath", common.epath)
             iptv.reload_pvr()
 
     @staticmethod
