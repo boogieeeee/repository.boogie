@@ -47,19 +47,20 @@ def patchsmu(smudir):
 
     with hay.stack("smupatch") as smuhay:
         smupatch = smuhay.find("smupatch").data
-        with open(os.path.join(smudir, "..", "script.module.resolveurl.json")) as vf:
+        with open(os.path.join(smudir, "..", "ResolveURL.json")) as vf:
             versioncommit = json.load(vf)
         versioncommit = versioncommit.get("latest")
         pldir = addon.get_addon("plugin.program.boogie-players").getAddonInfo("path")
         if not smupatch.get("versioncommit") == versioncommit:
             # first remove xbmcaddon referenced to script.module.urlresolver
-            files = [(["lib", "resolveurl", "lib", "log_utils.py"], 1),
-                     (["lib", "resolveurl", "lib", "kodi.py"], 1),
-                     (["lib", "resolveurl", "common.py"], 2),
-                     (["lib", "resolveurl", "lib", "CustomProgressDialog.py"], 1),
+            files = [(["script.module.resolveurl", "lib", "resolveurl", "lib", "log_utils.py"], 1),
+                     (["script.module.resolveurl", "lib", "resolveurl", "lib", "kodi.py"], 1),
+                     (["script.module.resolveurl", "lib", "resolveurl", "common.py"], 2),
+                     (["script.module.resolveurl", "lib", "resolveurl", "lib", "CustomProgressDialog.py"], 1),
                      ]
             for fpaths, patchtype in files:
                 fpath = os.path.join(smudir, *fpaths)
+                print(fpath)
                 with open(fpath, "r") as f:
                     contents = f.read()
                 if patchtype == 1:
@@ -112,9 +113,8 @@ class smu(linkplayerextension):
 
     def init(self):
         uname, branch, commit = getconfig("smu")
-        ghub.load("bstrdsmkr", "script.module.cryptopy", "master", None, ["lib"])
         ghub.load("romanvm", "kodi.six", "master", None, ["script.module.kodi-six", "libs"])
-        patchsmu(ghub.load(uname, "script.module.resolveurl", branch, commit, ["lib"]))
+        patchsmu(ghub.load(uname, "ResolveURL", branch, commit, ["script.module.resolveurl", "lib"]))
         from resolveurl import hmf
         self.hmf = hmf.HostedMediaFile
 
