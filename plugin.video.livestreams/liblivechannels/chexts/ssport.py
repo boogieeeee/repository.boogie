@@ -32,6 +32,7 @@ class ssport1(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "ssport"
     selcuk_name = "ssport"
+    selcuk_mobile = "73"
     ses_ids = ["ssport-live"]
     selcuk_adaptive = False
     ses_adaptive = False
@@ -42,6 +43,7 @@ class ssport2(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/tr/thumb/e/ed/S_Sport_2_logo.jpg/800px-S_Sport_2_logo.png"
     categories = [u"Türkçe", u"Spor"]
     selcuk_name = "ssport2"
+    selcuk_mobile = "74"
     ses_ids = ["ssport2-live"]
     selcuk_adaptive = False
     ses_adaptive = False

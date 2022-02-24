@@ -7,6 +7,14 @@ try:
         index = "polsat:polsatsport:"
         minepg = 1
 
+    class testpolsatextra(ChannelTest, unittest.TestCase):
+        index = "polsat:polsatsportextra:"
+        minepg = 1
+
+    class testpolsatnews(ChannelTest, unittest.TestCase):
+        index = "polsat:polsatsportnews:"
+        minepg = 1
+
 except ImportError:
     pass
 
@@ -15,6 +23,7 @@ from liblivechannels.chexts.scrapertools.multi import multi
 from liblivechannels import scraper
 from liblivechannels import programme
 from tinyxbmc import net
+from tinyxbmc import tools
 import json
 from datetime import datetime
 
@@ -65,6 +74,7 @@ def iterprogrammes(polsatname):
             if channel["title"] == polsatname:
                 for prog in channel["programs"]:
                     cur_start = datetime.fromtimestamp(prog["emissionDate"] / 1000)
+                    cur_start.replace(tzinfo=tools.tz_utc())
                     if prevargs:
                         kwargs = {"end": cur_start}
                         kwargs.update(prevargs)
