@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.10">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.11">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.six" />
 		<import addon="script.module.ghub"/>
 		<import addon="plugin.program.vods-players"/>
+        <import addon="script.module.certifi" />
+        <import addon="plugin.video.youtube" optional="true" />
+        <import addon="script.module.python.twitch" optional="true" />
 	</requires>
 	<extension point="xbmc.python.pluginsource" library="addon.py">
 		<provides>executable</provides>
@@ -100,7 +103,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.26">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.27">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
