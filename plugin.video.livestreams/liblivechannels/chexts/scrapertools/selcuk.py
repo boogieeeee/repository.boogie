@@ -3,13 +3,19 @@ try:
     import unittest
     import test
 
-    class TestChannel(unittest.TestCase):
-        def test_list(self):
+    class TestSelcuk(unittest.TestCase):
+        def test_selcuk_list(self):
             chans = len(list(iteratechannels()))
             self.assertTrue(chans > 0, "Selcuk found %s number of channels" % chans)
+
+        def test_selcuk_link(self):
+            test.testlink(self, itermedias("bein1"), 1, "bein1", 0)
+
+        def test_selcuk_mlink(self):
+            test.testlink(self, mobile_itermedias("36"), 1, "nat geo wild", 0)
+
 except ImportError:
     pass
-
 
 from tinyxbmc import tools
 from tinyxbmc import net

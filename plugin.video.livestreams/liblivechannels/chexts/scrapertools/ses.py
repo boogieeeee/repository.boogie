@@ -17,6 +17,16 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
+try:
+    import unittest
+    import test
+
+    class testses(unittest.TestCase):
+        def test_ses_link(self):
+            test.testlink(self, itermedias("beinsport-1-live"), 1, "bein1", 0)
+
+except ImportError:
+    pass
 
 
 from liblivechannels.chexts.scrapertools import normalize
@@ -28,7 +38,7 @@ import base64
 
 import htmlement
 
-domain = "https://www.sestv1.pw/"
+domain = "https://www.sestv2.pw/"
 
 namemap = {"sinema17": "Bein Box Office 1",
            "sinema16": "Dizi TV",
@@ -68,7 +78,8 @@ def itermedias(chid, chids=None, adaptive=True):
                 continue
         if url:
             url = url.decode()
-            yield net.hlsurl(url, headers={"referer": domain}, adaptive=adaptive)
+            if "thief" not in url:
+                yield net.hlsurl(url, headers={"referer": domain}, adaptive=adaptive)
 
 
 def iterpage(xpage):

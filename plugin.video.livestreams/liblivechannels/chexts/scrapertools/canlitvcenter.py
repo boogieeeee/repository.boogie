@@ -3,6 +3,17 @@ Created on Aug 2, 2021
 
 @author: boogie
 '''
+try:
+    import unittest
+    import test
+
+    class testcanli(unittest.TestCase):
+        def test_canli_link(self):
+            test.testlink(self, itermedias("tv8-canli-hd"), 1, "tv8", 0)
+
+except ImportError:
+    pass
+
 from tinyxbmc import net
 import htmlement
 import re

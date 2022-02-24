@@ -3,6 +3,17 @@ Created on Jun 6, 2021
 
 @author: boogie
 '''
+try:
+    import unittest
+    import test
+
+    class testkolay(unittest.TestCase):
+        def test_kolay_link(self):
+            test.testlink(self, itermedias("/tv8-canli-hd"), 1, "tv8", 0)
+
+except ImportError:
+    pass
+
 from tinyxbmc import net
 from liblivechannels import unwise
 

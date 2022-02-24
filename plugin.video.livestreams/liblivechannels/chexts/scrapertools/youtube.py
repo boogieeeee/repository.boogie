@@ -1,3 +1,14 @@
+try:
+    import unittest
+    import test
+
+    class testyt(unittest.TestCase):
+        def test_yt_link(self):
+            test.testlink(self, itermedias("cnnturk", None, None), 1, "bein1", 0)
+
+except ImportError:
+    pass
+
 import json
 import re
 import traceback

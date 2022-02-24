@@ -11,9 +11,26 @@ stubmod.rootpath = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath
 
 import addon
 
-
 base = addon.Base()
 
+
+def testlink(unit, it, minlinks, title, index):
+    valids = []
+    invalids = []
+    for link in tools.safeiter(it):
+        error = base.healthcheck(link)
+        if error is not None:
+            invalids.append((error, link))
+        else:
+            valids.append(link)
+    unit.assertFalse(minlinks > len(valids), "%s, %s, Minimum requried link is %s but available is %s."
+                                             "Invalids:%s"
+                                             "Valids:%s" % (title,
+                                                            index,
+                                                            minlinks,
+                                                            len(valids),
+                                                            invalids,
+                                                            valids))
 
 class ChannelTest():
     minlinks = 1
@@ -27,26 +44,11 @@ class ChannelTest():
                 break
 
     def test_links(self):
-        valids = []
-        invalids = []
         error = None
         if self.channel.checkerrors is not None:
             error = self.channel.checkerrors()
         if error is None:
-            for link in tools.safeiter(self.channel.get()):
-                error = base.healthcheck(link)
-                if error is not None:
-                    invalids.append((error, link))
-                else:
-                    valids.append(link)
-        self.assertFalse(self.minlinks > len(valids), "%s, %s, Minimum requried link is %s but available is %s."
-                                                      "Invalids:%s"
-                                                      "Valids:%s" % (self.channel.title,
-                                                                     self.channel.index,
-                                                                     self.minlinks,
-                                                                     len(valids),
-                                                                     invalids,
-                                                                     valids))
+            testlink(self, self.channel.get(), self.minlinks, self.channel.title, self.channel.index)
 
     def test_thumbnail(self):
         if self.thumbnail:

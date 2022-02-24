@@ -1,3 +1,14 @@
+try:
+    import unittest
+    import test
+
+    class testdaddy(unittest.TestCase):
+        def test_daddy_link(self):
+            test.testlink(self, itermedias(None, "beinsports1turkey"), 1, "Bein1", 0)
+
+except ImportError:
+    pass
+
 from tinyxbmc import net, tools
 from six.moves.urllib import parse
 import htmlement

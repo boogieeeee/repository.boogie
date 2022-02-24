@@ -1,4 +1,10 @@
 # -*- coding: utf-8 -*-
+try:
+    import unittest
+    import test
+except ImportError:
+    pass
+
 import datetime
 import re
 from liblivechannels import programme
