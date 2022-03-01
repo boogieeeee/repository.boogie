@@ -20,5 +20,5 @@ class historytr(multi, scraper):
     title = u"History Channel Turkiye"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/History_Logo.svg/458px-History_Logo.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
-    selcuk_mobile = "40"
-    selcuk_mobile_adaptive = False
+    # selcuk_mobile = "40"
+    # selcuk_mobile_adaptive = False
