@@ -62,7 +62,7 @@ def itermedias(chfilter, isadaptive=True):
             if "id" in chdict:
                 subpage = net.http(links[0], referer=selcukurl, cache=None)
                 olmusmu = re.findall(rgx1, subpage)
-                if len(olmusmu) == 2:
+                if len(olmusmu) == 3:
                     # olmusmu = [parse.unquote(x) for x in olmusmu]
                     keslan = re.search(rgx6, subpage)
                     kourl = "%s://%s/%s" % (up.scheme, up.netloc, keslan.group(1))
@@ -71,8 +71,9 @@ def itermedias(chfilter, isadaptive=True):
                     _radardom = bases.pop(-1)
                     selcukdom = bases.pop(-1)
                     for base in bases:
-                        media = "https://" + base + selcukdom + "/i/" + olmusmu[1] + "/" + chdict["id"] + "/playlist.m3u8" + olmusmu[0]
-                        yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)
+                        if "." not in base:
+                            media = "https://" + base + selcukdom + "/i/" + olmusmu[-1] + "/" + chdict["id"] + "/playlist.m3u8" + olmusmu[-2]
+                            yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)
 
 
 def mobile_itermedias(chid, isadaptive=True):

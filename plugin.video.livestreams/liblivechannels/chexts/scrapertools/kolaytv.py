@@ -21,13 +21,14 @@ import htmlement
 import re
 
 
-domain = "https://www.canlitvizle.life"
+domain = "https://www.donmaztv.com"
 
 rgx = "}\((?:\"|\')(.*?)(?:\"|\')\s*?\,\s*?(?:\"|\')(.*?)(?:\"|\')\s*?\,\s*?(?:\"|\')(.*?)(?:\"|\')\s*?\,\s*?(?:\"|\')(.*?)(?:\"|\')\)"
 rgx2 = "file\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')"
 
 
 def itermedias(chlink, chlinks=None):
+    links = []
     if not chlinks:
         chlinks = [chlink]
     for chlink in chlinks:
@@ -39,4 +40,7 @@ def itermedias(chlink, chlinks=None):
         wise = unwise.unwise(*re.findall(rgx, wise)[0])
         wise = unwise.unwise(*re.findall(rgx, wise)[1])
         media = re.search(rgx2, wise.replace("\\", "")).group(1)
-        yield net.hlsurl(media, headers={"referer": domain + "/"})
+        links.append(net.hlsurl(media, headers={"referer": domain + "/"}))
+    links.reverse()
+    for link in links:
+        yield link

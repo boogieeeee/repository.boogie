@@ -28,7 +28,6 @@ try:
 except ImportError:
     pass
 
-
 from liblivechannels.chexts.scrapertools import normalize
 from tinyxbmc import tools
 from tinyxbmc import net
@@ -38,7 +37,7 @@ import base64
 
 import htmlement
 
-domain = "https://www.sestv2.pw/"
+domain = "https://www.sestv3.pw/"
 
 namemap = {"sinema17": "Bein Box Office 1",
            "sinema16": "Dizi TV",
@@ -64,7 +63,11 @@ def itermedias(chid, chids=None, adaptive=True):
         jsurl = "%s://%s/embed/%s" % (up.scheme, up.netloc, chid)
         data = {"e": 1, "id": int(script.get("data-i"))}
         scode = net.http(jsurl, referer=jsurl,
-                         data=data, headers={"x-requested-with": "XMLHttpRequest"},
+                         data=data, headers={"x-requested-with": "XMLHttpRequest",
+                                             "origin": domain,
+                                             "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
+                                             "accept-encoding": "gzip, deflate, br",
+                                             "accept-language": "en-US,en;q=0.9"},
                          method="POST")
         url = None
         scode = scode.replace("-", "+")

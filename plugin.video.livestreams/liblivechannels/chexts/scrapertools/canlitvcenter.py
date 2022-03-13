@@ -51,5 +51,7 @@ def itermedias(ctvcid, ctvcids=None):
                             if "anahtar" in link:
                                 link = net.absurl(link, script.get("src"))
                                 links[link] = net.hlsurl(link + key.group(1), headers={"referer": domain})
-        for link in links.values():
+        ret_links = list(links.values())
+        ret_links.reverse()
+        for link in ret_links:
             yield link
