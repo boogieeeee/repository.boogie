@@ -86,4 +86,4 @@ class poscitech(vods.movieextension):
         src = re.findall(mrgx, iframe)
         ref = parse.urlparse(iframeu2)
         ref = "%s://%s/" % (ref.scheme, ref.netloc)
-        yield net.hlsurl(src[0], headers={"Referer": ref}, adaptive=False)
+        yield net.hlsurl(src[-1], headers={"Referer": ref}, adaptive=False)
