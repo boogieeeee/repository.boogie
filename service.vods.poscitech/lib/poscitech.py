@@ -79,7 +79,8 @@ class poscitech(vods.movieextension):
 
     def geturls(self, streamid):
         u = "%s/embed/stream-%s.php" % (dom, streamid)
-        iframeu = htmlement.fromstring(net.http(u)).find(".//iframe").get("src")
+        print(u)
+        iframeu = htmlement.fromstring(net.http(u)).find(".//iframe[@id='thatframe']").get("src")
         iframe = net.http(iframeu, referer=u)
         iframeu2 = re.search("iframe\s*?src=(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
         iframe = net.http(iframeu2, referer=iframeu)
