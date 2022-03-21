@@ -31,7 +31,7 @@ def itermedias(dadyid=None, dadyname=None):
         u = getchanurl(dadyname)
     else:
         u = "%s/embed/stream-%s.php" % (dom, dadyid)
-    iframeu = htmlement.fromstring(net.http(u)).find(".//iframe").get("src")
+    iframeu = htmlement.fromstring(net.http(u)).find(".//iframe[@id='thatframe']").get("src")
     iframe = net.http(iframeu, referer=u)
     iframeu2 = re.search("iframe\s*?src=(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
     iframe = net.http(iframeu2, referer=iframeu)
