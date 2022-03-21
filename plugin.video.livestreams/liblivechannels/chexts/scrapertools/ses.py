@@ -48,8 +48,6 @@ namemap = {"sinema17": "Bein Box Office 1",
            "nickeledeon": "Nickelodeon"
            }
 
-ua = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36"
-
 
 def itermedias(chid, chids=None, adaptive=True):
     if not chids:
@@ -64,7 +62,7 @@ def itermedias(chid, chids=None, adaptive=True):
         script = embedpage.find(".//script[@id='v']")
         jsurl = "%s://%s/embed/%s" % (up.scheme, up.netloc, chid)
         data = {"e": 1, "id": int(script.get("data-i"))}
-        scode = net.http(jsurl, referer=jsurl, useragent=ua,
+        scode = net.http(jsurl, referer=jsurl,
                          data=data, headers={"x-requested-with": "XMLHttpRequest",
                                              "origin": domain[:-1],
                                              "content-type": "application/x-www-form-urlencoded; charset=UTF-8",
