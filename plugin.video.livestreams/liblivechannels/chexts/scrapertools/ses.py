@@ -69,7 +69,13 @@ def itermedias(chid, chids=None, adaptive=True):
                                              "accept-encoding": "gzip, deflate, br",
                                              "accept-language": "en-US,en;q=0.9",
                                              "accept": "*/*",
-                                             "Cookie": "pop_2=1; pop_1=1; pop_4=1"},
+                                             "sec-ch-ua-platform": "Linux",
+                                             "origin": "https://www.sestv3.pw",
+                                             "sec-fetch-site": "same-origin",
+                                             "sec-fetch-mode": "cors",
+                                             "sec-fetch-dest": "empty",
+                                             "Cookie": "pop_2=1; pop_1=1; pop_4=1",
+                                             "thief": "boogiepop@gmx.com ulas bana"},
                          method="POST")
         url = None
         scode = scode.replace("-", "+")
