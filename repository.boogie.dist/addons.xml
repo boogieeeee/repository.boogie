@@ -1,109 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.11">
-	<requires>
-		<import addon="plugin.video.vods"/>
-		<import addon="script.module.tinyxbmc"/>
-		<import addon="script.module.six" />
-		<import addon="script.module.ghub"/>
-		<import addon="plugin.program.vods-players"/>
-        <import addon="script.module.certifi" />
-        <import addon="plugin.video.youtube" optional="true" />
-        <import addon="script.module.python.twitch" optional="true" />
-	</requires>
-	<extension point="xbmc.python.pluginsource" library="addon.py">
-		<provides>executable</provides>
-	</extension>
-	<extension library="lib" point="xbmc.python.module" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">Player Interfaces for plugin.video.vods</summary>
-		<description lang="en">Player Interfaces for plugin.video.vods</description>
-		<license>GNU General Public License, v2</license>
-		<language/>
-		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
-		<source/>
-		<website>https://github.com/boogieeeee/repository.boogie</website>
-		<email>boogiepop@gmx.com</email>
-	  </extension>
-	  <tinyxbmc>
-	  	<plugin path="lib" id="vodslinkplayer" module="smu" instance="smu"/>
-	  	<plugin path="lib" id="vodslinkplayer" module="players" instance="streamlink"/>
-	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="plexus"/>
-	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="elementum"/>
-	  	<plugin path="lib" id="vodslinkplayer" module="streams" instance="streams"/>
-	  </tinyxbmc>
-</addon>
-
-<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.4">
+<addon id="service.vods.cartoonhd" name="CartoonHD module for VODS" provider-name="boogie" version="0.0.13">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
-		<import addon="script.module.js2py"/>
 	</requires>
 	<extension point="xbmc.service"></extension>
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
+		<broken>Site No More relevant</broken>
 		<platform>all</platform>
-		<summary lang="en">Primewire module for VODS</summary>
-		<description lang="en">Primewire module for VODS</description>
+		<summary lang="en">CartoonHD module for VODS</summary>
+		<description lang="en">CartoonHD module for VODS</description>
 		<license>GNU General Public License, v2</license>
 		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
 		<website>https://github.com/boogieeeee/repository.boogie</website>
 		<email>boogiepop@gmx.com</email>
 	</extension>
 	<tinyxbmc>
-	  	<plugin path="lib" id="vodsmovie" module="primewire" instance="pwmovies"/>
-	  	<plugin path="lib" id="vodsshow" module="primewire" instance="pwseries"/>
+	  	<plugin path="lib" id="vodsmovie" module="cartoonhd" instance="cartoonhdmovies"/>
+	  	<plugin path="lib" id="vodsshow" module="cartoonhd" instance="cartoonhdseries"/>
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.f1full" name="F1full module for VODS" provider-name="boogie" version="0.0.2">
-	<requires>
-		<import addon="plugin.video.vods"/>
-		<import addon="script.module.htmlement"/>
-		<import addon="script.module.chromium"/>
-	</requires>
-	<extension point="xbmc.service"></extension>
-	<extension library="lib" point="xbmc.python.module" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">F1full module for VODS</summary>
-		<description lang="en">F1full module for VODS</description>
-		<license>GNU General Public License, v2</license>
-		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
-		<website>https://github.com/boogieeeee/repository.boogie</website>
-		<email>boogiepop@gmx.com</email>
-	</extension>
-	<tinyxbmc>
-	  	<plugin path="lib" id="vodsshow" module="f1" instance="full"/>
-	</tinyxbmc>
-</addon>
-
-<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.8">
-	<requires>
-
-		<import addon="plugin.video.vods"/>
-		<import addon="script.module.htmlement"/>
-		<import addon="script.module.chromium"/>
-	</requires>
-	<extension point="xbmc.service"></extension>
-	<extension library="lib" point="xbmc.python.module" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">Animeturk module for VODS</summary>
-		<description lang="en">Animeturk module for VODS</description>
-		<license>GNU General Public License, v2</license>
-		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
-		<website>https://github.com/boogieeeee/repository.boogie</website>
-		<email>boogiepop@gmx.com</email>
-	</extension>
-	<tinyxbmc>
-	  	<plugin path="lib" id="vodsshow" module="animeturk" instance="animeturk"/>
-	</tinyxbmc>
-</addon>
-
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.32">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.33">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -161,63 +81,26 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.cartoonhd" name="CartoonHD module for VODS" provider-name="boogie" version="0.0.13">
+<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.8">
 	<requires>
+
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
+		<import addon="script.module.chromium"/>
 	</requires>
 	<extension point="xbmc.service"></extension>
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
-		<broken>Site No More relevant</broken>
 		<platform>all</platform>
-		<summary lang="en">CartoonHD module for VODS</summary>
-		<description lang="en">CartoonHD module for VODS</description>
+		<summary lang="en">Animeturk module for VODS</summary>
+		<description lang="en">Animeturk module for VODS</description>
 		<license>GNU General Public License, v2</license>
 		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
 		<website>https://github.com/boogieeeee/repository.boogie</website>
 		<email>boogiepop@gmx.com</email>
 	</extension>
 	<tinyxbmc>
-	  	<plugin path="lib" id="vodsmovie" module="cartoonhd" instance="cartoonhdmovies"/>
-	  	<plugin path="lib" id="vodsshow" module="cartoonhd" instance="cartoonhdseries"/>
-	</tinyxbmc>
-</addon>
-
-    <addon id="repository.boogie" name="Boogie Kodi Repo" version="0.0.4" provider-name="boogie">
-        <requires>
-        </requires>
-        <extension point="xbmc.addon.repository" name="Boogie Kodi Repo">
-            <info compressed="false">https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/addons.xml</info>
-            <checksum>https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/addons.xml.md5</checksum>
-            <datadir zip="true">https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/</datadir>
-            <hashes>false</hashes>
-        </extension>
-        <extension point="xbmc.addon.metadata">
-            <summary>This is the personal repo published by me for me, in the name of science</summary>
-            <description>This is the personal repo published by me for me, in the name of science</description>
-            <platform>all</platform>
-    </extension>
-</addon>
-
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.0.8">
-	<requires>
-		<import addon="plugin.video.vods"/>
-		<import addon="script.module.htmlement"/>
-	</requires>
-	<extension point="xbmc.service"></extension>
-	<extension library="lib" point="xbmc.python.module" />
-	<extension point="xbmc.addon.metadata">
-		<platform>all</platform>
-		<summary lang="en">POSCITECH module for VODS</summary>
-		<description lang="en">POSCITECH module for VODS</description>
-		<license>GNU General Public License, v2</license>
-		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
-		<website>https://github.com/boogieeeee/repository.boogie</website>
-		<email>boogiepop@gmx.com</email>
-	</extension>
-	<tinyxbmc>
-	  	<plugin path="lib" id="vodsmovie" module="poscitech" instance="poscitech"/>
+	  	<plugin path="lib" id="vodsshow" module="animeturk" instance="animeturk"/>
 	</tinyxbmc>
 </addon>
 
@@ -241,5 +124,122 @@
 	<tinyxbmc>
 	  	<plugin path="lib" id="vodsmovie" module="webteizle" instance="webteizle"/>
 	</tinyxbmc>
+</addon>
+
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.11">
+	<requires>
+		<import addon="plugin.video.vods"/>
+		<import addon="script.module.tinyxbmc"/>
+		<import addon="script.module.six" />
+		<import addon="script.module.ghub"/>
+		<import addon="plugin.program.vods-players"/>
+        <import addon="script.module.certifi" />
+        <import addon="plugin.video.youtube" optional="true" />
+        <import addon="script.module.python.twitch" optional="true" />
+	</requires>
+	<extension point="xbmc.python.pluginsource" library="addon.py">
+		<provides>executable</provides>
+	</extension>
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Player Interfaces for plugin.video.vods</summary>
+		<description lang="en">Player Interfaces for plugin.video.vods</description>
+		<license>GNU General Public License, v2</license>
+		<language/>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<source/>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+		<email>boogiepop@gmx.com</email>
+	  </extension>
+	  <tinyxbmc>
+	  	<plugin path="lib" id="vodslinkplayer" module="smu" instance="smu"/>
+	  	<plugin path="lib" id="vodslinkplayer" module="players" instance="streamlink"/>
+	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="plexus"/>
+	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="elementum"/>
+	  	<plugin path="lib" id="vodslinkplayer" module="streams" instance="streams"/>
+	  </tinyxbmc>
+</addon>
+
+<addon id="service.vods.f1full" name="F1full module for VODS" provider-name="boogie" version="0.0.2">
+	<requires>
+		<import addon="plugin.video.vods"/>
+		<import addon="script.module.htmlement"/>
+		<import addon="script.module.chromium"/>
+	</requires>
+	<extension point="xbmc.service"></extension>
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">F1full module for VODS</summary>
+		<description lang="en">F1full module for VODS</description>
+		<license>GNU General Public License, v2</license>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+		<email>boogiepop@gmx.com</email>
+	</extension>
+	<tinyxbmc>
+	  	<plugin path="lib" id="vodsshow" module="f1" instance="full"/>
+	</tinyxbmc>
+</addon>
+
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.0.8">
+	<requires>
+		<import addon="plugin.video.vods"/>
+		<import addon="script.module.htmlement"/>
+	</requires>
+	<extension point="xbmc.service"></extension>
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">POSCITECH module for VODS</summary>
+		<description lang="en">POSCITECH module for VODS</description>
+		<license>GNU General Public License, v2</license>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+		<email>boogiepop@gmx.com</email>
+	</extension>
+	<tinyxbmc>
+	  	<plugin path="lib" id="vodsmovie" module="poscitech" instance="poscitech"/>
+	</tinyxbmc>
+</addon>
+
+<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.4">
+	<requires>
+		<import addon="plugin.video.vods"/>
+		<import addon="script.module.htmlement"/>
+		<import addon="script.module.js2py"/>
+	</requires>
+	<extension point="xbmc.service"></extension>
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Primewire module for VODS</summary>
+		<description lang="en">Primewire module for VODS</description>
+		<license>GNU General Public License, v2</license>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+		<email>boogiepop@gmx.com</email>
+	</extension>
+	<tinyxbmc>
+	  	<plugin path="lib" id="vodsmovie" module="primewire" instance="pwmovies"/>
+	  	<plugin path="lib" id="vodsshow" module="primewire" instance="pwseries"/>
+	</tinyxbmc>
+</addon>
+
+    <addon id="repository.boogie" name="Boogie Kodi Repo" version="0.0.4" provider-name="boogie">
+        <requires>
+        </requires>
+        <extension point="xbmc.addon.repository" name="Boogie Kodi Repo">
+            <info compressed="false">https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/addons.xml</info>
+            <checksum>https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/addons.xml.md5</checksum>
+            <datadir zip="true">https://raw.githubusercontent.com/boogieeeee/repository.boogie/master/repository.boogie.dist/</datadir>
+            <hashes>false</hashes>
+        </extension>
+        <extension point="xbmc.addon.metadata">
+            <summary>This is the personal repo published by me for me, in the name of science</summary>
+            <description>This is the personal repo published by me for me, in the name of science</description>
+            <platform>all</platform>
+    </extension>
 </addon>
 </addons>
