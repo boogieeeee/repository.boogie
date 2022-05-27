@@ -24,7 +24,7 @@ for target in ["util.py", "EPG.py"]:
         tcont = re.sub("plugin\.video\.ardundzdf", "plugin.video.livestreams", f.read())
         tcont = re.sub("xbmcaddon.Addon\(id=ADDON_ID\)", "xbmcaddon.Addon(ADDON_ID)", tcont)
         tcont = re.sub("ADDON_PATH[\s\t]*?=[\s\t]*?SETTINGS.getAddonInfo.+?\n", "ADDON_PATH = '%s'\n" % ardundzdf, tcont)
-        tcont = re.sub("USERDATA[\s\t]*?=[\s\t]*?xbmc.translatePath.+?\n", "USERDATA = '%s'\n" % os.path.abspath(os.path.join(addon.get_addondir("plugin.video.livestreams"), "")), tcont)
+        tcont = re.sub("USERDATA[\s\t]*?=[\s\t]*?xbmcvfs.translatePath.+?\n", "USERDATA = '%s'\n" % os.path.abspath(os.path.join(addon.get_addondir("plugin.video.livestreams"), "")), tcont)
         tcont = re.sub("HANDLE[\s\t]*?=[\s\t]*?int.+?\n", "HANDLE = 1", tcont)
         tcont = re.sub("int\(SETTINGS\.getSetting\('pref_tv_store_days'\)\)", "1", tcont)
     with open(tfile, "w", encoding="utf-8") as f:

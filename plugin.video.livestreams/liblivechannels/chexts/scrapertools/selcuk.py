@@ -29,7 +29,7 @@ import base64
 
 maxlink = 5
 subpath = None
-girisurl = "https://giris1.selcuksportshdgiris13.com/"
+girisurl = "https://www.selcuksportshd78.com/"
 rgx1 = "\s*[a-z]+\s?\:\s?(?:\'|\")(.+?)(?:\'|\")"
 rgx2 = "window\.streamradardomil\s*?\=\s*?(.+?)\;"
 rgx3 = "window\.streamradardomil\s*?\=\s*?(.+?)\;"
