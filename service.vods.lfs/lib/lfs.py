@@ -22,6 +22,7 @@ import vods
 from tinyxbmc import const
 from tinyxbmc import net
 import liblfs
+import chanmeta
 
 
 MAXCHAN = 30
@@ -39,15 +40,15 @@ class lfs(vods.movieextension):
 
     def getmovies(self, cat=None):
         for i in range(1, MAXCHAN + 1):
-            chname = "Channel"
+            chname = chanmeta.chnames.get(i) or "Channel (#%s)" % i
             if self.setting.getbool("verify"):
                 url = liblfs.get(i)
                 if url:
                     resp = net.http(url.url, headers=url.headers, method="HEAD", cache=None)
                     if resp.status_code == 200:
-                        self.additem("%s (#%s)" % (chname, i), url)
+                        self.additem(chname, url)
             else:
-                self.additem("%s (#%s)" % (chname, i), i)
+                self.additem(chname, i)
 
     def geturls(self, vid):
         if self.setting.getbool("verify"):
