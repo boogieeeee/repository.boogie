@@ -1,5 +1,5 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
-		<setting default="webteizle.vip" id="domain" label="Domain" type="text"/>
+		<setting default="webteizle1.com" id="domain" label="Domain" type="text"/>
 	</category>
 </settings>
