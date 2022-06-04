@@ -15,7 +15,7 @@ class base:
     useaddonplayers = False
 
     def scrapegrid(self, search=None, genre=None):
-        domain = "https://%s" % self.setting.getstr("domain")
+        domain = "https://%s/filter" % self.setting.getstr("domain")
         query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending"}
         if self.page:
             query["page"] = self.page
