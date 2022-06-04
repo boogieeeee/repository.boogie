@@ -81,7 +81,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.lfs" name="LFS module for VODS" provider-name="boogie" version="0.0.1">
+<addon id="service.vods.lfs" name="LFS module for VODS" provider-name="boogie" version="0.0.2">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
