@@ -19,15 +19,12 @@
 '''
 
 import vods
-import re
-import htmlement
-import json
-from tinyxbmc import net
 from tinyxbmc import const
+from tinyxbmc import net
+import liblfs
 
 
-dom = "https://soccerstreamslive.co"
-streamdom = "https://cloudstreams.org"
+MAXCHAN = 30
 
 
 class lfs(vods.movieextension):
@@ -41,16 +38,19 @@ class lfs(vods.movieextension):
     art = {}
 
     def getmovies(self, cat=None):
-        for i in range(1, 30 + 1):
+        for i in range(1, MAXCHAN + 1):
             chname = "Channel"
-            self.additem("%s (#%s)" % (chname, i), i)
+            if self.setting.getbool("verify"):
+                url = liblfs.get(i)
+                if url:
+                    resp = net.http(url.url, headers=url.headers, method="HEAD", cache=None)
+                    if resp.status_code == 200:
+                        self.additem("%s (#%s)" % (chname, i), url)
+            else:
+                self.additem("%s (#%s)" % (chname, i), i)
 
-    def geturls(self, streamid):
-        u = "%s/hdl%s.html" % (dom, streamid)
-        iframeu = htmlement.fromstring(net.http(u)).find(".//iframe").get("src")
-        iframe = net.http(iframeu, referer=u)
-        fid = re.search("fid\s*?\=\*?(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
-        cloud = net.http("%s/cloud.php?player=desktop&live=%s" % (streamdom, fid))
-        url = re.search('return\((\[.+?\])', cloud).group(1)
-        url = "".join(json.loads(url))
-        yield net.hlsurl(url, headers={"Referer": streamdom}, adaptive=True)
+    def geturls(self, vid):
+        if self.setting.getbool("verify"):
+            yield vid
+        else:
+            yield liblfs.get(vid)
