@@ -204,7 +204,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.0.8">
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.0.9">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
