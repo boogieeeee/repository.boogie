@@ -42,6 +42,7 @@ class trtspor(multi, scraper):
     ses_id = "trt3-spor-izle"
     selcuk_name = "trtspor"
     kolay_ids = ["/trt-spor/1", "/trt-spor/3"]
+    canlitv_ids = ["trt-spor", "trt-spor/2", "trt-spor/3"]
     ses_adaptive = False
     selcuk_adaptive = False
 
