@@ -21,6 +21,7 @@
 import vods
 import re
 import htmlement
+from datetime import datetime, timedelta
 from tinyxbmc import net
 from tinyxbmc import const
 from tinyxbmc import tools
@@ -29,9 +30,32 @@ from six.moves.urllib import parse
 
 # references: "https://poscitech.club/tv/ch1.php, https://daddylive.me/"
 
-dom = "https://daddylive.me"
 mrgx = "source\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")"
+dtrgx = "([0-9]{2})[\sa-zA-Z]+(january|february|march|april|may|june|july|august|october|november|december)\s+([0-9]{4}).+?GMT\+([0-9]+)"
 
+monthtoint = {"january": 1,
+              "february": 2,
+              "march": 3,
+              "april": 4,
+              "may": 5,
+              "june": 6,
+              "july": 7,
+              "august": 8,
+              "october": 9,
+              "november": 10,
+              "september": 11,
+              "december": 12}
+
+
+def getschdate(page):
+    dtmatch = re.search(dtrgx, page, re.IGNORECASE)
+    day = int(dtmatch.group(1))
+    month = monthtoint[dtmatch.group(2).lower().strip()]
+    year = int(dtmatch.group(3))
+    tz = tools.tz_utc()
+    tz.settimezone(int(dtmatch.group(4)))
+    dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
+    return dtob
 
 class poscitech(vods.movieextension):
     usedirect = True
@@ -47,25 +71,47 @@ class poscitech(vods.movieextension):
            }
 
     def getcategories(self):
-        page = self.download(dom)
-        for m in re.finditer("hr\>(.+?)\<(.+?)(?:<\/p|<br\s\/>)", page):
-            title = m.group(1)
-            txt = m.group(2)
-            channels = []
-            for m in re.finditer("\<a.+?\>(.+?)\<\/a\>", txt):
-                chnum = re.search("\(CH\-([0-9]+)\)", m.group(1))
-                if chnum:
-                    chnum = int(chnum.group(1))
-                    channels.append((m.group(1), chnum))
-            if channels:
-                self.additem(title, channels)
-
+        events = []
+        page = self.download("https://" + self.setting.getstr("domain"))
+        lines = page.split("\n")
+        sch_date = getschdate(page)
+        loctz = tools.tz_local()
+        for lineno, line in enumerate(lines):
+            sport = re.search("<h4><span.+?>(.+?)<", line)
+            if sport:
+                prevhour = -1
+                for m in re.finditer("hr\>(.+?)\<(.+?)(?:<\/p|<br\s\/>)", lines[lineno + 1]):
+                    title = m.group(1)
+                    print(title)
+                    evdtmatch = re.search("([0-9]{2})\:([0-9]{2})(.+)", title)
+                    title = evdtmatch.group(3).strip()
+                    hour = int(evdtmatch.group(1))
+                    minute = int(evdtmatch.group(2))
+                    evdate = datetime(hour=hour, minute=minute,
+                                      year=sch_date.year, month=sch_date.month, day=sch_date.day,
+                                      tzinfo=sch_date.tzinfo)
+                    if prevhour > hour:
+                        evdate = evdate + timedelta(hours=24)
+                    prevhour = hour
+                    txt = m.group(2)
+                    channels = []
+                    for m in re.finditer("\<a.+?\>(.+?)\<\/a\>", txt):
+                        chnum = re.search("\(CH\-([0-9]+)\)", m.group(1))
+                        if chnum:
+                            chnum = int(chnum.group(1))
+                            channels.append((m.group(1), chnum))
+                    if channels:
+                        events.append([evdate.astimezone(loctz), sport.group(1), title, channels])
+        for evdate, sport, title, channels in sorted(events):
+            title = "%02d.%02d %02d:%02d | %s | %s" % (evdate.day, evdate.month, evdate.hour, evdate.minute,
+                                                    sport, title)
+            self.additem(title, channels)                
     def getmovies(self, cat=None):
         if cat:
             for ctxt, cnum in cat:
                 self.additem(ctxt, cnum)
         else:
-            page = self.download(dom + "/24-hours-channels.php")
+            page = self.download("https://" + self.setting.getstr("domain") + "/24-hours-channels.php")
             chnames = {}
             for a in htmlement.fromstring(page).iterfind(".//table/.//a"):
                 href = a.get("href")
@@ -78,9 +124,9 @@ class poscitech(vods.movieextension):
                 self.additem("%s (#%s)" % (chname, i), i)
 
     def geturls(self, streamid):
-        u = "%s/embed/stream-%s.php" % (dom, streamid)
-        print(u)
-        iframeu = htmlement.fromstring(net.http(u)).find(".//iframe[@id='thatframe']").get("src")
+        u = "https://%s/embed/stream-%s.php" % (self.setting.getstr("domain"), streamid)
+        xiframe = htmlement.fromstring(net.http(u, referer="https://" + self.setting.getstr("domain")))
+        iframeu = xiframe.find(".//iframe[@id='thatframe']").get("src")
         iframe = net.http(iframeu, referer=u)
         iframeu2 = re.search("iframe\s*?src=(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
         iframe = net.http(iframeu2, referer=iframeu)
