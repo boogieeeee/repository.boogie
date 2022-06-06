@@ -7,6 +7,7 @@
 		<project>script.module.ghub</project>
 		<project>script.module.htmlement</project>
 		<project>script.module.tinyxbmc</project>
+		<project>service.vods.poscitech</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
