@@ -76,6 +76,8 @@ class iptv:
         if iptv.isenabled():
             time.sleep(1)
             addon.toggle_addon(IPTVSIMPLE)
+            if cfg.pvr:
+                iptv.config_pvr()
             time.sleep(1)
             addon.toggle_addon(IPTVSIMPLE)
 

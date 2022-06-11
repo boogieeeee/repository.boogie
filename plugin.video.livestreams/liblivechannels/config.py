@@ -113,6 +113,14 @@ class config(object):
         return path
 
     @property
+    def ffmpegdirect(self):
+        if addon.has_addon("inputstream.ffmpegdirect"):
+            print(self.setting.getbool("ffmpegdirect"))
+            return self.setting.getbool("ffmpegdirect")
+        else:
+            return False
+
+    @property
     def port(self):
         return self.setting.getint("port")
 

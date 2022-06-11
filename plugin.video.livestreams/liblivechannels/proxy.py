@@ -15,6 +15,7 @@ from thirdparty import m3u8
 from tinyxbmc import net
 from tinyxbmc import tools
 from tinyxbmc import const
+from tinyxbmc import addon
 
 from liblivechannels import log
 from liblivechannels import hls
@@ -148,7 +149,7 @@ class Handler(BaseHTTPRequestHandler):
                         pnames.append(playlistname)
                 playlisturl = None
                 if url:
-                    if url.inputstream:
+                    if url.inputstream and not self.base.config.ffmpegdirect:
                         self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
                         self.writeline("#KODIPROP:inputstreamclass=inputstream.adaptive")
                         self.writeline("#KODIPROP:inputstream.adaptive.manifest_type=%s" % url.manifest)
@@ -159,6 +160,10 @@ class Handler(BaseHTTPRequestHandler):
                                 self.writeline('#KODIPROP:inputstream.adaptive.license_key=%s' % url.kodilurl)
                             playlisturl = net.tokodiurl(url.url, headers=url.headers, pushverify="false", pushua=const.USERAGENT)
                         self.writeline("#KODIPROP:inputstream.adaptive.stream_headers=%s" % const.USERAGENT)
+                    elif addon.has_addon("inputstream.ffmpegdirect"):
+                        self.writeline("#KODIPROP:inputstreamaddon=inputstream.ffmpegdirect")
+                        self.writeline("#KODIPROP:inputstreamclass=inputstream.ffmpegdirect")
+                        self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
                 self.writeline('#EXTINF:0 tvg-logo="%s" tvg-id="%s" group-title="%s",%s' % (icon,
                                                                                             index,
                                                                                             ";".join(cats + pnames),
