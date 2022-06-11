@@ -12,6 +12,11 @@ try:
     class testtrtsporyildiz(ChannelTest, unittest.TestCase):
         index = "trt1:trtsporyildiz:"
 
+    class testtrthaber(ChannelTest, unittest.TestCase):
+        index = "trt1:trthaber:"
+        
+    class testtrtcocuk(ChannelTest, unittest.TestCase):
+        index = "trt1:trtcocuk:"
 
 except ImportError:
     pass
@@ -55,3 +60,22 @@ class trtsporyildiz(multi, scraper):
     canlitv_ids = "trt-spor-yildiz/1", "trt-spor-yildiz/2", "trt-spor-yildiz/3"
     # selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"
+    
+
+class trthaber(multi, scraper):
+    title = u"TRT Haber"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/TRT_Haber_Eyl%C3%BCl_2020_Logo.svg/2560px-TRT_Haber_Eyl%C3%BCl_2020_Logo.svg.png"
+    categories = [u"Türkçe", u"Haber"]
+    yayin_id = "trt-haber"
+    youtube_chanid = "trthaber"
+    kolay_ids = ["/trt-haber/1", "/trt-haber/2", "/trt-haber/3", "/trt-haber/4"]
+    canlitv_ids = ["trt-haber/1", "trt-haber/2"]
+    
+
+class trtcocuk(multi, scraper):
+    title = u"TRT Çocuk"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TRT_%C3%87ocuk_logo_%282021%29.svg/2560px-TRT_%C3%87ocuk_logo_%282021%29.svg.png"
+    categories = [u"Türkçe", u"Çocuk"]
+    yayin_id = "trt-cocuk"
+    kolay_ids = ["/trt-cocuk/1", "/trt-cocuk/2"]
+    canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
