@@ -25,5 +25,5 @@ class cntr(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/200px-Cartoon_Network_2010_logo.svg.png"
     categories = [u"Türkçe", u"Realiti"]
     kolay_ids = ["/cartoon-network", "/cartoon-network/2"]
-    yayin_name = "cartoon-network"
+    yayin_id = "cartoon-network"
     sesid = "cortoon-network-izle"
