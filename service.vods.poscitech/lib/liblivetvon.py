@@ -15,20 +15,20 @@ from six.moves.urllib import parse
 setting = kodisetting("service.vods.poscitech")
 domain = "https://" + setting.getstr("domain")
 mrgx = "source\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")"
-dtrgx = "([0-9]{2})[\sa-zA-Z]+(january|february|march|april|may|june|july|august|october|november|december)\s+([0-9]{4}).+?GMT\+([0-9]+)"
+dtrgx = "<h3>.+?([0-9]+).+?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*?([0-9]{4})"
 
-monthtoint = {"january": 1,
-              "february": 2,
-              "march": 3,
-              "april": 4,
+monthtoint = {"jan": 1,
+              "feb": 2,
+              "mar": 3,
+              "apr": 4,
               "may": 5,
-              "june": 6,
-              "july": 7,
-              "august": 8,
-              "october": 9,
-              "november": 10,
-              "september": 11,
-              "december": 12}
+              "jun": 6,
+              "jul": 7,
+              "aug": 8,
+              "oct": 9,
+              "nov": 10,
+              "sep": 11,
+              "dec": 12}
 
 
 def geturl(streamid):
@@ -36,10 +36,8 @@ def geturl(streamid):
     xiframe = htmlement.fromstring(net.http(u, referer=domain))
     iframeu = xiframe.find(".//iframe[@id='thatframe']").get("src")
     iframe = net.http(iframeu, referer=u)
-    iframeu2 = re.search("iframe\s*?src=(?:\'|\")(.+?)(?:\'|\")", iframe).group(1)
-    iframe = net.http(iframeu2, referer=iframeu)
     src = re.findall(mrgx, iframe)
-    ref = parse.urlparse(iframeu2)
+    ref = parse.urlparse(iframeu)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
     return net.hlsurl(src[-1], headers={"Referer": ref}, adaptive=False)
 
@@ -50,7 +48,7 @@ def getschdate(page):
     month = monthtoint[dtmatch.group(2).lower().strip()]
     year = int(dtmatch.group(3))
     tz = tools.tz_utc()
-    tz.settimezone(int(dtmatch.group(4)))
+    tz.settimezone(1)
     dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
     return dtob
 
@@ -91,7 +89,7 @@ def getevents():
 
 
 def getchmeta(numbyname=False, nameidbynum=False):
-    page = net.http(domain + "/24-hours-channels.php", cache=60 * 24)
+    page = net.http(domain + "/24-7-channels.php", cache=60 * 24)
     chnames = {}
     for a in htmlement.fromstring(page).iterfind(".//div[@class='grid-item']/a"):
         href = a.get("href")

@@ -21,7 +21,7 @@
 import vods
 
 from tinyxbmc import const
-import libdaddy
+import liblivetvon
 
 
 class poscitech(vods.movieextension):
@@ -38,9 +38,9 @@ class poscitech(vods.movieextension):
            }
 
     def getcategories(self):
-        for evdate, sport, title, channels in sorted(libdaddy.getevents()):
+        for evdate, sport, title, channels in sorted(liblivetvon.getevents()):
             title = "%02d.%02d %02d:%02d | %s | %s" % (evdate.day, evdate.month, evdate.hour, evdate.minute,
-                                                    sport, title)
+                                                       sport, title)
             self.additem(title, channels)
 
     def getmovies(self, cat=None):
@@ -48,10 +48,10 @@ class poscitech(vods.movieextension):
             for ctxt, cnum in cat:
                 self.additem(ctxt, cnum)
         else:
-            chnames = libdaddy.getchmeta(numbyname=True)
+            chnames = liblivetvon.getchmeta(numbyname=True)
             for i in range(1, 200 + 1):
                 chname = chnames.get(i, "Channel")
                 self.additem("%s (#%s)" % (chname, i), i)
 
     def geturls(self, streamid):
-        yield libdaddy.geturl(streamid)
+        yield liblivetvon.geturl(streamid)
