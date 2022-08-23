@@ -75,9 +75,9 @@ class multi:
         if self.ses_id or self.ses_ids:
             for yayin in safeiter(ses.itermedias(self.ses_id, self.ses_ids, self.ses_adaptive)):
                 yield yayin
-        if self.selcuk_mobile:
-            for yayin in safeiter(selcuk.mobile_itermedias(self.selcuk_mobile, self.selcuk_mobile_adaptive)):
-                yield yayin
+        #if self.selcuk_mobile:
+        #    for yayin in safeiter(selcuk.mobile_itermedias(self.selcuk_mobile, self.selcuk_mobile_adaptive)):
+        #        yield yayin
         if self.sports24_id:
             for yayin in safeiter(sports24.itermedias(self.sports24_id)):
                 yield yayin

@@ -10,20 +10,13 @@ except ImportError:
     pass
 
 from tinyxbmc import addon
-from tinyxbmc import tools
+from tinyxbmc import stubmod
 
 daddyaddon = "service.vods.poscitech"
 
 
 def itermedias(dadyid=None, dadyname=None):
-    if tools.isstub():
-        # test things and hackeries
-        from tinyxbmc import stubmod
-        import os
-        import sys
-        sys.path.append(os.path.join(stubmod.rootpath, daddyaddon, "lib"))
-        import liblivetvon
-    elif addon.has_addon(daddyaddon):
+    if addon.has_addon(daddyaddon):
         addon.depend_addon(daddyaddon)
         import liblivetvon
     else:
