@@ -125,8 +125,8 @@ class Handler(BaseHTTPRequestHandler):
                     if resp is not None and not isinstance(resp, Exception):
                         content = resp.content.decode()
                         if content[:7] == "#EXTM3U":
-                            m3file = m3u8.loads(content, uri=u)
-                            m3file.full_uri = u
+                            m3file = m3u8.loads(content, uri=resp.url)
+                            m3file.full_uri = resp.url
                             pgen.add(m3file, headers, forceproxy or chan.usehlsproxy)
                             if pgen.playlists.qsize():
                                 break
