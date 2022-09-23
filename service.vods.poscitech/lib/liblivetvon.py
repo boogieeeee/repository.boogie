@@ -15,7 +15,7 @@ from six.moves.urllib import parse
 setting = kodisetting("service.vods.poscitech")
 domain = "https://" + setting.getstr("domain")
 mrgx = "source\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")"
-dtrgx = "<h3>.+?([0-9]+).+?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*?([0-9]{4})"
+dtrgx = "([0-9]{1,2})[\sa-zA-Z]*?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*?([0-9]{4})"
 
 monthtoint = {"jan": 1,
               "feb": 2,
@@ -60,7 +60,7 @@ def getevents():
     sch_date = getschdate(page)
     loctz = tools.tz_local()
     for lineno, line in enumerate(lines):
-        sport = re.search("<h4><span.+?>(.+?)<", line)
+        sport = re.search("<h2 style.+?>(.+?)<", line)
         if sport:
             prevhour = -1
             for m in re.finditer("hr\>(.+?)\<(.+?)(?:<\/p|<br\s\/>)", lines[lineno + 1]):
