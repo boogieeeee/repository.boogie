@@ -115,7 +115,6 @@ class config(object):
     @property
     def ffmpegdirect(self):
         if addon.has_addon("inputstream.ffmpegdirect"):
-            print(self.setting.getbool("ffmpegdirect"))
             return self.setting.getbool("ffmpegdirect")
         else:
             return False

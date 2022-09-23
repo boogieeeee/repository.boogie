@@ -3,7 +3,7 @@
 		<setting default="false" id="validate" label="Validate Channels on next run" type="bool"/>
 		<setting default="8010" id="port" label="Proxy Server Port" type="number"/>
 		<setting default="false" id="pvr" label="Auto-Configure IPTV Simple On Startup (Requires Restart)" type="bool" enable="System.HasAddon(pvr.iptvsimple)"/>
-		<setting default="false" id="ffmpegdirect" label="Prefer is.ffmpegdirect over is.adaptive (Requires Restart, NO DRM!)" type="bool" enable="System.HasAddon(inputstream.ffmpegdirect)"/>
+		<setting default="false" id="ffmpegdirect" label="Force ffmpeg direct (Requires Restart, NO DRM!)" type="bool" enable="System.AddonIsEnabled(inputstream.ffmpegdirect)"/>
 		<setting default="false" id="record" label="Record IPTVSimple PVR reminder timers" type="bool" enable="System.HasAddon(pvr.iptvsimple)"/>
 		<setting id="pvrlocation" source="auto" option="writeable" label="Location of PVR records" type="folder" enable="eq(-1,true)"/>
 		<setting default="false" id="pvrusetemp" label="Specify Temp Storage Location" type="bool" enable="eq(-2,true)"/>
