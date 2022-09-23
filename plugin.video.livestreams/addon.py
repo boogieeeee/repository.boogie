@@ -97,7 +97,7 @@ class Base(container.container):
         response = self.proxy_get(u, headers)
         if response is None or isinstance(response, Exception) or not response.content[:7].decode() == "#EXTM3U":
             return "M3U8 File does not have correct header"
-        m3u = m3u8.loads(response.content.decode(), u)
+        m3u = m3u8.loads(response.content.decode(), response.url)
         if m3u.is_variant:
             for playlist in m3u.playlists:
                 response = self.proxy_get(playlist.absolute_uri, headers, "HEAD")
