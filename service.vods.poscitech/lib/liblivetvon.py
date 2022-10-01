@@ -39,7 +39,7 @@ def geturl(streamid):
     src = re.findall(mrgx, iframe)
     ref = parse.urlparse(iframeu)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
-    return net.hlsurl(src[-1], headers={"Referer": ref}, adaptive=False)
+    return net.hlsurl(src[-1], headers={"Referer": ref}, adaptive=True)
 
 
 def getschdate(page):
@@ -60,13 +60,12 @@ def getevents():
     sch_date = getschdate(page)
     loctz = tools.tz_local()
     for lineno, line in enumerate(lines):
-        sport = re.search("<h2 style.+?>(.+?)<", line)
+        sport = re.search("<h2 style.+?>.*?([A-Za-z0-9\s\-]+?)<", line)
         if sport:
             prevhour = -1
             for m in re.finditer("hr\>(.+?)\<(.+?)(?:<\/p|<br\s\/>)", lines[lineno + 1]):
                 title = m.group(1)
-                print(title)
-                evdtmatch = re.search("([0-9]{2})\:([0-9]{2})(.+)", title)
+                evdtmatch = re.search("([0-9]{1,2})\:([0-9]{1,2})(.+)", title)
                 title = evdtmatch.group(3).strip()
                 hour = int(evdtmatch.group(1))
                 minute = int(evdtmatch.group(2))
