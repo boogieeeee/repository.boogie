@@ -9,7 +9,7 @@ try:
 
     class testcanli(unittest.TestCase):
         def test_canli_link(self):
-            test.testlink(self, itermedias("tv8-canli-hd"), 1, "tv8", 0)
+            test.testlink(self, itermedias("tv8-canli-hd/2"), 1, "tv8", 0)
 
 except ImportError:
     pass
@@ -31,7 +31,7 @@ def itermedias(ctvcid, ctvcids=None):
     if not ctvcids:
         ctvcids = [ctvcid]
     for ctvcid in ctvcids:
-        links = {}
+        links = []
         u = domain + "/" + ctvcid
         iframe1 = htmlement.fromstring(net.http(u, referer=domain)).find(".//iframe").get("src")
         iframe2 = htmlement.fromstring(net.http(iframe1, referer=u)).find(".//iframe").get("src")
@@ -39,7 +39,7 @@ def itermedias(ctvcid, ctvcids=None):
         media = re.search("file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
         if media:
             link = base64.b64decode(media.group(1)).decode()
-            links[link] = net.hlsurl(link, headers={"referer": domain})
+            links.append(net.hlsurl(link, headers={"referer": domain}))
         else:
             for script in htmlement.fromstring(src).iterfind(".//script"):
                 ssrc = script.get("src")
@@ -50,8 +50,6 @@ def itermedias(ctvcid, ctvcids=None):
                         for link in re.findall(rgxlink, scriptsrc):
                             if "anahtar" in link:
                                 link = net.absurl(link, script.get("src"))
-                                links[link] = net.hlsurl(link + key.group(1), headers={"referer": domain})
-        ret_links = list(links.values())
-        ret_links.reverse()
-        for link in ret_links:
+                                links.append(net.hlsurl(link + key.group(1), headers={"referer": domain}))
+        for link in links:
             yield link
