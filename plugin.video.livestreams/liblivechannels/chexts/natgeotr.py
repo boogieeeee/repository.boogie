@@ -26,8 +26,6 @@ class natgeowild(multi, scraper):
     yayin_name = "natgeowild"
     selcuk_mobile = "36"
     selcuk_mobile_adaptive = False
-    ses_ids = ["national-geo-wild-izle"]
-    ses_adaptive = False
 
 
 class natgeo(multi, scraper):
@@ -35,5 +33,3 @@ class natgeo(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6a/National-Geographic-Logo.svg/640px-National-Geographic-Logo.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "nationalgeographic"
-    # selcuk_mobile = "2"
-    # selcuk_mobile_adaptive = False

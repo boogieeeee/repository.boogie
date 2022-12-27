@@ -26,8 +26,6 @@ class discoverychanneltr(multi, scraper):
     yayin_name = "discovery"
     selcuk_mobile = "38"
     selcuk_mobile_adaptive = False
-    ses_ids = ["discovery-channel-izle"]
-    ses_adaptive = False
 
 
 class discoverysciencetr(multi, scraper):
@@ -37,5 +35,3 @@ class discoverysciencetr(multi, scraper):
     yayin_name = "discoveryscience"
     selcuk_mobile = "39"
     selcuk_mobile_adaptive = False
-    ses_ids = ["discovery-science-izle"]
-    ses_adaptive = False

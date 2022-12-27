@@ -31,12 +31,10 @@ class trt1(multi, scraper):
     icon = "https://www.trt1.com.tr/public/logo/d60ab555-f948-464a-a139-df5410d2a7b5/trt1_logo.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "trt-1"
-    ses_id = "trt1-izle"
     selcuk_name = "trt1"
     kolay_ids = ["/trt-1/1", "/trt-1/2", "/trt-1/3", "/trt-1/4"]
     canlitv_ids = ["trt-1/1", "trt-1/2"]
     selcuk_adaptive = False
-    ses_adaptive = False
 
 
 class trtspor(multi, scraper):
@@ -44,11 +42,9 @@ class trtspor(multi, scraper):
     icon = "https://www.trtspor.com.tr/static/img/trtspor-logo-yeni.png"
     categories = [u"Türkçe", u"Spor"]
     yayin_id = "trt-3"
-    ses_id = "trt3-spor-izle"
     selcuk_name = "trtspor"
     kolay_ids = ["/trt-spor/1", "/trt-spor/3"]
     canlitv_ids = ["trt-spor", "trt-spor/2", "trt-spor/3"]
-    ses_adaptive = False
     selcuk_adaptive = False
 
 

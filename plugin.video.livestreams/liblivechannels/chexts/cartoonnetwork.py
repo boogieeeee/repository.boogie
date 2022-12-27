@@ -26,4 +26,3 @@ class cntr(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     kolay_ids = ["/cartoon-network", "/cartoon-network/2"]
     yayin_id = "cartoon-network"
-    sesid = "cortoon-network-izle"
