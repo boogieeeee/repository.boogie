@@ -24,6 +24,3 @@ class tv100(multi, scraper):
     youtube_chanid = "tv100"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "100"
-
-    def youtube_stream(self, stream):
-        return "ekonomi" not in stream["compactVideoRenderer"]["title"]["runs"][0]["text"].lower()
