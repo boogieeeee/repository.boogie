@@ -5,11 +5,11 @@ try:
 
     class testnatgeowild(ChannelTest, unittest.TestCase):
         index = "natgeotr:natgeowild:"
-        minlinks = 1
+        minlinks = 0
 
     class testnatgeo(ChannelTest, unittest.TestCase):
         index = "natgeotr:natgeo:"
-        minlinks = 1
+        minlinks = 0
 
 except ImportError:
     pass
@@ -24,8 +24,6 @@ class natgeowild(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d6/Nat_Geo_Wild_logo.png/1200px-Nat_Geo_Wild_logo.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "natgeowild"
-    selcuk_mobile = "36"
-    selcuk_mobile_adaptive = False
 
 
 class natgeo(multi, scraper):

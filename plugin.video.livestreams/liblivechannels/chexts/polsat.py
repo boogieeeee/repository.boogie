@@ -43,11 +43,7 @@ class polsatsport(multi, scraper):
     title = "Polsat Sport"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportpoland"
-
-    def get(self):
-        yield net.acestreamurl("acestream://92b6ba09dae4bbb8a67a405125d08ca8d15380ee")
-        for link in multi.get(self):
-            yield link
+    acestreams = ["acestream://92b6ba09dae4bbb8a67a405125d08ca8d15380ee"]
 
     def iterprogrammes(self):
         for p in iterprogrammes("POLSAT Sport"):
@@ -59,9 +55,7 @@ class polsatpremium1(multi, scraper):
     title = "Polsat Sport Premium 1"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportpoland"
-
-    def get(self):
-        yield net.acestreamurl("acestream://4ce55db7e578ff52a6e526cf610e477464b8a99f")
+    acestreams = ["acestream://4ce55db7e578ff52a6e526cf610e477464b8a99f"]
 
     def iterprogrammes(self):
         for p in iterprogrammes("POLSAT Sport Premium 1"):
@@ -73,9 +67,7 @@ class polsatpremium2(multi, scraper):
     title = "Polsat Sport Premium 2"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportpoland"
-
-    def get(self):
-        yield net.acestreamurl("acestream://3147c586346aee00c005d1caa55204d38678c95f")
+    acestreams = ["acestream://3147c586346aee00c005d1caa55204d38678c95f"]
 
     def iterprogrammes(self):
         for p in iterprogrammes("POLSAT Sport Premium 2"):
@@ -87,11 +79,7 @@ class polsatsportextra(multi, scraper):
     title = "Polsat Sport Extra"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportextrapoland"
-
-    def get(self):
-        yield net.acestreamurl("acestream://ef2cf11fc83f4f15a33c9a514a7afd2bce73122f")
-        for link in multi.get(self):
-            yield link
+    acestreams = ["acestream://ef2cf11fc83f4f15a33c9a514a7afd2bce73122f"]
 
 
 class polsatsportnews(multi, scraper):

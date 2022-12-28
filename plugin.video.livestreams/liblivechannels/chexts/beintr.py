@@ -47,6 +47,7 @@ class bein1(multi, scraper):
     selcuk_mobile = "1"
     selcuk_adaptive = False
     dady_name = "beinsports1turkey"
+    acestreams = ["acestream://118416583faa3fb4f03800173429b6b844b43a52"]
 
 
 class bein2(multi, scraper):
@@ -58,6 +59,7 @@ class bein2(multi, scraper):
     selcuk_mobile = "3"
     selcuk_adaptive = False
     dady_name = "beinsports2turkey"
+    acestreams = ["acestream://48bee10b883f17c7186d60f1e8022dca0ba41a05"]
 
 
 class bein3(multi, scraper):
@@ -69,6 +71,7 @@ class bein3(multi, scraper):
     selcuk_mobile = "7"
     selcuk_adaptive = False
     dady_name = "beinsports3turkey"
+    acestreams = ["acestream://ed81c333815247536edfcdb2755147e8c4144d62"]
 
 
 class bein4(multi, scraper):
@@ -80,6 +83,7 @@ class bein4(multi, scraper):
     selcuk_mobile = "29"
     selcuk_adaptive = False
     dady_name = "beinsports4turkey"
+    acestreams = ["acestream://7683cd0cbacf55fa8b39c363219ffba1bc47cf9d"]
 
 
 class beinmax1(multi, scraper):

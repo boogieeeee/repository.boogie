@@ -4,12 +4,12 @@ try:
     from test import ChannelTest
 
     class testdiscovery(ChannelTest, unittest.TestCase):
-        index = "discoverytr:discoverychanneltr:"
-        minlinks = 1
+        index = "discovery:discoverychanneltr:"
+        minlinks = 0
 
     class testdiscoveryscience(ChannelTest, unittest.TestCase):
-        index = "discoverytr:discoverysciencetr:"
-        minlinks = 1
+        index = "discovery:discoverysciencetr:"
+        minlinks = 0
 
 except ImportError:
     pass
@@ -24,8 +24,6 @@ class discoverychanneltr(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/de/thumb/5/5f/Discovery_Channel_HD.svg/2000px-Discovery_Channel_HD.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "discovery"
-    selcuk_mobile = "38"
-    selcuk_mobile_adaptive = False
 
 
 class discoverysciencetr(multi, scraper):
@@ -33,5 +31,3 @@ class discoverysciencetr(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/29/Discovery_Science_2017_Logo.svg/1200px-Discovery_Science_2017_Logo.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "discoveryscience"
-    selcuk_mobile = "39"
-    selcuk_mobile_adaptive = False

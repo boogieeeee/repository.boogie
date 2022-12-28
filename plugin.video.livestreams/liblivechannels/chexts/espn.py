@@ -25,6 +25,7 @@ class espn(multi, scraper):
     sports24_id = "espn"
     dady_name = "espnusa"
     vercel_id = "10179"
+    acestreams = ["acestream://4b4907de51ec11087d4bed5876f2a0c68264f442"]
 
 
 class espn2(multi, scraper):
@@ -33,3 +34,4 @@ class espn2(multi, scraper):
     sports24_id = "espn2"
     dady_name = "espn2usa"
     vercel_id = "12444"
+    acestreams = ["acestream://664eb5fe460b96941aed633959a845b185cd8394"]

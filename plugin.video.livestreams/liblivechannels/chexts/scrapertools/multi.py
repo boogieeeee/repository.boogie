@@ -11,9 +11,12 @@ from liblivechannels.chexts.scrapertools import vercel
 from liblivechannels.chexts.scrapertools import mynetyayin
 
 from tinyxbmc.tools import safeiter
+from tinyxbmc import net
 
 
 class multi:
+    #acestreams
+    acestreams = []
     # kolay tv
     kolay_id = None
     kolay_ids = None
@@ -49,6 +52,8 @@ class multi:
     mynet_yayin = None
 
     def get(self):
+        for acestream in self.acestreams:
+            yield net.acestreamurl(acestream)
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_stream, self.youtube_sindex)):
                 yield yayin
