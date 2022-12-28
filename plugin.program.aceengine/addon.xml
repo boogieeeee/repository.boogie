@@ -1,0 +1,23 @@
+<?xml version='1.0' encoding='UTF-8' standalone='yes'?>
+<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.1">
+	<requires>
+		<import addon="script.module.tinyxbmc"/>
+		<import addon="script.module.six" />
+	</requires>
+	<extension point="xbmc.service" library="service.py" />
+	<extension point="xbmc.python.pluginsource" library="addon.py">
+		<provides>executable</provides>
+	</extension>
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Ecestreamengine Controller service for kodi</summary>
+		<description lang="en">Ecestreamengine Controller service for kodi</description>
+		<license>GNU General Public License, v2</license>
+		<language/>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<source/>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+		<email>boogiepop@gmx.com</email>
+	  </extension>
+</addon>
