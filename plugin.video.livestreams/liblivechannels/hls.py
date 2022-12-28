@@ -1,7 +1,4 @@
-import ghub
-
 import json
-import binascii
 
 from six.moves.urllib import parse
 from six.moves import queue
@@ -10,10 +7,7 @@ from liblivechannels import common
 from thirdparty.m3u8 import model
 
 from tinyxbmc import addon
-from tinyxbmc import net
 
-ghub.load("ricmoo", "pyaes", None, period=24 * 7)
-import pyaes
 import subprocess
 
 
@@ -27,34 +21,24 @@ class PlaylistGenerator(object):
     def sorter(playlist):
         return playlist.stream_info.bandwidth
 
-    def add(self, m3file, headers, useproxy):
+    def add(self, m3file, headers):
         if len(m3file.playlists):
             for playlist in sorted(m3file.playlists, key=self.sorter, reverse=True):
-                if useproxy:
-                    self.headcheck(playlist, headers, useproxy)
-                    if self.playlists.qsize():
-                        break
-                else:
-                    playlist.uri = net.tokodiurl(playlist.absolute_uri, headers=headers)
-                    self.playlists.put(playlist)
+                self.headcheck(playlist, headers)
+                if self.playlists.qsize():
+                    break
         elif len(m3file.segments):
-            if not useproxy:
-                m3file.full_uri = net.tokodiurl(m3file.full_uri, headers=headers)
-            else:
-                m3file.full_uri = encodeurl(url=m3file.full_uri, headers=headers)
+            m3file.full_uri = encodeurl(url=m3file.full_uri, headers=headers)
             self.index += 1
             playlist = model.Playlist(m3file.full_uri,
                                       {"bandwidth": self.index},
                                       None, m3file.base_uri)
             self.playlists.put(playlist)
 
-    def headcheck(self, playlist, headers, useproxy):
-        error = self.base.healthcheck(playlist.absolute_uri, headers)
+    def headcheck(self, playlist, headers):
+        error, _resp, _headers = self.base.healthcheck(playlist.absolute_uri)
         if error is None:
-            if not useproxy:
-                playlist.uri = net.tokodiurl(playlist.absolute_uri, headers=headers)
-            else:
-                playlist.uri = encodeurl(url=playlist.absolute_uri, headers=headers)
+            playlist.uri = encodeurl(url=playlist.absolute_uri, headers=headers)
             self.playlists.put(playlist)
 
     @property
@@ -99,11 +83,6 @@ class DecryptPayload:
         self.iv = iv
         self.chunksize = None
         self.skipdec = method not in ["AES-128"]
-        if not self.hasopenssl and method == "AES-128":
-            key = binascii.unhexlify(key)
-            iv = binascii.unhexlify(iv)
-            self.aes = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(key, iv=iv), padding=pyaes.PADDING_NONE)
-            self.chunksize = 128
 
     def decrypt(self, chunk):
         if self.skipdec:
@@ -114,10 +93,6 @@ class DecryptPayload:
                                    stdout=subprocess.PIPE,
                                    stderr=subprocess.STDOUT)
             return prc.communicate(chunk)[0]
-        elif self.aes:
-            return self.aes.feed(chunk)
 
     def flush(self):
-        if self.aes:
-            return self.aes.feed()
         return b""

@@ -17,7 +17,7 @@ def testlink(unit, it, minlinks, title, index):
     valids = []
     invalids = []
     for link in tools.safeiter(it):
-        error = base.healthcheck(link)
+        error, _resp, _headers = base.healthcheck(link)
         if error is not None:
             invalids.append((error, link))
         else:
@@ -30,6 +30,7 @@ def testlink(unit, it, minlinks, title, index):
                                                             len(valids),
                                                             invalids,
                                                             valids))
+
 
 class ChannelTest():
     minlinks = 1

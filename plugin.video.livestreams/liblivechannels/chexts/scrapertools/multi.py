@@ -1,7 +1,6 @@
 # -*- encoding: utf-8 -*-
 from liblivechannels.chexts.scrapertools import youtube
 from liblivechannels.chexts.scrapertools import selcuk
-from liblivechannels.chexts.scrapertools import ses
 from liblivechannels.chexts.scrapertools import kolaytv
 from liblivechannels.chexts.scrapertools import canlitvcenter
 from liblivechannels.chexts.scrapertools import dadylive
@@ -27,11 +26,6 @@ class multi:
     youtube_chanid = None
     youtube_stream = None
     youtube_sindex = None
-
-    # ses tv
-    ses_id = None
-    ses_ids = None
-    ses_adaptive = True
 
     # canlitvcenter
     canlitv_id = None
@@ -69,9 +63,6 @@ class multi:
                 yield yayin
         if self.dady_id or self.dady_name:
             for yayin in safeiter(dadylive.itermedias(self.dady_id, self.dady_name)):
-                yield yayin
-        if self.ses_id or self.ses_ids:
-            for yayin in safeiter(ses.itermedias(self.ses_id, self.ses_ids, self.ses_adaptive)):
                 yield yayin
         if self.sports24_id:
             for yayin in safeiter(sports24.itermedias(self.sports24_id)):

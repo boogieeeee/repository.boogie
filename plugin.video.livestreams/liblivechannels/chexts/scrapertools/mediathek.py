@@ -45,7 +45,6 @@ class multi():
     categories = ["Deutschland"]
     title = u"Das Erste"
     iconpath = os.path.join(ardundzdf, "resources", "images", "")
-    usehlsproxy = False
     sender = "Das Erste"
     epg = None
     link = None

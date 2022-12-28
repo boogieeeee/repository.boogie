@@ -37,6 +37,7 @@ from liblivechannels import epg
 from liblivechannels import pvr
 
 from thirdparty import m3u8
+import aceengine
 
 _chancls = {}
 _chanins = {}
@@ -51,14 +52,18 @@ class Base(container.container):
     def init(self):
         self.config = config.config()
 
-    def proxy_get(self, url, headers, method="GET"):
+    def isinvalidresponse(self, response):
+        return response is None or isinstance(response, Exception) or response.status_code not in [200, 206]
+
+    def http_retry(self, url, headers, method="GET"):
         _headers = headers.copy()
-        for retry in range(5):
+        for retry in range(3):
             if "user-agent" not in [x.lower() for x in _headers.keys()]:
                 _headers[u"User-agent"] = const.USERAGENT
             try:
                 resp = self.download(url, headers=_headers, text=False,
-                                     timeout=common.query_timeout, stream=True, cache=None, method=method, verify=False)
+                                     timeout=common.query_timeout, stream=True,
+                                     cache=None, method=method, verify=False)
                 if resp.status_code not in [200, 206]:
                     if retry == 2:
                         return resp
@@ -70,47 +75,72 @@ class Base(container.container):
                 if retry == 2:
                     return e
 
-    def healthcheck(self, url, headers=None):
-        if isinstance(url, net.mpdurl):
-            if not url.inputstream:
-                if url.kodilurl:
-                    return "Inputstream.adaptive cant play encrypted streams"
-                else:
-                    return "Inputstream.adaptive not available"
-            response = self.proxy_get(url.url, url.headers)
-            if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
-                return "MPD url is inaccessable"
-            if url.lurl and False:
-                response = self.proxy_get(url.lurl, url.lheaders)
-                if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
-                    return "MPD license url is inaccessable"
-            return
+    def check_mpdurl(self, url):
+        # DASH streams, most likely this block is partly broken since no channels provide DASH
+        if not url.inputstream:
+            if url.kodilurl:
+                return "Inputstream.adaptive cant play encrypted streams", None, None
+            else:
+                return "Inputstream.adaptive not available", None, None
+        if self.isinvalidresponse(self.http_retry(url.url, url.headers)):
+            return "MPD url is inaccessable", None, None
+        if url.lurl and False:
+            if self.isinvalidresponse(self.http_retry(url.lurl, url.lheaders)):
+                return "MPD license url is inaccessable", None, None
+        return None, None, None
+
+    def check_acestreamurl(self, url):
+        response = self.http_retry(url.kodiurl, {})
+        if self.isinvalidresponse(response):
+            return "Broken Acestream URL", None, None
+        for _second in range(10):
+            stats = aceengine.stats(url)
+            if stats.get("status") == "dl":
+                aceengine.stop(url)
+                return None, None, None
+            time.sleep(1)
+
+    def check_hlsurl(self, url, forceget=False):
         if isinstance(url, net.hlsurl):
-            u = url.url
             headers = url.headers
+            u = url.url
         else:
-            u = url
-        if headers is None:
-            u, headers = net.fromkodiurl(u)
+            u, headers = net.fromkodiurl(url)
         if not headers:
             headers = {}
-        response = self.proxy_get(u, headers)
-        if response is None or isinstance(response, Exception) or not response.content[:7].decode() == "#EXTM3U":
-            return "M3U8 File does not have correct header"
-        m3u = m3u8.loads(response.content.decode(), response.url)
+        manifest = self.http_retry(u, headers)
+        if self.isinvalidresponse(manifest) or not manifest.content[:7].decode() == "#EXTM3U":
+            return "M3U8 File does not have correct header", manifest, headers
+        m3u = m3u8.loads(manifest.content.decode(), manifest.url)
         if m3u.is_variant:
             for playlist in m3u.playlists:
-                response = self.proxy_get(playlist.absolute_uri, headers, "HEAD")
-                if response is None or isinstance(response, Exception) or response.status_code not in [200, 206]:
-                    response = self.proxy_get(playlist.absolute_uri, headers)
-                    if response is not None and not isinstance(response, Exception) and response.status_code in [200, 206]:
-                        if response.content[:7].decode() == "#EXTM3U":
-                            return  # Successfull GET
-                else:  # Successfull HEAD
-                    return
-            return "M3U8 File has no available variant"
+                if not forceget:
+                    response = self.http_retry(playlist.absolute_uri, headers, "HEAD")
+                else:
+                    response = None
+                if self.isinvalidresponse(response):
+                    # HEAD may not be supported, do a get
+                    response = self.http_retry(playlist.absolute_uri, headers)
+                    if not self.isinvalidresponse(response) and response.content[:7].decode() == "#EXTM3U":
+                        return None, manifest, headers  # Successfull GET
+                else:
+                    # Successfull HEAD
+                    return None, manifest, headers
+            return "M3U8 File has no available variant", manifest, headers
         elif not len(m3u.segments):
-            return "M3U8 File has no available segment"
+            return "M3U8 File has no available segment", manifest, headers
+        else:
+            return None, manifest, headers
+
+    def healthcheck(self, url):
+        # MPD url
+        if isinstance(url, net.mpdurl):
+            return self.check_mpdurl(url)
+        # Acestream URLs
+        if isinstance(url, net.acestreamurl):
+            return self.check_acestreamurl(url)
+        # HLS URLs
+        return self.check_hlsurl(url)
 
     def checkinternet(self):
         try:
@@ -155,7 +185,7 @@ class Base(container.container):
                 error = c.checkerrors()
             if error is None:
                 for url in tools.safeiter(c.get()):
-                    error = self.healthcheck(url)
+                    error, _resp, _header = self.healthcheck(url)
                     if error is None:
                         # at least one url is enough
                         found = True

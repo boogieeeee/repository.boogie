@@ -69,7 +69,6 @@ class scraper(object):
     index = None
     checkerrors = None
     subchannel = False
-    usehlsproxy = True
 
     def __init__(self, download):
         self.download = download

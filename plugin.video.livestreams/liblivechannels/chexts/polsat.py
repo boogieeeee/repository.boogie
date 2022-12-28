@@ -15,6 +15,14 @@ try:
         index = "polsat:polsatsportnews:"
         minepg = 1
 
+    class testpolsatpremium1(ChannelTest, unittest.TestCase):
+        index = "polsat:polsatpremium1:"
+        minepg = 1
+
+    class testpolsatnews(ChannelTest, unittest.TestCase):
+        index = "polsat:polsatpremium2:"
+        minepg = 1
+
 except ImportError:
     pass
 
@@ -35,10 +43,42 @@ class polsatsport(multi, scraper):
     title = "Polsat Sport"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportpoland"
-    usehlsproxy = True
+
+    def get(self):
+        yield net.acestreamurl("acestream://92b6ba09dae4bbb8a67a405125d08ca8d15380ee")
+        for link in multi.get(self):
+            yield link
 
     def iterprogrammes(self):
         for p in iterprogrammes("POLSAT Sport"):
+            yield p
+
+
+class polsatpremium1(multi, scraper):
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Polsat_Sport_Premium_1_2021_gradient.svg/320px-Polsat_Sport_Premium_1_2021_gradient.svg.png"
+    title = "Polsat Sport Premium 1"
+    categories = ["Polish", "Sport"]
+    dady_name = "polsatsportpoland"
+
+    def get(self):
+        yield net.acestreamurl("acestream://4ce55db7e578ff52a6e526cf610e477464b8a99f")
+
+    def iterprogrammes(self):
+        for p in iterprogrammes("POLSAT Sport Premium 1"):
+            yield p
+
+
+class polsatpremium2(multi, scraper):
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Polsat_Sport_Premium_2_2021_gradient.svg/320px-Polsat_Sport_Premium_2_2021_gradient.svg.png"
+    title = "Polsat Sport Premium 2"
+    categories = ["Polish", "Sport"]
+    dady_name = "polsatsportpoland"
+
+    def get(self):
+        yield net.acestreamurl("acestream://3147c586346aee00c005d1caa55204d38678c95f")
+
+    def iterprogrammes(self):
+        for p in iterprogrammes("POLSAT Sport Premium 2"):
             yield p
 
 
@@ -47,11 +87,11 @@ class polsatsportextra(multi, scraper):
     title = "Polsat Sport Extra"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportextrapoland"
-    usehlsproxy = True
 
-    def iterprogrammes(self):
-        for p in iterprogrammes("POLSAT Sport Extra"):
-            yield p
+    def get(self):
+        yield net.acestreamurl("acestream://ef2cf11fc83f4f15a33c9a514a7afd2bce73122f")
+        for link in multi.get(self):
+            yield link
 
 
 class polsatsportnews(multi, scraper):
@@ -59,7 +99,6 @@ class polsatsportnews(multi, scraper):
     title = "Polsat Sport News"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportnewspoland"
-    usehlsproxy = True
 
     def iterprogrammes(self):
         for p in iterprogrammes("POLSAT Sport News"):

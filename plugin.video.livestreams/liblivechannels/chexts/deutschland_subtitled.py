@@ -26,7 +26,6 @@ class br(scraper):
     categories = ["Deutschland", "Subtitled"]
     title = u"BR [ÜT]"
     icon = domain + "/unternehmen/inhalt/rundfunkrat/br-fernsehen-logo-neu-102~_v-img__16__9__xl_-d31c35f8186ebeb80b0cd843a7c267a0e0c81647.jpg?version=2b06d"
-    usehlsproxy = False
 
     def get(self):
         page = self.download(self.domain + "/mediathek/live")
@@ -40,7 +39,6 @@ class daserste(scraper):
     categories = ["Deutschland", "Subtitled"]
     title = u"Das Erste [ÜT]"
     icon = domain + "/mediasrc/img/tv/ard/ard-daserste-logo.png"
-    usehlsproxy = False
 
     def get(self):
         page = self.download(self.domain)

@@ -15,7 +15,6 @@ from thirdparty import m3u8
 from tinyxbmc import net
 from tinyxbmc import tools
 from tinyxbmc import const
-from tinyxbmc import addon
 
 from liblivechannels import log
 from liblivechannels import hls
@@ -82,7 +81,7 @@ class Handler(BaseHTTPRequestHandler):
             rng = self.headers.get("Range")
             if rng:
                 qheaders["Range"] = rng
-            resp = self.base.proxy_get(qurl, qheaders)
+            resp = self.base.http_retry(qurl, qheaders)
             if isinstance(resp, Exception) or resp is None:
                 self.send_response(500, str(resp))
                 self.end_headers()
@@ -105,32 +104,36 @@ class Handler(BaseHTTPRequestHandler):
             chan = self.base.loadchannel(qplaylist)
             if not chan:
                 return
-            self.send_response(200)
-            self.end_headers()
             pgen = hls.PlaylistGenerator(self.base)
-            forceproxy = kwargs.get("forceproxy", 0)
             for url in tools.safeiter(chan.get()):
                 if isinstance(url, net.mpdurl) and url.inputstream:
                     pass
-                    # skip mpds for now
-                else:
-                    if isinstance(url, net.hlsurl):
-                        headers = url.headers
-                        u = url.url
+                    # skip mpds for now, partly broken
+                elif isinstance(url, net.acestreamurl):
+                    # todo: check if ffmpegdirect is the player
+                    if self.base.check_acestreamurl(url)[0] is None:
+                        self.send_response(301)
+                        self.send_header('Location', url.kodiurl)
                     else:
-                        u, headers = net.fromkodiurl(url)
-                    if not headers:
-                        headers = {}
-                    resp = self.base.proxy_get(u, headers)
-                    if resp is not None and not isinstance(resp, Exception):
+                        self.send_response(500)
+                    self.end_headers()
+                    break
+                else:
+                    error, resp, headers = self.base.check_hlsurl(url)
+                    print(error, resp, headers)
+                    if error is None:
+                        self.send_response(200)
+                        self.end_headers()
                         content = resp.content.decode()
-                        if content[:7] == "#EXTM3U":
-                            m3file = m3u8.loads(content, uri=resp.url)
-                            m3file.full_uri = resp.url
-                            pgen.add(m3file, headers, forceproxy or chan.usehlsproxy)
-                            if pgen.playlists.qsize():
-                                break
-            self.wfile.write(pgen.m3file.dumps().encode())
+                        print(content, resp.url)
+                        m3file = m3u8.loads(content, uri=resp.url)
+                        m3file.full_uri = resp.url
+                        print(m3file)
+                        pgen.add(m3file, headers)
+                        if pgen.playlists.qsize():
+                            print(1121)
+                            self.wfile.write(pgen.m3file.dumps().encode())
+                            break
         elif qepg:  # epg response
             self.send_response(200)
             self.end_headers()
@@ -153,6 +156,8 @@ class Handler(BaseHTTPRequestHandler):
                         self.writeline("#KODIPROP:inputstreamaddon=inputstream.ffmpegdirect")
                         self.writeline("#KODIPROP:inputstreamclass=inputstream.ffmpegdirect")
                         self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
+                        self.writeline("#KODIPROP:inputstream.ffmpegdirect.is_realtime_stream=false")
+                        # self.writeline("#KODIPROP:inputstream.ffmpegdirect.manifest_type=hls")
                     elif url.inputstream:
                         self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
                         self.writeline("#KODIPROP:inputstreamclass=inputstream.adaptive")
@@ -176,7 +181,7 @@ class Handler(BaseHTTPRequestHandler):
         qurl = kwargs.get("url")
         qheaders = kwargs.get("headers", {})
         if qurl:
-            resp = self.base.proxy_get(qurl, qheaders, method="HEAD")
+            resp = self.base.http_retry(qurl, qheaders, method="HEAD")
             if isinstance(resp, Exception) or resp is None:
                 self.send_response(500, str(resp))
             else:
