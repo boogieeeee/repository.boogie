@@ -43,14 +43,17 @@ def getmedias(url, selcukurl, isadaptive=False):
     if "id" in chdict:
         subpage = net.http(links[0], referer=selcukurl, cache=None)
         olmusmu = re.findall(rgx1, subpage)
-        if len(olmusmu) == 3:
-            keslan = re.search(rgx6, subpage)
-            kourl = "%s://%s/%s" % (up.scheme, up.netloc, keslan.group(1))
-            kopage = net.http(kourl, referer=selcukurl, cache=None)
-            bases = [base64.b64decode(x).decode() for x in re.findall(rgx4, kopage)]
-            _radardom = bases.pop(-1)
-            selcukdom = bases.pop(-1)
-            for base in bases:
-                if "." not in base:
-                    media = "https://" + base + selcukdom + "/i/" + olmusmu[-1] + "/" + chdict["id"] + "/playlist.m3u8" + olmusmu[-2]
-                    yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)
+        if len(olmusmu) >= 3:
+            olmusmu = olmusmu[-3:]
+            #keslan = re.search(rgx6, subpage)
+            #kourl = "%s://%s/%s" % (up.scheme, up.netloc, keslan.group(1))
+            #kopage = net.http(kourl, referer=selcukurl, cache=None)
+            bases = [base64.b64decode(x).decode() for x in re.findall(rgx4, subpage)]
+            _data1 = bases.pop(0)
+            _reklam = bases.pop(0)
+            _iframe = bases.pop(-1)
+            doms = bases.pop(-1), bases.pop(-1)
+            subs = bases
+            for sub in subs:
+                media = "https://" + sub + doms[0] + "/selcuksports/" + olmusmu[-1] + "/" + chdict["id"] + "/playlist.m3u8" + olmusmu[-2]
+                yield net.hlsurl(media, headers={"referer": url}, adaptive=isadaptive)
