@@ -6,7 +6,7 @@ Created on Jun 4, 2022
 import htmlement
 import re
 import json
-from tinyxbmc import net
+from tinyxbmc import net, mediaurl
 
 dom = "https://soccerstreamslive.co"
 streamdom = "https://cloudstreams.org"
@@ -21,4 +21,4 @@ def get(streamid):
             cloud = net.http("%s/cloud.php?player=desktop&live=%s" % (streamdom, fid.group(1)), cache=None)
             url = re.search('return\((\[.+?\])', cloud).group(1)
             url = "".join(json.loads(url))
-            return net.hlsurl(url, headers={"Referer": streamdom}, adaptive=False)
+            return mediaurl.hlsurl(url, headers={"Referer": streamdom}, adaptive=False)
