@@ -21,6 +21,7 @@
 import vods
 import htmlement
 import re
+from six.moves.urllib import parse
 
 from tinyxbmc import const
 from tinyxbmc import net
@@ -43,7 +44,12 @@ class dizi(vods.showextension):
         self.encoding = "iso-8859-9"
 
     def gettree(self, url):
-        return htmlement.fromstring(self.download(net.absurl(url, self.domain), encoding=self.encoding, referer=self.domain))
+        resp = self.download(net.absurl(url, self.domain), encoding=self.encoding, referer=self.domain, text=False)
+        domain = parse.urlparse(resp.url).netloc
+        if not domain == self._domain:
+            self.setting.set("domain", domain)
+            self.init()
+        return htmlement.fromstring(resp.content.decode(self.encoding))
 
     def getcategories(self):
         for div in self.gettree("").iterfind(".//div"):
