@@ -32,9 +32,9 @@ class selcuk(vods.movieextension):
             }
 
     def getmovies(self):
-        for selcukurl, url, chname in libselcuk.iteratechannels():
-            self.additem(chname, [url, selcukurl])
+        for chid, _chlink, chname in libselcuk.iteratechannels():
+            self.additem(chname, chid)
 
     def geturls(self, url):
-        for media in libselcuk.getmedias(*url):
+        for media in libselcuk.getmedias(url):
             yield media
