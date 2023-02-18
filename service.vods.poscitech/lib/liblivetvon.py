@@ -40,7 +40,7 @@ def geturl(streamid):
     src = re.findall(mrgx, iframe)
     ref = parse.urlparse(iframeu)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
-    return mediaurl.hlsurl(src[-1], headers={"Referer": ref}, adaptive=True)
+    return mediaurl.hlsurl(src[-1], headers={"Referer": ref}, adaptive=False, ffmpegdirect=True)
 
 
 def getschdate(page):
