@@ -21,4 +21,4 @@ def get(streamid):
             cloud = net.http("%s/cloud.php?player=desktop&live=%s" % (streamdom, fid.group(1)), cache=None)
             url = re.search('return\((\[.+?\])', cloud).group(1)
             url = "".join(json.loads(url))
-            return mediaurl.hlsurl(url, headers={"Referer": streamdom}, adaptive=False)
+            return mediaurl.hlsurl(url, headers={"Referer": streamdom}, adaptive=True, ffmpegdirect=True)
