@@ -15,7 +15,7 @@ except ImportError:
     pass
 
 
-from tinyxbmc import net
+from tinyxbmc import net, mediaurl
 from liblivechannels import scraper
 import re
 import json
@@ -30,7 +30,7 @@ class br(scraper):
     def get(self):
         page = self.download(self.domain + "/mediathek/live")
         link = re.search(r'publicLocation.+?"(.+?)"', page)
-        yield net.hlsurl(link.group(1))
+        yield mediaurl.hlsurl(link.group(1))
 
 
 class daserste(scraper):
@@ -45,4 +45,4 @@ class daserste(scraper):
         js = re.search(r'data-ctrl-player="(.+?)"', page).group(1)
         js = re.search(r'url(?:\'|\")\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")', js).group(1)
         jsdata = json.loads(self.download(self.domain2 + js, referer=self.domain2 + "index.html"))
-        yield net.hlsurl(jsdata["mc"]["_alternativeMediaArray"][0]["_mediaArray"][0]["_mediaStreamArray"][0]["_stream"][0])
+        yield mediaurl.hlsurl(jsdata["mc"]["_alternativeMediaArray"][0]["_mediaArray"][0]["_mediaStreamArray"][0]["_stream"][0])

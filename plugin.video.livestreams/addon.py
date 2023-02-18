@@ -24,6 +24,7 @@ from tinyxbmc import const
 from tinyxbmc import net
 from tinyxbmc import gui
 from tinyxbmc import extension
+from tinyxbmc import mediaurl
 
 import time
 import traceback
@@ -101,7 +102,7 @@ class Base(container.container):
             time.sleep(1)
 
     def check_hlsurl(self, url, forceget=False):
-        if isinstance(url, net.hlsurl):
+        if isinstance(url, mediaurl.hlsurl):
             headers = url.headers
             u = url.url
         else:
@@ -134,10 +135,10 @@ class Base(container.container):
 
     def healthcheck(self, url):
         # MPD url
-        if isinstance(url, net.mpdurl):
+        if isinstance(url, mediaurl.mpdurl):
             return self.check_mpdurl(url)
         # Acestream URLs
-        if isinstance(url, net.acestreamurl):
+        if isinstance(url, mediaurl.acestreamurl):
             return self.check_acestreamurl(url)
         # HLS URLs
         return self.check_hlsurl(url)
@@ -193,7 +194,7 @@ class Base(container.container):
             if not error and not found:
                 error = "No playlist"
             if error is None:
-                channels.append([c.icon, c.title, c.index, c.categories, url if isinstance(url, const.URL) else None])
+                channels.append([c.icon, c.title, c.index, c.categories, url if isinstance(url, mediaurl.url) else None])
                 error = "UP"
             pg.update(int(100 * index / len(chans)), "%s\n%s: %s" % (c.title, error, c.index))
             if index == 200000:

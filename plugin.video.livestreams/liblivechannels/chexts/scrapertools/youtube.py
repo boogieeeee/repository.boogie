@@ -14,7 +14,7 @@ import re
 import traceback
 import random
 
-from tinyxbmc import net
+from tinyxbmc import net, mediaurl
 
 ua = "Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36"
 
@@ -61,5 +61,5 @@ def itermedias(youtube_chanid, youtube_stream, youtube_sindex):
         response = json.loads(re.search('ytInitialPlayerResponse\s*?\=\s*?(\{.+?\})\;', page).group(1))
     # dash = response["streamingData"].get("dashManifestUrl")
     # if dash:
-    #     yield net.mpdurl(dash)
-    yield net.hlsurl(response["streamingData"]["hlsManifestUrl"])
+    #     yield mediaurl.mpdurl(dash)
+    yield mediaurl.hlsurl(response["streamingData"]["hlsManifestUrl"])

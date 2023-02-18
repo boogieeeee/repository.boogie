@@ -1,5 +1,5 @@
 from liblivechannels import scraper
-from tinyxbmc import net
+from tinyxbmc import net, mediaurl
 import base64
 
 import re
@@ -17,7 +17,7 @@ def itermedias(chid):
     if mpd and mpdlic:
         mpd = net.absurl(base64.b64decode(mpd.group(1)).decode(), iframeurl)
         mpdlic = net.absurl(base64.b64decode(mpdlic.group(1)).decode(), iframeurl)
-        m = net.mpdurl(mpd, headers, mpdlic, headers.copy())
+        m = mediaurl.mpdurl(mpd, headers, mpdlic, headers.copy())
         yield m
 
 
@@ -46,7 +46,7 @@ class chanjs(scraper):
         print(cid)
         print(uid)
         print(body)
-        yield net.mpdurl(mpd, headers, mpdl, headers, lbody=body)
+        yield mediaurl.mpdurl(mpd, headers, mpdl, headers, lbody=body)
 
 
 class sports24js():

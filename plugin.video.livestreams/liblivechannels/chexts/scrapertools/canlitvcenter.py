@@ -15,6 +15,7 @@ except ImportError:
     pass
 
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import htmlement
 import re
 import base64
@@ -39,7 +40,7 @@ def itermedias(ctvcid, ctvcids=None):
         media = re.search("file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
         if media:
             link = base64.b64decode(media.group(1)).decode()
-            links.append(net.hlsurl(link, headers={"referer": domain}))
+            links.append(mediaurl.hlsurl(link, headers={"referer": domain}))
         else:
             for script in re.findall('script src=\\\\"(.+?)"', src):
                 ssrc = script.replace("\\", "")
@@ -50,6 +51,6 @@ def itermedias(ctvcid, ctvcids=None):
                     if "anahtar" in link:
                         link = net.absurl(link, ssrc)
                         #links.append(net.hlsurl(link + key.group(1), headers={"referer": domain}))
-                        links.append(net.hlsurl(link, headers={"referer": domain}))
+                        links.append(mediaurl.hlsurl(link, headers={"referer": domain}))
         for link in links:
             yield link

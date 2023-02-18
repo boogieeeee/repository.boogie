@@ -15,6 +15,7 @@ except ImportError:
     pass
 
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from liblivechannels import unwise
 
 import htmlement
@@ -43,7 +44,7 @@ def itermedias(chlink, chlinks=None):
         wise = unwise.unwise(*re.findall(rgx, wise)[0])
         wise = unwise.unwise(*re.findall(rgx, wise)[1])
         media = re.search(rgx2, wise.replace("\\", "")).group(1)
-        links.append(net.hlsurl(media, headers={"referer": domain + "/"}))
+        links.append(mediaurl.hlsurl(media, headers={"referer": domain + "/"}))
     links.reverse()
     for link in links:
         yield link

@@ -7,7 +7,7 @@ Created on Jul 16, 2021
 import ghub
 import re
 import os
-from tinyxbmc import addon, tools, net
+from tinyxbmc import addon, tools, net, mediaurl
 from liblivechannels import programme
 from datetime import datetime
 from io import open
@@ -74,12 +74,12 @@ class multi():
         elif "ZDF" in link:
             links = util.get_ZDFstreamlinks()
         else:
-            yield net.hlsurl(link)
+            yield mediaurl.hlsurl(link)
             raise StopIteration
         for link in links:
             sender, url, _img, _ = link.split("|")
             if sender == self.sender:
-                yield net.hlsurl(url)
+                yield mediaurl.hlsurl(url)
                 break
 
     def iterprogrammes(self):

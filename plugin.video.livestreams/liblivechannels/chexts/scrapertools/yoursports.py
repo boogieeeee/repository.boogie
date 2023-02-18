@@ -4,6 +4,7 @@ Created on Jul 31, 2021
 @author: boogie
 '''
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import htmlement
 import re
 import base64
@@ -23,7 +24,7 @@ class yoursports():
         m3path = re.search("atob\((?:\"|\')(.+?)(?:\"|\')\)", iframep).group(1)
         for suffix in ["", "=", "=="]:
             try:
-                yield net.hlsurl(net.absurl(base64.b64decode(m3path + suffix).decode(), iframeu), headers={"Referer": iframeu})
+                yield mediaurl.hlsurl(net.absurl(base64.b64decode(m3path + suffix).decode(), iframeu), headers={"Referer": iframeu})
                 break
             except Exception:
                 pass

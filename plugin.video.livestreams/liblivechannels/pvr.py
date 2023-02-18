@@ -6,6 +6,7 @@ Created on Aug 3, 2021
 from tinyxbmc import addon
 from tinyxbmc import tools
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from tinyxbmc import gui
 
 from liblivechannels import config
@@ -147,7 +148,7 @@ class iptv:
         for _icon, title, index, _cats, url in cfg.channels:
             if chname == title:
                 # TO-DO: improve this, there can be different channels with same name
-                if not isinstance(url, net.mpdurl):
+                if not isinstance(url, mediaurl.mpdurl):
                     url = hls.encodeurl(playlist=index, forceproxy=1)
                     threading.Thread(target=iptv._recorder_thread, args=(timerid, url, fname, startts, endts)).start()
                     break

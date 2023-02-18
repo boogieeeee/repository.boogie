@@ -11,7 +11,7 @@ except ImportError:
 
 from liblivechannels import scraper
 from liblivechannels.chexts.scrapertools.multi import multi
-from tinyxbmc import net
+from tinyxbmc import net, mediaurl
 import re
 
 
@@ -29,5 +29,5 @@ class tv8(multi, scraper):
             yield stream
         tv8url = "https://www.tv8.com.tr/canli-yayin"
         page = net.http(tv8url)
-        yield net.hlsurl(re.findall("file\s?:\s?(?:\"|\')(https:\/\/.+?)(?:\"|\')", page)[0],
+        yield mediaurl.hlsurl(re.findall("file\s?:\s?(?:\"|\')(https:\/\/.+?)(?:\"|\')", page)[0],
                          headers={"Referer": tv8url})

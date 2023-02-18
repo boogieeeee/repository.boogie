@@ -8,6 +8,7 @@ from tinyxbmc import container
 from tinyxbmc import gui
 from tinyxbmc import net
 from tinyxbmc import const
+from tinyxbmc import mediaurl
 
 from liblivechannels import epg
 
@@ -129,7 +130,7 @@ class Navi(Base):
             else:
                 cats = ["Broken"]
             channels.remove(channel)
-            channels.append([icon, title, cindex, cats, url if isinstance(url, const.URL) else None])
+            channels.append([icon, title, cindex, cats, url if isinstance(url, mediaurl.url) else None])
             gui.ok("Validation", msg)
             self.config.hay.throw("channels", channels)
             self.config.hay.snapshot()
@@ -145,9 +146,9 @@ class Navi(Base):
             item.resolve(self.geturl(url))
 
     def geturl(self, url):
-        if not isinstance(url, const.URL):
+        if not isinstance(url, mediaurl.url):
             url, headers = net.fromkodiurl(url)
-            url = net.hlsurl(url, headers)
+            url = mediaurl.hlsurl(url, headers)
         return url
 
     def geturls(self, cid):

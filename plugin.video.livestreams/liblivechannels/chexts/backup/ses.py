@@ -31,6 +31,7 @@ except ImportError:
 from liblivechannels.chexts.scrapertools import normalize
 from tinyxbmc import tools
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from six.moves.urllib import parse
 import json
 import base64
@@ -90,7 +91,7 @@ def itermedias(chid, chids=None, adaptive=True):
         if url:
             url = url.decode()
             if "thief" not in url:
-                yield net.hlsurl(url, headers={"referer": domain}, adaptive=adaptive)
+                yield mediaurl.hlsurl(url, headers={"referer": domain}, adaptive=adaptive)
 
 
 def iterpage(xpage):

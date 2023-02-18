@@ -13,6 +13,7 @@ import base64
 
 from thirdparty import m3u8
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from tinyxbmc import tools
 from tinyxbmc import const
 
@@ -106,10 +107,10 @@ class Handler(BaseHTTPRequestHandler):
                 return
             pgen = hls.PlaylistGenerator(self.base)
             for url in tools.safeiter(chan.get()):
-                if isinstance(url, net.mpdurl) and url.inputstream:
+                if isinstance(url, mediaurl.mpdurl) and url.inputstream:
                     pass
                     # skip mpds for now, partly broken
-                elif isinstance(url, net.acestreamurl):
+                elif isinstance(url, mediaurl.acestreamurl):
                     # todo: check if ffmpegdirect is the player
                     if self.base.check_acestreamurl(url)[0] is None:
                         self.send_response(301)
@@ -162,7 +163,7 @@ class Handler(BaseHTTPRequestHandler):
                         self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
                         self.writeline("#KODIPROP:inputstreamclass=inputstream.adaptive")
                         self.writeline("#KODIPROP:inputstream.adaptive.manifest_type=%s" % url.manifest)
-                        if isinstance(url, net.mpdurl):
+                        if isinstance(url, mediaurl.mpdurl):
                             if url.lurl:
                                 self.writeline('#KODIPROP:inputstream.adaptive.license_type=%s' % url.license)
                                 url.lurl, url.lheaders = net.fromkodiurl(net.tokodiurl(url.lurl, headers=url.lheaders, pushua=const.USERAGENT, pushverify="false"))
