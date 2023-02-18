@@ -22,7 +22,7 @@ class tv8(multi, scraper):
     yayin_id = "tv-8"
     selcuk_name = "8"
     kolay_ids = ["/tv8-canli-hd", "/tv8-canli-hd/2", "/tv8-canli-hd/3"]
-    canlitv_ids = ["tv8-canli-hd", "tv8-canli-hd/2"]
+    canlitv_ids = ["tv8-canli", "tv8-canli/2"]
 
     def get(self):
         for stream in multi.get(self):

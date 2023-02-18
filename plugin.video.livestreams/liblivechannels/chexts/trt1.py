@@ -33,7 +33,7 @@ class trt1(multi, scraper):
     yayin_id = "trt-1"
     selcuk_name = "trt1"
     kolay_ids = ["/trt-1/1", "/trt-1/2", "/trt-1/3", "/trt-1/4"]
-    canlitv_ids = ["trt-1/1", "trt-1/2"]
+    canlitv_ids = ["trt-1-canli-izle/1", "trt-1-canli-izle/2"]
     selcuk_adaptive = False
 
 

@@ -9,7 +9,7 @@ try:
 
     class testcanli(unittest.TestCase):
         def test_canli_link(self):
-            test.testlink(self, itermedias("tv8-canli-hd/2"), 1, "tv8", 0)
+            test.testlink(self, itermedias("tv-8-canli/2"), 1, "tv8", 0)
 
 except ImportError:
     pass
@@ -23,7 +23,7 @@ import base64
 dom = "canlitv.center"
 domain = "https://" + dom
 
-rgxkey = "verianahtar[\s\t]*?\=[\s\t]*?(?:\"|\')(.+?)(?:\"|\')"
+#rgxkey = "verianahtar[\s\t]*?\=[\s\t]*?(?:\"|\')(.+?)(?:\"|\')"
 rgxlink = "yayin[a-zA-Z0-9]+[\s\t]*?\=[\s\t]*?(?:\"|\')(.*?)(?:\"|\')"
 
 
@@ -41,15 +41,15 @@ def itermedias(ctvcid, ctvcids=None):
             link = base64.b64decode(media.group(1)).decode()
             links.append(net.hlsurl(link, headers={"referer": domain}))
         else:
-            for script in htmlement.fromstring(src).iterfind(".//script"):
-                ssrc = script.get("src")
-                if ssrc and ("yayin" in ssrc or "/play.php" in ssrc):
-                    scriptsrc = net.http(script.get("src"), referer=domain)
-                    key = re.search(rgxkey, scriptsrc)
-                    if key:
-                        for link in re.findall(rgxlink, scriptsrc):
-                            if "anahtar" in link:
-                                link = net.absurl(link, script.get("src"))
-                                links.append(net.hlsurl(link + key.group(1), headers={"referer": domain}))
+            for script in re.findall('script src=\\\\"(.+?)"', src):
+                ssrc = script.replace("\\", "")
+                scriptsrc = net.http(ssrc, referer=domain)
+                #key = re.search(rgxkey, scriptsrc)
+                #if key:
+                for link in re.findall(rgxlink, scriptsrc):
+                    if "anahtar" in link:
+                        link = net.absurl(link, ssrc)
+                        #links.append(net.hlsurl(link + key.group(1), headers={"referer": domain}))
+                        links.append(net.hlsurl(link, headers={"referer": domain}))
         for link in links:
             yield link
