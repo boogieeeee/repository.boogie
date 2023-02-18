@@ -21,7 +21,7 @@ class tv8(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "tv-8"
     selcuk_name = "8"
-    kolay_ids = ["/tv8-canli-hd", "/tv8-canli-hd/2", "/tv8-canli-hd/3"]
+    kolay_ids = ["/tv8-canli-yayinlar", "/tv8-canli-yayinlar/2", "/tv8-canli-yayinlar/3"]
     canlitv_ids = ["tv8-canli", "tv8-canli/2"]
 
     def get(self):

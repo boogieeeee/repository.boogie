@@ -28,7 +28,7 @@ class atv(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "atv"
     youtube_chanid = "ATVTurkiye"
-    kolay_ids = ["/atv-hd-canli-1/1", "/atv-hd-canli-1/2", "/atv-hd-canli-1/3"]
+    kolay_ids = ["/atv-canli-donmadan/1", "/atv-canli-donmadan/2", "/atv-canli-donmadan/3"]
 
 
 class ahaber(multi, scraper):

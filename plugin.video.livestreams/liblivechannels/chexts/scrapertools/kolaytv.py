@@ -9,7 +9,7 @@ try:
 
     class testkolay(unittest.TestCase):
         def test_kolay_link(self):
-            test.testlink(self, itermedias("/tv8-canli-hd"), 1, "tv8", 0)
+            test.testlink(self, itermedias("/tv8-canli-yayinlar"), 1, "tv8", 0)
 
 except ImportError:
     pass
@@ -36,6 +36,9 @@ def itermedias(chlink, chlinks=None):
         page = htmlement.fromstring(net.http(url, referer=domain))
         iurl = page.find(".//iframe").get("src")
         ipage = net.http(iurl, referer=url)
+        iurl2 = re.search('src="(.+?)".+iframe', ipage).group(1)
+        iurl2 = iurl2.replace("'+ulke+'", "DE")
+        ipage = net.http(iurl2, referer=iurl)
         wise = unwise.unwise(*re.findall(rgx, ipage)[0])
         wise = unwise.unwise(*re.findall(rgx, wise)[0])
         wise = unwise.unwise(*re.findall(rgx, wise)[1])
