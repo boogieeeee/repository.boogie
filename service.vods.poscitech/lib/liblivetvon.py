@@ -8,6 +8,7 @@ import re
 from datetime import datetime, timedelta
 from tinyxbmc.addon import kodisetting
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from tinyxbmc import tools
 from six.moves.urllib import parse
 
@@ -39,7 +40,7 @@ def geturl(streamid):
     src = re.findall(mrgx, iframe)
     ref = parse.urlparse(iframeu)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
-    return net.hlsurl(src[-1], headers={"Referer": ref}, adaptive=True)
+    return mediaurl.hlsurl(src[-1], headers={"Referer": ref}, adaptive=True)
 
 
 def getschdate(page):
