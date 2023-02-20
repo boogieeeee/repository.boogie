@@ -90,7 +90,7 @@ class animeturk(vods.showextension):
                 print(traceback.format_exc())
 
     def getcategories(self):
-        u = "%sa/jax/turler" % domain
+        u = "%s/ajax/turler" % domain
         with Browser() as browser:
             page = browser.navigate(u, domain, headers={"x-requested-with": "XMLHttpRequest"})
         # page = self.download(u, headers=headers, referer=domain)
