@@ -19,7 +19,7 @@ def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md
     while number_of_derived_words < target_key_size:
         if block is not None:
             hasher.update(block)
-        hasher.update(passwd.encode())
+        hasher.update(passwd)
         hasher.update(salt)
         block = hasher.digest()
         hasher = hashlib.new(hash_algorithm)
@@ -32,10 +32,8 @@ def evpKDF(passwd, salt, key_size=8, iv_size=4, iterations=1, hash_algorithm="md
     return derived_bytes[0: key_size * 4], derived_bytes[key_size * 4:]
 
 
-def decrypt(data, password, salt):
-    key, _ = evpKDF(password, salt, key_size=12)
-    iv = key[len(key) - 16:]
-    key = key[:len(key) - 16]
+def decrypt(data, password, iv, salt):
+    key, _ = evpKDF(password, salt, key_size=8)
     decrypter = pyaes.Decrypter(pyaes.AESModeOfOperationCBC(key, iv))
     decryptedData = decrypter.feed(data)
     decryptedData += decrypter.feed()

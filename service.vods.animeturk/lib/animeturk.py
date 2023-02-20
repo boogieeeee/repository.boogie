@@ -26,6 +26,7 @@ import traceback
 import jscrypto
 import base64
 import binascii
+from urllib import parse
 
 from tinyxbmc import net
 from tinyxbmc import tools
@@ -35,7 +36,7 @@ from chromium import Browser
 
 
 domain = "https://www.turkanime.net/"
-
+master = b'NzEwXjhBQDNAPlQyfSN6TjV4Sz9rUjdLTktiQC1BIUx6WUw1fk0xcVUwVWZkV3Nab0JtNFVVYXQlfXVlVXY2RS0tKmhEUFBiSDdLMmJwOV4zbzQxaHcsa2hMOn1LeDgwODBATQ=='
 
 class animeturk(vods.showextension):
     usedirect = False
@@ -119,25 +120,21 @@ class animeturk(vods.showextension):
                 self.scrapegrid(htmlement.fromstring(browser.navigate(domain, None, self.ispagevalid)))
 
     def getlink(self, mirrorlink, xmirrorpage=None):
-        try:
-            if not xmirrorpage:
-                with Browser() as browser:
-                    mirrorpage = browser.navigate(mirrorlink,
-                                                  domain,
-                                                  headers={"x-requested-with": "XMLHttpRequest"})
-                xmirrorpage = htmlement.fromstring(mirrorpage)
-            iframe = net.absurl(xmirrorpage.find(".//iframe").get("src"), domain)
+        if not xmirrorpage:
             with Browser() as browser:
-                iframesrc = browser.navigate(iframe, domain)
-            iframe2 = json.loads(re.search("var\s*?iframe\s*?\=\s*?(?:\'|\")(.+)(?:\'|\")", iframesrc).group(1))
-            password = re.search("var\s*?pass\s*?\=\s*?(?:\'|\")(.+)(?:\'|\")", iframesrc).group(1)
-            link = jscrypto.decrypt(base64.b64decode(iframe2["ct"]),
-                                    password,
-                                    binascii.unhexlify(iframe2["s"]))
-            link = json.loads(link)
-            return net.absurl(link, domain)
-        except Exception:
-            print(traceback.format_exc())
+                mirrorpage = browser.navigate(mirrorlink,
+                                              domain,
+                                              headers={"x-requested-with": "XMLHttpRequest"})
+            xmirrorpage = htmlement.fromstring(mirrorpage)
+        iframe = net.absurl(xmirrorpage.find(".//iframe").get("src"), domain)
+        urldata = parse.urlparse(iframe).fragment.split("/")[2].split("?")[0]
+        urldata = json.loads(base64.b64decode(urldata))
+        link = jscrypto.decrypt(base64.b64decode(urldata["ct"]),
+                                base64.b64decode(master),
+                                binascii.unhexlify(urldata["iv"]),
+                                binascii.unhexlify(urldata["s"]))
+        link = json.loads(link)
+        return net.absurl(link, domain)
 
     def iterajaxlink(self, xpage, xpath=None):
         xpath = xpath or ".//button"
@@ -149,12 +146,12 @@ class animeturk(vods.showextension):
                     tag = tools.elementsrc(button).encode("ascii", "replace").strip()
                     yield tag, net.absurl(ajaxlink.group(1), domain)
 
-    def geturls(self, id):
+    def geturls(self, uid):
         fansubxpath = ".//div[@class='panel-body']/div[1]/button"
         mirrorxpath = ".//div[@class='panel-body']/div[4]/button"
 
         with Browser() as browser:
-            page = browser.navigate(id, domain, self.ispagevalid)
+            page = browser.navigate(uid, domain, self.ispagevalid)
         xpage = htmlement.fromstring(page)
 
         fansubs = {}
@@ -174,7 +171,7 @@ class animeturk(vods.showextension):
                 i += 1
                 if fansubselect == -1 or fansubselect == i:
                     with Browser(None, 0) as browser:
-                        page = browser.navigate(fansublink, id, headers={"x-requested-with": "XMLHttpRequest"})
+                        page = browser.navigate(fansublink, uid, headers={"x-requested-with": "XMLHttpRequest"})
                     xfansubpage = htmlement.fromstring(page)
                     mirror = self.getlink(None, xfansubpage)
                     if mirror:
