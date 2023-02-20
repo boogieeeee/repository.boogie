@@ -26,6 +26,7 @@ import traceback
 import jscrypto
 import base64
 import binascii
+import html
 from urllib import parse
 
 from tinyxbmc import net
@@ -35,8 +36,7 @@ from tinyxbmc import const
 from chromium import Browser
 
 
-domain = "https://www.turkanime.net/"
-master = b'NzEwXjhBQDNAPlQyfSN6TjV4Sz9rUjdLTktiQC1BIUx6WUw1fk0xcVUwVWZkV3Nab0JtNFVVYXQlfXVlVXY2RS0tKmhEUFBiSDdLMmJwOV4zbzQxaHcsa2hMOn1LeDgwODBATQ=='
+domain = "https://www.turkanime.net"
 
 class animeturk(vods.showextension):
     usedirect = False
@@ -46,13 +46,51 @@ class animeturk(vods.showextension):
     info = {"title": u"Türk Anime TV"
             }
     ismovie = False
+    
+    def init(self):
+        self.masterkey = self.setting.getstr("masterkey").encode()
 
     def ispagevalid(self, page):
         if re.search(u"<span class=\"copyText\">. [0-9]+ Türk Anime TV", page, re.UNICODE):
             return page
+        
+    def iterkeys(self):
+        yield self.masterkey
+        with Browser() as browser:
+            page = browser.navigate(domain + "/embed/", domain,)
+        for js in re.findall('"(\/embed\/js.*?)"', page):
+            with Browser() as browser:
+                jspage = browser.navigate(domain + js, domain)
+            # find sub jspages
+            if jspage is None:
+                continue
+            for subjs in re.findall('([a-f0-9]{8,})',jspage):
+                with Browser() as browser:
+                    subjspage = browser.navigate(domain + "/embed/js/embeds." + subjs + ".js", domain)
+                if subjspage is None:
+                    continue
+                # find stringlist
+                for stringlist in re.findall("var _0x[a-z0-9]+?=\[(.*?)\];", subjspage):
+                    # search for strings greater than 64 chars length (normally 100)
+                    for keycandidate in re.findall("'([^\']{64,})'", stringlist):
+                        yield html.unescape(keycandidate).encode()
+                        
+    def decrypt(self, data, iv, salt):
+        for password in self.iterkeys():
+            try:
+                retval = jscrypto.decrypt(data, password, iv, salt)
+                retval = json.loads(retval)
+                if not password == self.masterkey:
+                    print("master key updated: %s" % password)
+                    self.setting.set("masterkey", password.decode())
+                    self.masterkey = password
+                return retval
+            except Exception:
+                print("key failed: %s" % password)
+                print(traceback.format_exc())
 
     def getcategories(self):
-        u = "%sajax/turler" % domain
+        u = "%sa/jax/turler" % domain
         with Browser() as browser:
             page = browser.navigate(u, domain, headers={"x-requested-with": "XMLHttpRequest"})
         # page = self.download(u, headers=headers, referer=domain)
@@ -109,7 +147,7 @@ class animeturk(vods.showextension):
     def getepisodes(self, showargs=None, seaargs=None):
         if showargs:
             aniid, art = showargs
-            url = "%sajax/bolumler&animeId=%s" % (domain, aniid)
+            url = "%s/ajax/bolumler&animeId=%s" % (domain, aniid)
             with Browser() as browser:
                 page = browser.navigate(url, domain, headers={"x-requested-with": "XMLHttpRequest"})
             for a in htmlement.fromstring(page).iterfind(".//a"):
@@ -132,11 +170,9 @@ class animeturk(vods.showextension):
         iframe = net.absurl(xmirrorpage.find(".//iframe").get("src"), domain)
         urldata = parse.urlparse(iframe).fragment.split("/")[2].split("?")[0]
         urldata = json.loads(base64.b64decode(urldata))
-        link = jscrypto.decrypt(base64.b64decode(urldata["ct"]),
-                                base64.b64decode(master),
-                                binascii.unhexlify(urldata["iv"]),
-                                binascii.unhexlify(urldata["s"]))
-        link = json.loads(link)
+        link = self.decrypt(base64.b64decode(urldata["ct"]),
+                            binascii.unhexlify(urldata["iv"]),
+                            binascii.unhexlify(urldata["s"]))
         return net.absurl(link, domain)
 
     def iterajaxlink(self, xpage, xpath=None):
