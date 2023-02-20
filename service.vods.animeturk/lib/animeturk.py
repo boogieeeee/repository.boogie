@@ -69,7 +69,10 @@ class animeturk(vods.showextension):
     def scrapegrid(self, xpage):
         for div in xpage.iterfind(".//div[@class='panel panel-visible']"):
             a = div.find(".//a[@class='baloon']")
-            img = net.absurl(div.find(".//img").get("data-src"), domain)
+            img = div.find(".//img").get("data-src")
+            if not img:
+                img = div.find(".//img").get("src")
+            img = net.absurl(img, domain)
             art = {"icon": img, "thumb": img, "poster": img}
             title = a.get("data-original-title").replace("izle", "").strip()
             url = net.absurl(a.get("href"), domain)
