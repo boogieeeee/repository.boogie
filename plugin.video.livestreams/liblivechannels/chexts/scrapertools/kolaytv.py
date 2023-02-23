@@ -20,7 +20,7 @@ from liblivechannels import unwise
 
 import htmlement
 import re
-
+import traceback
 
 domain = "https://www.donmaztv.com"
 
@@ -40,11 +40,14 @@ def itermedias(chlink, chlinks=None):
         iurl2 = re.search('src="(.+?)".+iframe', ipage).group(1)
         iurl2 = iurl2.replace("'+ulke+'", "DE")
         ipage = net.http(iurl2, referer=iurl)
-        wise = unwise.unwise(*re.findall(rgx, ipage)[0])
-        wise = unwise.unwise(*re.findall(rgx, wise)[0])
-        wise = unwise.unwise(*re.findall(rgx, wise)[1])
-        media = re.search(rgx2, wise.replace("\\", "")).group(1)
-        links.append(mediaurl.hlsurl(media, headers={"referer": domain + "/"}))
+        try:
+            wise = unwise.unwise(*re.findall(rgx, ipage)[0])
+            wise = unwise.unwise(*re.findall(rgx, wise)[0])
+            wise = unwise.unwise(*re.findall(rgx, wise)[1])
+            media = re.search(rgx2, wise.replace("\\", "")).group(1)
+            links.append(mediaurl.hlsurl(media, headers={"referer": domain + "/"}, adaptive=False, ffmpegdirect=False))
+        except Exception:
+            print(traceback.format_exc())
     links.reverse()
     for link in links:
         yield link
