@@ -17,7 +17,7 @@ from tinyxbmc import stubmod
 selcukaddon = "service.vods.selcuk"
 
 
-def itermedias(chfilter, isadaptive=False):
+def itermedias(chfilter):
     if addon.has_addon(selcukaddon):
         addon.depend_addon(selcukaddon)
         import libselcuk

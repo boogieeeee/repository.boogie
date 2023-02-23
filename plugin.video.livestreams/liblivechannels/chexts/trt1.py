@@ -34,7 +34,6 @@ class trt1(multi, scraper):
     selcuk_name = "trt1"
     kolay_ids = ["/trt-1-canli/1", "/trt-1-canli/2", "/trt-1-canli/3", "/trt-1-canli/4"]
     canlitv_ids = ["trt-1-canli-izle/1", "trt-1-canli-izle/2"]
-    selcuk_adaptive = False
 
 
 class trtspor(multi, scraper):
@@ -45,7 +44,6 @@ class trtspor(multi, scraper):
     selcuk_name = "trtspor"
     kolay_ids = ["/trt-spor/1", "/trt-spor/2","/trt-spor/3", "/trt-spor/4"]
     canlitv_ids = ["trt-spor", "trt-spor/2", "trt-spor/3"]
-    selcuk_adaptive = False
 
 
 class trtsporyildiz(multi, scraper):

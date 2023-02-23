@@ -23,7 +23,6 @@ class multi:
 
     # selcuk sports
     selcuk_name = None
-    selcuk_adaptive = True
 
     # youtube
     youtube_chanid = None
@@ -64,7 +63,7 @@ class multi:
             for yayin in safeiter(canlitvcenter.itermedias(self.canlitv_id, self.canlitv_ids)):
                 yield yayin
         if self.selcuk_name:
-            for yayin in safeiter(selcuk.itermedias(self.selcuk_name, self.selcuk_adaptive)):
+            for yayin in safeiter(selcuk.itermedias(self.selcuk_name)):
                 yield yayin
         if self.dady_id or self.dady_name:
             for yayin in safeiter(dadylive.itermedias(self.dady_id, self.dady_name)):

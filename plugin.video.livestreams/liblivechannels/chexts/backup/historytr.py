@@ -20,4 +20,3 @@ class history(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f5/History_Logo.svg/458px-History_Logo.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
     selcuk_name = "history"
-    selcuk_adaptive = False

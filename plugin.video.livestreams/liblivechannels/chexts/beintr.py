@@ -44,8 +44,6 @@ class bein1(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "bein1"
     selcuk_name = "bein1"
-    selcuk_mobile = "1"
-    selcuk_adaptive = False
     dady_name = "beinsports1turkey"
     acestreams = ["acestream://118416583faa3fb4f03800173429b6b844b43a52"]
 
@@ -56,8 +54,6 @@ class bein2(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "bein2"
     selcuk_name = "bein2"
-    selcuk_mobile = "3"
-    selcuk_adaptive = False
     dady_name = "beinsports2turkey"
     acestreams = ["acestream://48bee10b883f17c7186d60f1e8022dca0ba41a05"]
 
@@ -68,8 +64,6 @@ class bein3(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "bein3"
     selcuk_name = "bein3"
-    selcuk_mobile = "7"
-    selcuk_adaptive = False
     dady_name = "beinsports3turkey"
     acestreams = ["acestream://ed81c333815247536edfcdb2755147e8c4144d62"]
 
@@ -80,8 +74,6 @@ class bein4(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "bein4"
     selcuk_name = "bein4"
-    selcuk_mobile = "29"
-    selcuk_adaptive = False
     dady_name = "beinsports4turkey"
     acestreams = ["acestream://7683cd0cbacf55fa8b39c363219ffba1bc47cf9d"]
 
@@ -91,9 +83,7 @@ class beinmax1(multi, scraper):
     icon = "https://i.pinimg.com/originals/95/f6/68/95f6681b3ad0c0404b04a7c4a8cccb06.png"
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "beinmax1"
-    selcuk_mobile = "30"
     selcuk_name = "beinmax1"
-    selcuk_adaptive = False
 
 
 class beinmax2(multi, scraper):
@@ -102,8 +92,6 @@ class beinmax2(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "beinmax2"
     selcuk_name = "beinmax2"
-    selcuk_mobile = "31"
-    selcuk_adaptive = False
 
 
 class beinhaber(multi, scraper):
@@ -112,5 +100,4 @@ class beinhaber(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "beinhaber"
     selcuk_name = "beinhaber"
-    selcuk_mobile = "32"
-    selcuk_adaptive = False
+
