@@ -24,8 +24,38 @@ import base64
 dom = "canlitv.center"
 domain = "https://" + dom
 
-#rgxkey = "verianahtar[\s\t]*?\=[\s\t]*?(?:\"|\')(.+?)(?:\"|\')"
 rgxlink = "yayin[a-zA-Z0-9]+[\s\t]*?\=[\s\t]*?(?:\"|\')(.*?)(?:\"|\')"
+
+
+def findmedias(src, links, baseaddr):
+    found = False
+    media = re.search("file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
+    if media:
+        link = base64.b64decode(media.group(1)).decode()
+        links.append(mediaurl.hlsurl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
+        found = True
+    else:
+        for link in re.findall(rgxlink, src):
+            if "anahtar" in link:
+                link = net.absurl(link, baseaddr)
+                links.append(mediaurl.hlsurl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
+                found = True
+                break
+    return found
+
+def itersubpages(src):
+    found = False
+    for iframe2 in re.findall('iframe.*?src=\\\\?"(.+?)"', src):
+        found = True
+        yield iframe2.replace("\\", "")
+    if not found:
+        for script in re.findall('script src=\\\\?"(.+?)"', src):
+            found = True
+            yield script.replace("\\", "")
+    if not found:
+        iframe1 = htmlement.fromstring(src).find(".//iframe")
+        if iframe1 is not None:
+            yield iframe1.get("src")
 
 
 def itermedias(ctvcid, ctvcids=None):
@@ -34,23 +64,17 @@ def itermedias(ctvcid, ctvcids=None):
     for ctvcid in ctvcids:
         links = []
         u = domain + "/" + ctvcid
-        iframe1 = htmlement.fromstring(net.http(u, referer=domain)).find(".//iframe").get("src")
-        iframe2 = htmlement.fromstring(net.http(iframe1, referer=u)).find(".//iframe").get("src")
-        src = net.http(iframe2, referer=iframe1)
-        media = re.search("file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
-        if media:
-            link = base64.b64decode(media.group(1)).decode()
-            links.append(mediaurl.hlsurl(link, headers={"referer": domain}))
-        else:
-            for script in re.findall('script src=\\\\"(.+?)"', src):
-                ssrc = script.replace("\\", "")
-                scriptsrc = net.http(ssrc, referer=domain)
-                #key = re.search(rgxkey, scriptsrc)
-                #if key:
-                for link in re.findall(rgxlink, scriptsrc):
-                    if "anahtar" in link:
-                        link = net.absurl(link, ssrc)
-                        #links.append(net.hlsurl(link + key.group(1), headers={"referer": domain}))
-                        links.append(mediaurl.hlsurl(link, headers={"referer": domain}))
+        srcroot = net.http(u, referer=domain)
+        for subpage1 in itersubpages(srcroot):
+            sub1src = net.http(subpage1, referer=domain)
+            found = findmedias(sub1src, links, subpage1)
+            if not found:
+                for subpage2 in itersubpages(sub1src):
+                    sub2src = net.http(subpage2, referer=domain)
+                    found = findmedias(sub2src, links, subpage2)
+                    if not found:
+                        for subpage3 in itersubpages(sub2src):
+                            sub3src = net.http(subpage3, referer=domain)
+                            findmedias(sub3src, links, subpage3)
         for link in links:
             yield link
