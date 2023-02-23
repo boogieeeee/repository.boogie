@@ -38,4 +38,4 @@ class ahaber(multi, scraper):
     yayin_id = "a-haber"
     youtube_chanid = "ahaber"
     kolay_ids = ["/a-haber/1", "/a-haber/2", "/a-haber/3", "/a-haber/4"]
-    canlitv_ids = ["a-haber-izle/1", "a-haber-izle/2", "a-haber-izle/3"]
+    canlitv_ids = ["a-haber-izle/1", "a-haber-izle/2"]
