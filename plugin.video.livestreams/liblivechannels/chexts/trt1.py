@@ -43,7 +43,7 @@ class trtspor(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_id = "trt-3"
     selcuk_name = "trtspor"
-    kolay_ids = ["/trt-spor/1", "/trt-spor/3"]
+    kolay_ids = ["/trt-spor/1", "/trt-spor/2","/trt-spor/3", "/trt-spor/4"]
     canlitv_ids = ["trt-spor", "trt-spor/2", "trt-spor/3"]
     selcuk_adaptive = False
 
