@@ -30,7 +30,7 @@ class br(scraper):
     def get(self):
         page = self.download(self.domain + "/mediathek/live")
         link = re.search(r'publicLocation.+?"(.+?)"', page)
-        yield mediaurl.hlsurl(link.group(1))
+        yield mediaurl.hlsurl(link.group(1), ffmpegdirect=False)
 
 
 class daserste(scraper):
