@@ -62,4 +62,6 @@ def itermedias(youtube_chanid, youtube_stream, youtube_sindex):
     # dash = response["streamingData"].get("dashManifestUrl")
     # if dash:
     #     yield mediaurl.mpdurl(dash)
-    yield mediaurl.hlsurl(response["streamingData"]["hlsManifestUrl"])
+    yield mediaurl.hlsurl(response["streamingData"]["hlsManifestUrl"],
+                          adaptive=True,
+                          ffmpegdirect=False)
