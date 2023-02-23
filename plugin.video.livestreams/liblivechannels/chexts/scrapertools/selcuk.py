@@ -25,10 +25,10 @@ def itermedias(chfilter, isadaptive=False):
         raise StopIteration
     if chfilter:
         found = False
-        for selcukurl, url, chname in libselcuk.iteratechannels():
+        for chid, _chlink, chname in libselcuk.iteratechannels():
             if chfilter == normalize(chname):
                 found = True
                 break
         if found:
-            for media in libselcuk.getmedias(url, selcukurl, isadaptive):
+            for media in libselcuk.getmedias(chid):
                 yield media
