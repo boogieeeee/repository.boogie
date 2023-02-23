@@ -26,4 +26,5 @@ class teevee2(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     youtube_chanid = "teve2"
     kolay_id = "/teve2-canli-hd"
+    canlitv_ids = "teve2/1", "teve2/2"
     yayin_name = "teve2"
