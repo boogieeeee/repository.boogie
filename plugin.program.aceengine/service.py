@@ -12,6 +12,7 @@ from aceengine import const
 
 class AceService(addon.blockingloop):
     def oninit(self):
+        self.wait = 1
         self.settings = addon.kodisetting(const.ADDONID)
         self.backend = backend.getbackend(self.settings)
         if self.backend:
