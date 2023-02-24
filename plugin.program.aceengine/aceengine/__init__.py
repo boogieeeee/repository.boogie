@@ -51,11 +51,11 @@ class acestream():
             streamhay.throw(const.STREAMHAY_KEY, streams)
 
     def query(self, uri, ignore=False):
-        jsdata = net.http(uri, cache=None)
         try:
+            jsdata = net.http(uri, cache=None)
             jsdata = json.loads(jsdata)
-        except Exception:
-            jsdata = {"error": "JsonError: %s" % jsdata,
+        except Exception as e:
+            jsdata = {"error": "Query Error %s" % e,
                       "response": None}
         if jsdata.get("error") and not ignore:
             raise AcestreamError(jsdata["error"])
@@ -63,13 +63,15 @@ class acestream():
         
     def updatestats(self):
         if (time.time() - self.lastupdate) > 1:
-            self.stats = self.query(self.stat_url)
-            self.lastupdate = time.time()
+            stats = self.query(self.stat_url, ignore=True)
+            if stats:
+                self.stats = stats
+                self.lastupdate = time.time()
         
     @property
     def hasstarted(self):
         self.updatestats()
-        return self.stats["status"] == "dl"
+        return self.stats.get("status") == "dl"
         
     def stop(self, url=None):
         if not url:
