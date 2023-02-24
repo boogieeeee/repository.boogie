@@ -78,7 +78,7 @@ class iptv:
             addon.toggle_addon(IPTVSIMPLE)
             if cfg.pvr:
                 iptv.config_pvr()
-            time.sleep(1)
+            time.sleep(3)
             addon.toggle_addon(IPTVSIMPLE)
 
     @staticmethod
