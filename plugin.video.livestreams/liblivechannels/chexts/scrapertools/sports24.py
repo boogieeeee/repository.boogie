@@ -42,10 +42,6 @@ class chanjs(scraper):
         uid = "".join((jslist[128], jslist[186], jslist[183], jslist[115]))
         body = '{"env":"production","user_id":"%s","channel_id":"%s","message":[D{SSM}]}' % (uid, cid)
         mpd = self.js["playback_info"]["dash_manifest_url"].replace("http://", "https://")
-        print(guid)
-        print(cid)
-        print(uid)
-        print(body)
         yield mediaurl.mpdurl(mpd, headers, mpdl, headers, lbody=body)
 
 
