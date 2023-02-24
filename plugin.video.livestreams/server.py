@@ -11,6 +11,15 @@ from addon import Base
 import time
 import xbmc
 
+REMOTE_DBG = False
+
+if REMOTE_DBG:
+    import sys
+    pdevpath = "/home/boogie/.p2/pool/plugins/org.python.pydev.core_9.3.0.202203051235/pysrc/"
+    sys.path.append(pdevpath)
+    import pydevd  # @UnresolvedImport
+    pydevd.settrace(stdoutToServer=True, stderrToServer=True, suspend=False)
+
 
 PORT = 8000
 
