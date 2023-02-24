@@ -9,7 +9,6 @@ import logging
 class Logger(object):
     def __init__(self, level=20, Log=None):
         fmt = '%(asctime)s: %(levelname)s: %(module)s.%(funcName)s: %(message)s'
-        fmtr = logging.Formatter(fmt)
         logging.basicConfig(format=fmt)
         self.Logger = logging.getLogger()
         self.setlevel(level)

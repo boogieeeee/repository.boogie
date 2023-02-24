@@ -12,10 +12,8 @@ import binascii
 import base64
 
 from thirdparty import m3u8
-from tinyxbmc import net
 from tinyxbmc import mediaurl
 from tinyxbmc import tools
-from tinyxbmc import const
 
 from liblivechannels import log
 from liblivechannels import hls

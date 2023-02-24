@@ -27,7 +27,6 @@ from tinyxbmc import extension
 from tinyxbmc import mediaurl
 
 import time
-import traceback
 import socket
 import urllib3
 
@@ -38,7 +37,6 @@ from liblivechannels import epg
 from liblivechannels import pvr
 
 from thirdparty import m3u8
-import aceengine
 
 _chancls = {}
 _chanins = {}

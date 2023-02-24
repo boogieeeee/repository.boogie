@@ -2,7 +2,6 @@ from tinyxbmc import tools
 from tinyxbmc import addon
 
 from liblivechannels import common
-from six import PY2
 
 import codecs
 

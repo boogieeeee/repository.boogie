@@ -6,7 +6,6 @@ Created on Aug 3, 2021
 from tinyxbmc import addon
 from tinyxbmc import tools
 from tinyxbmc import net
-from tinyxbmc import mediaurl
 from tinyxbmc import gui
 
 from liblivechannels import config
