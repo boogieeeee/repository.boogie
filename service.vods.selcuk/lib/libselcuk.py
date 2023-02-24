@@ -63,3 +63,4 @@ def getmedias(chid, isadaptive=False, direct=False):
                 for sub in subs:
                     media = "https://" + sub + doms[0] + "/selcuksports/" + olmusmu[-1] + "/" + chid + "/playlist.m3u8" + olmusmu[-2]
                     yield mediaurl.hlsurl(media, headers={"referer": "https://%s/" % parse.urlparse(url).netloc}, adaptive=isadaptive, ffmpegdirect=direct)
+            break
