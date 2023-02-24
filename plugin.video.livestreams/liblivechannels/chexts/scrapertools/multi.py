@@ -10,8 +10,10 @@ from liblivechannels.chexts.scrapertools import yayinakisi
 from liblivechannels.chexts.scrapertools import vercel
 from liblivechannels.chexts.scrapertools import mynetyayin
 
+from liblivechannels import common
+
 from tinyxbmc.tools import safeiter
-from tinyxbmc import net, mediaurl
+from tinyxbmc import mediaurl
 
 
 class multi:
@@ -52,8 +54,10 @@ class multi:
 
     def get(self):
         for acestream in self.acestreams:
+            self.pvrinputstream = common.INPUTSTREAMFFMPEG
             yield mediaurl.acestreamurl(acestream)
         if self.youtube_chanid:
+            self.pvrinputstream = common.INPUTSTREAMADAPTIVE
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_stream, self.youtube_sindex)):
                 yield yayin
         if self.kolay_id or self.kolay_ids:
