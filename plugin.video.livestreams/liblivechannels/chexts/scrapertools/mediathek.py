@@ -7,8 +7,8 @@ Created on Jul 16, 2021
 import ghub
 import re
 import os
-from tinyxbmc import addon, tools, net, mediaurl
-from liblivechannels import programme
+from tinyxbmc import addon, tools, mediaurl
+from liblivechannels import programme, common
 from datetime import datetime
 from io import open
 
@@ -48,6 +48,7 @@ class multi():
     sender = "Das Erste"
     epg = None
     link = None
+    pvrinputstream = common.INPUTSTREAMADAPTIVE
 
     def _link_epg(self):
         if not self.link or not self.epg:
