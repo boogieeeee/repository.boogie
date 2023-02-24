@@ -104,10 +104,8 @@ class Navi(Base):
             else:
                 cntx_plist = self.item("Add to Playlist", method="edit_playlist")
                 cntx_plist_kwargs = {"addto": True, "index": index}
-            # cntx_validate = self.item("Validate", method="validate_single")
             cntx_select = self.item("Select Source", method="select_source")
             item.context(cntx_select, True, index)
-            # item.context(cntx_validate, False, index)
             item.context(cntx_plist, False, **cntx_plist_kwargs)
             item.resolve(index)
 
