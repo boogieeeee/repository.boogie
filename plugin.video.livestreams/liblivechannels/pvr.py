@@ -145,13 +145,11 @@ class iptv:
 
     @staticmethod
     def recorder(timerid, chname, fname, startts, endts):
-        for _icon, title, index, _cats, url in cfg.channels:
+        for _icon, title, index, _cats, pvrinputstream in cfg.channels:
             if chname == title:
-                # TO-DO: improve this, there can be different channels with same name
-                if not isinstance(url, mediaurl.mpdurl):
-                    url = hls.encodeurl(playlist=index, forceproxy=1)
-                    threading.Thread(target=iptv._recorder_thread, args=(timerid, url, fname, startts, endts)).start()
-                    break
+                url = hls.encodeurl(playlist=index, forceproxy=1)
+                threading.Thread(target=iptv._recorder_thread, args=(timerid, url, fname, startts, endts)).start()
+                break
 
     @staticmethod
     def shouldrecord():

@@ -20,7 +20,7 @@ class write(addon.blockingloop):
 
     def onloop(self):
         try:
-            icon, title, index, cats, _isdaptive = self.channels[self.index]
+            icon, title, index, cats, _pvrinputstream = self.channels[self.index]
         except IndexError:
             self.writeline("</tv>")
             with codecs.open(common.epath, "w", encoding="utf-8") as f:

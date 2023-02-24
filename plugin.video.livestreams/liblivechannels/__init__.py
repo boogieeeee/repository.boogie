@@ -69,6 +69,7 @@ class scraper(object):
     index = None
     checkerrors = None
     subchannel = False
+    pvrinputstream = None
 
     def __init__(self, download):
         self.download = download

@@ -15,3 +15,5 @@ check_timeout = 6 * 60 * 60
 dpath = os.path.join(os.path.dirname(__file__), "chexts")
 mpath = os.path.join(os.path.dirname(__file__), "media")
 epath = os.path.join(addon.get_addondir(addon_id), "epg.xml")
+INPUTSTREAMADAPTIVE = "adaptive"
+INPUTSTREAMFFMPEG = "ffmpegdirect"

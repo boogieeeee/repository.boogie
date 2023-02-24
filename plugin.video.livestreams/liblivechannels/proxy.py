@@ -146,30 +146,21 @@ class Handler(BaseHTTPRequestHandler):
             self.end_headers()
             self.writeline('#EXTM3U')
             playlists = self.base.config.playlists
-            for icon, title, index, cats, url in self.base.config.channels:
+            for icon, title, index, cats, pvrinputstream in self.base.config.channels:
                 pnames = []
                 for playlistname, indexes in self.base.config.iterplaylists(playlists):
                     if index in indexes:
                         pnames.append(playlistname)
                 playlisturl = None
-                if url:
-                    if self.base.config.ffmpegdirect:
-                        self.writeline("#KODIPROP:inputstreamaddon=inputstream.ffmpegdirect")
-                        self.writeline("#KODIPROP:inputstreamclass=inputstream.ffmpegdirect")
-                        self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
-                        self.writeline("#KODIPROP:inputstream.ffmpegdirect.is_realtime_stream=false")
-                        # self.writeline("#KODIPROP:inputstream.ffmpegdirect.manifest_type=hls")
-                    elif url.inputstream:
-                        self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
-                        self.writeline("#KODIPROP:inputstreamclass=inputstream.adaptive")
-                        self.writeline("#KODIPROP:inputstream.adaptive.manifest_type=%s" % url.manifest)
-                        if isinstance(url, mediaurl.mpdurl):
-                            if url.lurl:
-                                self.writeline('#KODIPROP:inputstream.adaptive.license_type=%s' % url.license)
-                                url.lurl, url.lheaders = net.fromkodiurl(net.tokodiurl(url.lurl, headers=url.lheaders, pushua=const.USERAGENT, pushverify="false"))
-                                self.writeline('#KODIPROP:inputstream.adaptive.license_key=%s' % url.kodilurl)
-                            playlisturl = net.tokodiurl(url.url, headers=url.headers, pushverify="false", pushua=const.USERAGENT)
-                        self.writeline("#KODIPROP:inputstream.adaptive.stream_headers=%s" % const.USERAGENT)
+                if pvrinputstream == common.INPUTSTREAMADAPTIVE:
+                    self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
+                    self.writeline("#KODIPROP:inputstreamclass=inputstream.adaptive")
+                    self.writeline("#KODIPROP:inputstream.adaptive.manifest_type=hls")
+                elif pvrinputstream == common.INPUTSTREAMFFMPEG:
+                    self.writeline("#KODIPROP:inputstreamaddon=inputstream.ffmpegdirect")
+                    self.writeline("#KODIPROP:inputstreamclass=inputstream.ffmpegdirect")
+                    self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
+                    self.writeline("#KODIPROP:inputstream.ffmpegdirect.is_realtime_stream=false")
                 self.writeline('#EXTINF:0 tvg-logo="%s" tvg-id="%s" group-title="%s",%s' % (icon,
                                                                                             index,
                                                                                             ";".join(cats + pnames),

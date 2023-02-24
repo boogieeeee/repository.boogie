@@ -138,12 +138,12 @@ class config(object):
             yield playlist.title(), playlists[playlist]
 
     def iterchannels(self):
-        for icon, title, index, cats, url in self.channels:
-            yield icon, title, index, cats, url
+        for icon, title, index, cats, pvrinputstream, in self.channels:
+            yield icon, title, index, cats, pvrinputstream
 
     def itercats(self):
         cats = []
-        for _icon, _title, _index, chancats, _url in self.iterchannels():
+        for _icon, _title, _index, chancats, _pvrinputstream in self.iterchannels():
             for cat in chancats:
                 if cat not in cats:
                     cats.append(cat)

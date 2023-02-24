@@ -91,16 +91,13 @@ class Base(container.container):
         return None, None, None
 
     def check_acestreamurl(self, url):
-        response = self.http_retry(url.kodiurl, {})
-        if self.isinvalidresponse(response):
-            return "Broken Acestream URL", None, None
-        return None, None, None
-        #for _second in range(10):
-            #stats = aceengine.stats(url)
-            #if stats.get("status") == "dl":
-            #    aceengine.stop(url)
-            #    return None, None, None
-            #time.sleep(1)
+        for _sec in range(10):
+            url.aceurl.getstream()
+            if url.aceurl.hasstarted:
+                return None, None, None
+            time.sleep(1)
+        return "Slow Acestream", None, None 
+
 
     def check_hlsurl(self, url, forceget=False):
         if isinstance(url, mediaurl.hlsurl):
@@ -195,7 +192,7 @@ class Base(container.container):
             if not error and not found:
                 error = "No playlist"
             if error is None:
-                channels.append([c.icon, c.title, c.index, c.categories, url if isinstance(url, mediaurl.url) else None])
+                channels.append([c.icon, c.title, c.index, c.categories, c.pvrinputstream])
                 error = "UP"
             pg.update(int(100 * index / len(chans)), "%s\n%s: %s" % (c.title, error, c.index))
             if index == 200000:
