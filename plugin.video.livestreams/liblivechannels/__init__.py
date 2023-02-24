@@ -83,23 +83,3 @@ class scraper(object):
     def iterprogrammes(self):
         raise StopIteration
         yield
-
-
-class scrapers(object):
-    def __init__(self, download):
-        self.download = download
-
-    def makechannel(self, cid, base, **kwargs):
-        if "icon" in kwargs and not isinstance(kwargs["icon"], string_types):
-            kwargs.pop("icon")
-        cid = cid.encode("hex") if PY2 else cid.encode().hex()
-        return type("ch_" + cid, (base,), kwargs)
-
-    def _getchannel(self, cid):
-        return self.getchannel(cid[3:].decode("hex"))
-
-    def iteratechannels(self):
-        yield scraper
-
-    def getchannel(self, cid):
-        pass

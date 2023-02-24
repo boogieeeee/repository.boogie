@@ -68,8 +68,6 @@ class write(addon.blockingloop):
             self.writeline('</programme>')
 
     def writeline(self, txt):
-        if PY2 and isinstance(txt, unicode):
-            txt.encode("utf-8")
         self.wfile += txt + "\n"
 
     def xmlescape(self, txt):

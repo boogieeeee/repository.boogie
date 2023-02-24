@@ -94,12 +94,13 @@ class Base(container.container):
         response = self.http_retry(url.kodiurl, {})
         if self.isinvalidresponse(response):
             return "Broken Acestream URL", None, None
-        for _second in range(10):
-            stats = aceengine.stats(url)
-            if stats.get("status") == "dl":
-                aceengine.stop(url)
-                return None, None, None
-            time.sleep(1)
+        return None, None, None
+        #for _second in range(10):
+            #stats = aceengine.stats(url)
+            #if stats.get("status") == "dl":
+            #    aceengine.stop(url)
+            #    return None, None, None
+            #time.sleep(1)
 
     def check_hlsurl(self, url, forceget=False):
         if isinstance(url, mediaurl.hlsurl):
@@ -216,12 +217,6 @@ class Base(container.container):
                 if not cls.index:
                     cls.index = "%s:%s:" % (mod.__name__, cls.__name__)
                 yield cls
-            for mod, cls in extension.getobjects(common.dpath, parents=[liblivechannels.scrapers]):
-                cls_ob = cls(self.download)
-                for cls_sub in tools.safeiter(cls_ob.iteratechannels()):
-                    if not cls_sub.index:
-                        cls_sub.index = "%s:%s:%s" % (mod.__name__, cls.__name__, cls_sub.__name__)
-                    yield cls_sub
 
         for cls in _iterobjs():
             found = False
@@ -256,14 +251,4 @@ class Base(container.container):
                         if chanid == cls.index:
                             _chanins[chanid] = cls(self.download)
                             break
-                else:
-                    for mod, cls in extension.getobjects(common.dpath, m, c, parents=[liblivechannels.scrapers]):
-                        if cls.__name__ == c and mod.__name__ == m:
-                            try:
-                                subcls = cls(self.download)._getchannel(subc)
-                            except Exception:
-                                print(traceback.format_exc())
-                                continue
-                            subcls.index = "%s:%s:%s" % (mod.__name__, cls.__name__, subcls.__name__)
-                            _chanins[chanid] = subcls(self.download)
         return _chanins.get(chanid)
