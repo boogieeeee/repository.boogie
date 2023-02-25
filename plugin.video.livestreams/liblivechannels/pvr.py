@@ -76,8 +76,6 @@ class iptv:
         if iptv.isenabled():
             time.sleep(1)
             addon.toggle_addon(IPTVSIMPLE)
-            if cfg.pvr:
-                iptv.config_pvr()
             time.sleep(3)
             addon.toggle_addon(IPTVSIMPLE)
 
@@ -94,7 +92,6 @@ class iptv:
                 pvr_settings.set("epgPathType", 0)
             if not pvr_settings.getstr("epgPath") == common.epath:
                 pvr_settings.set("epgPath", common.epath)
-            iptv.reload_pvr()
 
     @staticmethod
     def _recorder_thread(timerid, url, fname, startts, endts):

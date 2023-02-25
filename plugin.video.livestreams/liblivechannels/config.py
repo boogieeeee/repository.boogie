@@ -86,6 +86,10 @@ class config(object):
     @property
     def pvr(self):
         return self.setting.getbool("pvr")
+    
+    @pvr.setter
+    def pvr(self, value):
+        return self.setting.set("pvr", value)
 
     @property
     def pvrrecord(self):

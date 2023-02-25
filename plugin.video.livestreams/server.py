@@ -11,15 +11,6 @@ from addon import Base
 import time
 import xbmc
 
-REMOTE_DBG = False
-
-if REMOTE_DBG:
-    import sys
-    pdevpath = "/home/boogie/.p2/pool/plugins/org.python.pydev.core_9.3.0.202203051235/pysrc/"
-    sys.path.append(pdevpath)
-    import pydevd  # @UnresolvedImport
-    pydevd.settrace(stdoutToServer=True, stderrToServer=True, suspend=False)
-
 
 PORT = 8000
 
@@ -51,10 +42,6 @@ class Server(addon.blockingloop):
         self.thread = Thread(target=self.httpd.serve_forever)
         self.thread.start()
 
-        # if iptvsimple auto configuration is requested execute it
-        if base.config.pvr:
-            base.iptvsimple.config_pvr()
-
     def onclose(self):
         # stop the server
         self.httpd.shutdown()
@@ -69,8 +56,11 @@ class Server(addon.blockingloop):
             if base.config.update_pvr:
                 base.iptvsimple.reload_pvr()
                 base.config.update_pvr = False
-                time.sleep(1)
                 base.iptvsimple.channels = base.iptvsimple.getchannels()
+            if base.config.pvr:
+                base.iptvsimple.config_pvr()
+                base.config.pvr = False
+                base.iptvsimple.reload_pvr()
             if False and base.config.pvrrecord and base.config.pvrlocation:
                 base.iptvsimple.shouldrecord()
 
