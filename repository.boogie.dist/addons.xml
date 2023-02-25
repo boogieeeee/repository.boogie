@@ -23,7 +23,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.45">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.46">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -103,7 +103,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.9">
+<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.10">
 	<requires>
 
 		<import addon="plugin.video.vods"/>
