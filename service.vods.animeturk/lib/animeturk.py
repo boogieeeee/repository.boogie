@@ -209,7 +209,7 @@ class animeturk(vods.showextension):
             for _fansub, fansublink in fansubs.items():
                 i += 1
                 if fansubselect == -1 or fansubselect == i:
-                    with Browser(None, 0) as browser:
+                    with Browser() as browser:
                         page = browser.navigate(fansublink, uid, headers={"x-requested-with": "XMLHttpRequest"})
                     xfansubpage = htmlement.fromstring(page)
                     mirror = self.getlink(None, xfansubpage)
