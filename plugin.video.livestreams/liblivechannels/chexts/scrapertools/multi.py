@@ -57,7 +57,6 @@ class multi:
             self.pvrinputstream = common.INPUTSTREAMFFMPEG
             yield mediaurl.acestreamurl(acestream)
         if self.youtube_chanid:
-            self.pvrinputstream = common.INPUTSTREAMADAPTIVE
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_stream, self.youtube_sindex)):
                 yield yayin
         if self.kolay_id or self.kolay_ids:
