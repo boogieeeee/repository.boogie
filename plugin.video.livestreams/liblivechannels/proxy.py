@@ -112,12 +112,10 @@ class Handler(BaseHTTPRequestHandler):
                 elif isinstance(url, mediaurl.acestreamurl):
                     # todo: check if ffmpegdirect is the player
                     if self.base.check_acestreamurl(url)[0] is None:
-                        self.send_response(302)
+                        self.send_response(307)
                         self.send_header('Location', url.kodiurl)
-                    else:
-                        self.send_response(500)
-                    self.end_headers()
-                    break
+                        self.end_headers()
+                        break
                 else:
                     error, resp, headers = self.base.check_hlsurl(url)
                     if error is None:
