@@ -227,7 +227,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.2">
+<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.six" />
