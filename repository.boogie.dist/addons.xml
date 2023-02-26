@@ -206,25 +206,24 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.f1full" name="F1full module for VODS" provider-name="boogie" version="0.0.2">
+<addon id="service.vods.f1full" name="Racereplay module for VODS" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
-		<import addon="script.module.chromium"/>
 	</requires>
 	<extension point="xbmc.service"></extension>
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
 		<platform>all</platform>
-		<summary lang="en">F1full module for VODS</summary>
-		<description lang="en">F1full module for VODS</description>
+		<summary lang="en">Racereplay module for VODS</summary>
+		<description lang="en">Racereplay module for VODS</description>
 		<license>GNU General Public License, v2</license>
 		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
 		<website>https://github.com/boogieeeee/repository.boogie</website>
 		<email>boogiepop@gmx.com</email>
 	</extension>
 	<tinyxbmc>
-	  	<plugin path="lib" id="vodsshow" module="f1" instance="full"/>
+	  	<plugin path="lib" id="vodsshow" module="race" instance="replay"/>
 	</tinyxbmc>
 </addon>
 
