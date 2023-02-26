@@ -88,6 +88,7 @@ class Handler(BaseHTTPRequestHandler):
                 m3file = self.render_m3(resp, qurl, qheaders)
                 if isinstance(m3file, Exception):
                     self.send_response(500, str(m3file))
+                    self.end_headers()
                     return
                 self.send_response(resp.status_code)
                 self.end_headers()
@@ -111,7 +112,7 @@ class Handler(BaseHTTPRequestHandler):
                 elif isinstance(url, mediaurl.acestreamurl):
                     # todo: check if ffmpegdirect is the player
                     if self.base.check_acestreamurl(url)[0] is None:
-                        self.send_response(301)
+                        self.send_response(302)
                         self.send_header('Location', url.kodiurl)
                     else:
                         self.send_response(500)

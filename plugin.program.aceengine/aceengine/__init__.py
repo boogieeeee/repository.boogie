@@ -24,8 +24,8 @@ class acestream():
         self.stats = {}
         self.lastupdate = 0
 
-    def getstream(self):
-        if not self.playback_url:
+    def getstream(self, force=False):
+        if not self.playback_url or force:
             jsdata = self.query("%s/ace/getstream?id=%s&format=json" % (acestream.apiurl(), self.id), ignore=True)
             if jsdata:
                 self.stat_url = jsdata["stat_url"]
