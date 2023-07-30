@@ -8,7 +8,6 @@ from tinyxbmc import const
 
 from addon import Base
 
-import time
 import xbmc
 
 
@@ -21,7 +20,7 @@ logger = log.Logger(20)
 
 class Server(addon.blockingloop):
     def init(self):
-        self.wait = 3
+        self.wait = 5
         self.dropboxtoken = const.DB_TOKEN
 
     def oninit(self):
@@ -41,6 +40,7 @@ class Server(addon.blockingloop):
         logger.info("Starting livestreams m3u8 proxy")
         self.thread = Thread(target=self.httpd.serve_forever)
         self.thread.start()
+        self.pvrtimer = base.config.pvrtimer
 
     def onclose(self):
         # stop the server
@@ -50,10 +50,13 @@ class Server(addon.blockingloop):
     def onloop(self):
         # runs each self.wait seconds
         if base.iptvsimple.isenabled() and not xbmc.Player().isPlaying():
-            if not base.config.update_running and ((time.time() - base.config.lastupdate > common.check_timeout) or base.config.validate):
-                Thread(target=base.do_validate, args=(True, self.isclosed())).start()
+            if not base.config.update_running and ((base.config.lastupdate < base.config.updatetime) or base.config.validate):
+                Thread(target=base.do_validate, args=(True, self.isclosed)).start()
                 # base.config.validate flag is reset in base.do_validate method
-            if base.config.update_pvr:
+            if self.pvrtimer and self.pvrtimer > 0:
+                self.pvrtimer -= self.wait
+            if base.config.update_pvr or (self.pvrtimer is not None and self.pvrtimer <= 0):
+                self.pvrtimer = None
                 base.iptvsimple.reload_pvr()
                 base.config.update_pvr = False
                 base.iptvsimple.channels = base.iptvsimple.getchannels()

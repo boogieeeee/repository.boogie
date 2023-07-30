@@ -1,5 +1,7 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
+	    <setting id="updatetime" type="time" label="Auto update channels at" default="05:00"/>
+	    <setting id="pvrtimer" type="slider" label="Restart PVR IPTV simple after n seconds the addon starts" default="30" range="5,5,60" option="int" />
 		<setting default="false" id="validate" label="Validate Channels on next run" type="bool"/>
 		<setting default="8010" id="port" label="Proxy Server Port" type="number"/>
 		<setting default="false" id="pvr" label="Configure PVR IPTV Simple to use Livestreams" type="bool" enable="System.HasAddon(pvr.iptvsimple)"/>

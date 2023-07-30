@@ -9,7 +9,10 @@ from tinyxbmc import tools
 from tinyxbmc import gui
 
 from liblivechannels import common
+from datetime import datetime
+from tinyxbmc.tools import tz_local
 
+loc_tz = tz_local()
 
 class config(object):
     def __init__(self):
@@ -86,7 +89,17 @@ class config(object):
     @property
     def pvr(self):
         return self.setting.getbool("pvr")
+
+    @property
+    def updatetime(self):
+        hourmin = self.setting.getstr("updatetime").split(":")
+        td = datetime.today()
+        return datetime(td.year, td.month, td.day, int(hourmin[0]), int(hourmin[1]), tzinfo=loc_tz).timestamp()
     
+    @property
+    def pvrtimer(self):
+        return int(self.setting.getstr("pvrtimer"))
+
     @pvr.setter
     def pvr(self, value):
         return self.setting.set("pvr", value)
