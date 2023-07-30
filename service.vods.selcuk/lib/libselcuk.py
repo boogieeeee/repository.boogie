@@ -27,7 +27,7 @@ setting = kodisetting("service.vods.selcuk")
 
 def geturl():
     entrypage = net.http("https://%s/" % setting.getstr("domain"), cache=10)
-    return htmlement.fromstring(entrypage).findall(".//div[@class='sites']/.//a")[0].get("href")
+    return htmlement.fromstring(entrypage).findall(".//a[@class='button']")[0].get("href")
 
 
 def iteratechannels():
