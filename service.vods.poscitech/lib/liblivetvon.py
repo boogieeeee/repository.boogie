@@ -16,7 +16,7 @@ from six.moves.urllib import parse
 setting = kodisetting("service.vods.poscitech")
 domain = "https://" + setting.getstr("domain")
 mrgx = "source\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")"
-dtrgx = "([0-9]{1,2})[\sa-zA-Z]*?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)\s*?([0-9]{4})"
+dtrgx = "([0-9]{1,2})[\sa-zA-Z]*?(jan|feb|mar|apr|may|jun|jul|aug|sep|oct|nov|dec)[a-zA-Z\s]*?([0-9]{4})"
 
 monthtoint = {"jan": 1,
               "feb": 2,
@@ -44,15 +44,17 @@ def geturl(streamid):
 
 
 def getschdate(page):
-    dtmatch = re.search(dtrgx, page, re.IGNORECASE)
-    day = int(dtmatch.group(1))
-    month = monthtoint[dtmatch.group(2).lower().strip()]
-    year = int(dtmatch.group(3))
-    tz = tools.tz_utc()
-    tz.settimezone(1)
-    dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
-    return dtob
-
+    today =  datetime.now()
+    for dtmatch in re.finditer(dtrgx, page, re.IGNORECASE): 
+        day = int(dtmatch.group(1))
+        month = monthtoint[dtmatch.group(2).lower().strip()]
+        year = int(dtmatch.group(3))
+        if today.month == month:
+            tz = tools.tz_utc()
+            tz.settimezone(1)
+            dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
+            return dtob
+    return today
 
 def getevents():
     events = []
