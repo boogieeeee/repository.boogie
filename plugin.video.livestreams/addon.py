@@ -169,7 +169,7 @@ class Base(container.container):
                 self.config.update_running = False
                 pg.close()
                 return
-            if is_closed or hasattr(pg, "iscanceled") and pg.iscanceled():
+            if is_closed and is_closed() or hasattr(pg, "iscanceled") and pg.iscanceled():
                 self.config.update_running = False
                 break
             c = self.loadchannel(chan)
