@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.49">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.50">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -59,7 +59,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.lfs" name="LFS module for VODS" provider-name="boogie" version="0.0.4">
+<addon id="service.vods.lfs" name="LFS module for VODS" provider-name="boogie" version="0.0.5">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -67,6 +67,7 @@
 	<extension point="xbmc.service"></extension>
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
+	    <broken>site is broken</broken>
 		<platform>all</platform>
 		<summary lang="en">LFS module for VODS</summary>
 		<description lang="en">LFS module for VODS</description>
@@ -138,7 +139,7 @@
 	  </tinyxbmc>
 </addon>
 
-<addon id="service.vods.selcuk" name="Selcuk Sports module for VODS" provider-name="boogie" version="0.0.2">
+<addon id="service.vods.selcuk" name="Selcuk Sports module for VODS" provider-name="boogie" version="0.0.3">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.six"/>
@@ -204,7 +205,7 @@
 	  </extension>
 </addon>
 
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.3">
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.4">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
