@@ -3,12 +3,12 @@ import sys
 import os
 sys.argv[0] = "plugin://plugin.video.livestreams"
 
-from tinyxbmc import net
 from tinyxbmc import stubmod
+from tinyxbmc import net
 from tinyxbmc import tools
 import addon
 
-# stubmod.rootpath = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
+stubmod.rootpath = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 
 base = addon.Base()
 

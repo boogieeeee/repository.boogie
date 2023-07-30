@@ -20,5 +20,6 @@ class dmax(multi, scraper):
     categories = [u"Türkçe", u"Belgesel"]
     kolay_id = "/d-max"
     yayin_name = "dmax"
+    canlitv_ids = ["d-max-izle", "d-max-izle/2"]
     # selcuk_mobile = "115"
     # selcuk_mobile_adaptive = False

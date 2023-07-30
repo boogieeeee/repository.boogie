@@ -88,7 +88,7 @@ class beinmax1(multi, scraper):
 
 class beinmax2(multi, scraper):
     title = u"Bein Sports Max 2 Turkiye"
-    icon = "https://static.togglestatic.com/shain/v1/dataservice/ResizeImage/$value?Format=%27png%27&Quality=85&Width=640&Height=480&ImageUrl=1844650.png"
+    icon = "https://assets.bein.com/mena/sites/3/2015/06/beIN_SPORTS_MAX2_DIGITAL_Mono.png"
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "beinmax2"
     selcuk_name = "beinmax2"

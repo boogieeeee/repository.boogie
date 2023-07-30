@@ -80,6 +80,11 @@ class polsatsportextra(multi, scraper):
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportextrapoland"
     acestreams = ["acestream://ef2cf11fc83f4f15a33c9a514a7afd2bce73122f"]
+    
+    def iterprogrammes(self):
+        for p in iterprogrammes("POLSAT Sport Extra"):
+            yield p
+
 
 
 class polsatsportnews(multi, scraper):

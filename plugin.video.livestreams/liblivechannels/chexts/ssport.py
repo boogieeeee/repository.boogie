@@ -33,6 +33,9 @@ class ssport1(multi, scraper):
     yayin_name = "ssport"
     selcuk_name = "ssport"
 
+    def iterprogrammes(self):
+        for prog in iterprogrammes(""):
+            yield prog
 
 class ssport2(multi, scraper):
     title = u"S Sport 2"
@@ -41,15 +44,15 @@ class ssport2(multi, scraper):
     selcuk_name = "ssport2"
 
     def iterprogrammes(self):
-        for prog in iterprogrammes():
+        for prog in iterprogrammes("-2"):
             yield prog
 
 
-def iterprogrammes():
+def iterprogrammes(suffix):
     u = "https://www.ssport.tv/yayin-akisi"
     pagex = htmlement.fromstring(net.http(u))
     prename = predate = None
-    for day in pagex.iterfind('.//ul[@id="switcher-day-s-sport-2"]/li'):
+    for day in pagex.iterfind('.//ul[@id="switcher-day-s-sport%s"]/li' % suffix):
         datadate = day.get("data-date")
         if datadate is not None:
             curmatch = re.search("([0-9]+)\s(.+?)\s", datadate)
