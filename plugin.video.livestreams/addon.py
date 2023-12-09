@@ -200,7 +200,7 @@ class Base(container.container):
                 break
         self.config.channels = channels
         epg.write(self, pg)
-        self.config.lastupdate = int(time.time())
+        self.config.lastupdate = self.config.updatetime
         self.config.update_running = False
         if self.config.validate:
             self.config.validate = False
