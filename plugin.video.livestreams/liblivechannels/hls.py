@@ -7,6 +7,7 @@ from liblivechannels import common
 from thirdparty.m3u8 import model
 
 from tinyxbmc import addon
+from tinyxbmc import mediaurl
 
 import subprocess
 
@@ -36,7 +37,7 @@ class PlaylistGenerator(object):
             self.playlists.put(playlist)
 
     def headcheck(self, playlist, headers):
-        error, _resp, _headers = self.base.healthcheck(playlist.absolute_uri)
+        error, _resp, _headers = self.base.healthcheck(mediaurl.hlsurl(playlist.absolute_uri, headers=headers))
         if error is None:
             playlist.uri = encodeurl(url=playlist.absolute_uri, headers=headers)
             self.playlists.put(playlist)
