@@ -17,9 +17,6 @@ from tinyxbmc import mediaurl
 class multi:
     #acestreams
     acestreams = []
-    # kolay tv
-    kolay_id = None
-    kolay_ids = None
 
     # selcuk sports
     selcuk_name = None
@@ -56,9 +53,6 @@ class multi:
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
                 yield yayin
-        #if self.kolay_id or self.kolay_ids:
-        #    for yayin in safeiter(kolaytv.itermedias(self.kolay_id, self.kolay_ids)):
-        #        yield yayin
         if self.canlitv_id or self.canlitv_ids:
             for yayin in safeiter(canlitvcenter.itermedias(self.canlitv_id, self.canlitv_ids)):
                 yield yayin
@@ -68,9 +62,6 @@ class multi:
         if self.selcuk_name:
             for yayin in safeiter(selcuk.itermedias(self.selcuk_name)):
                 yield yayin
-        #if self.sports24_id:
-        #    for yayin in safeiter(sports24.itermedias(self.sports24_id)):
-        #        yield yayin
 
     def iterprogrammes(self):
         if self.yayin_id or self.yayin_name:

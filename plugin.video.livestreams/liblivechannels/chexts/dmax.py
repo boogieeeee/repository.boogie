@@ -18,7 +18,6 @@ class dmax(multi, scraper):
     title = u"DMAX Turkiye"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/DMAX_-_Logo_2016.svg/1200px-DMAX_-_Logo_2016.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
-    kolay_id = "/d-max"
     yayin_name = "dmax"
     canlitv_ids = ["d-max-izle", "d-max-izle/2"]
     # selcuk_mobile = "115"

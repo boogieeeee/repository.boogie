@@ -32,7 +32,6 @@ class trt1(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "trt-1"
     selcuk_name = "trt1"
-    kolay_ids = ["/trt-1-canli/1", "/trt-1-canli/2", "/trt-1-canli/3", "/trt-1-canli/4"]
     canlitv_ids = ["trt1-izle", "trt1-izle/2"]
 
 
@@ -42,7 +41,6 @@ class trtspor(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_id = "trt-3"
     selcuk_name = "trtspor"
-    kolay_ids = ["/trt-spor/1", "/trt-spor/2","/trt-spor/3", "/trt-spor/4"]
     canlitv_ids = ["trt-spor-yildiz/1", "trt-spor-yildiz/2", "trt-spor-yildiz/3"]
 
 
@@ -50,7 +48,6 @@ class trtsporyildiz(multi, scraper):
     title = u"TRT Spor Yildiz"
     icon = "https://www.trtspor.com.tr/static/img/trt-spor-yildiz-logo-beyaz-zemin.png"
     categories = [u"Türkçe", u"Spor"]
-    kolay_ids = "/trt-spor-yildiz/1", "/trt-spor-yildiz/2"
     canlitv_ids = "trt-spor-yildiz/1", "trt-spor-yildiz/2", "trt-spor-yildiz/3"
     selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"
@@ -62,7 +59,6 @@ class trthaber(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_id = "trt-haber"
     youtube_chanid = "trthaber"
-    kolay_ids = ["/trt-haber/1", "/trt-haber/2", "/trt-haber/3", "/trt-haber/4"]
     canlitv_ids = ["trt-haber/1", "trt-haber/2"]
     
 
@@ -71,5 +67,4 @@ class trtcocuk(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TRT_%C3%87ocuk_logo_%282021%29.svg/2560px-TRT_%C3%87ocuk_logo_%282021%29.svg.png"
     categories = [u"Türkçe", u"Çocuk"]
     yayin_id = "trt-cocuk"
-    kolay_ids = ["/trt-cocuk/1", "/trt-cocuk/2"]
     canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
