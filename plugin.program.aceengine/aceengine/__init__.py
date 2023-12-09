@@ -26,7 +26,7 @@ class acestream():
 
     def getstream(self, force=False):
         if not self.playback_url or force:
-            jsdata = self.query("%s/ace/getstream?id=%s&format=json" % (acestream.apiurl(), self.id), ignore=True)
+            jsdata = self.query("%s/ace/getstream?id=%s&format=json" % (acestream.apiurl(), self.id), ignore=False)
             if jsdata:
                 self.stat_url = jsdata["stat_url"]
                 self.command_url = jsdata["command_url"]

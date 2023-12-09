@@ -90,10 +90,13 @@ class Base(container.container):
 
     def check_acestreamurl(self, url):
         for _sec in range(7):
-            url.aceurl.getstream(True)
-            if url.aceurl.hasstarted:
-                return None, None, None
-            time.sleep(1)
+            try:
+                url.aceurl.getstream(True)
+                if url.aceurl.hasstarted:
+                    return None, None, None
+                time.sleep(1)
+            except Exception:
+                return "Acestream Error", None, None
         return "Slow Acestream", None, None 
 
 
