@@ -56,11 +56,11 @@ class multi:
         if self.canlitv_id or self.canlitv_ids:
             for yayin in safeiter(canlitvcenter.itermedias(self.canlitv_id, self.canlitv_ids)):
                 yield yayin
-        if self.dady_id or self.dady_name:
-            for yayin in safeiter(dadylive.itermedias(self.dady_id, self.dady_name)):
-                yield yayin
         if self.selcuk_name:
             for yayin in safeiter(selcuk.itermedias(self.selcuk_name)):
+                yield yayin
+        if self.dady_id or self.dady_name:
+            for yayin in safeiter(dadylive.itermedias(self.dady_id, self.dady_name)):
                 yield yayin
 
     def iterprogrammes(self):
