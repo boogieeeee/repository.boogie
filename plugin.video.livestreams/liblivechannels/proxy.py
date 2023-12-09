@@ -119,13 +119,13 @@ class Handler(BaseHTTPRequestHandler):
                 else:
                     error, resp, headers = self.base.check_hlsurl(url)
                     if error is None:
-                        self.send_response(200)
-                        self.end_headers()
                         content = resp.content.decode()
                         m3file = m3u8.loads(content, uri=resp.url)
                         m3file.full_uri = resp.url
                         pgen.add(m3file, headers)
                         if pgen.playlists.qsize():
+                            self.send_response(200)
+                            self.end_headers()
                             self.wfile.write(pgen.m3file.dumps().encode())
                             break
         elif qepg:  # epg response
