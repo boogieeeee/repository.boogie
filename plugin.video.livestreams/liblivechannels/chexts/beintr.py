@@ -98,6 +98,7 @@ class beinhaber(multi, scraper):
     title = u"Bein Sports Haber"
     icon = "https://www.kolaytv.biz/bein-sports-haber.png"
     categories = [u"Türkçe", u"Spor"]
+    youtube_chanid = "beinsportsturkiye"
     yayin_name = "beinhaber"
     selcuk_name = "beinhaber"
 

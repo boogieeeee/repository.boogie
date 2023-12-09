@@ -4,7 +4,7 @@ try:
 
     class testyt(unittest.TestCase):
         def test_yt_link(self):
-            test.testlink(self, itermedias("cnnturk", None, None), 1, "bein1", 0)
+            test.testlink(self, itermedias("cnnturk", None), 1, "bein1", 0)
 
 except ImportError:
     pass
@@ -12,56 +12,48 @@ except ImportError:
 import json
 import re
 import traceback
-import random
+import htmlement
 
 from tinyxbmc import net, mediaurl
 
 ua = "Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36"
 
-COOKIE = 'CONSENT=YES+cb-m.20210328-17-p0.en+FX+%s' % random.randint(100, 999)
+def getconsent(page):
+    xpage = htmlement.fromstring(page)
+    form = xpage.find(".//form")
+    data = {}
+    if form is None or "/save" not in form.get("action"):
+        return page 
+    for inp in form.findall(".//input[@type='hidden']"):
+        data[inp.get("name")] = inp.get("value")
+    page = net.http(form.get("action"),
+                    useragent = ua,
+                    method = "POST",
+                    data = data)
+    return page
 
-
-def itermedias(youtube_chanid, youtube_stream, youtube_sindex):
+def itermedias(youtube_chanid, youtube_sindex):
     try:
-        u = "https://m.youtube.com/%s" % youtube_chanid
-        page = net.http(u,
-                        useragent=ua,
-                        headers={"Cookie": COOKIE})
-        try:
-            js = json.loads(re.search('<div id="initial-data"><!-- (.+?) -->', page).group(1))
-        except AttributeError:
-            t = re.search("ytInitialData = '(.+?)'", page).group(1)
-            js = json.loads(t.encode("utf-8").decode("unicode-escape"))
-        streams = js["contents"]["singleColumnBrowseResultsRenderer"]["tabs"][0]["tabRenderer"]["content"]["sectionListRenderer"]["contents"][0]["itemSectionRenderer"]["contents"]
-        sindex = None
-
-        if youtube_stream:
-            for sindex, stream in enumerate(streams):
-                if youtube_stream(stream):
-                    break
-
-        if not sindex and youtube_sindex:
-            sindex = youtube_sindex
-
-        if sindex is None:
-            sindex = 0
-        vid = streams[sindex]["channelFeaturedVideoRenderer"]["videoId"]
-        # icon = js["metadata"]["channelMetadataRenderer"]["avatar"]["thumbnails"][0]["url"]
+        u = "https://www.youtube.com/@%s/streams" % youtube_chanid
+        page = getconsent(net.http(u, useragent=ua))
+        t = re.search("ytInitialData = (.+);<\/script>", page).group(1)
+        js = json.loads(t)
+        streams = []
+        for tab in js["contents"].get("twoColumnBrowseResultsRenderer", js["contents"].get("singleColumnBrowseResultsRenderer"))["tabs"]:
+            try:
+                contents = tab["tabRenderer"]["content"]["richGridRenderer"]["contents"]
+                for content in contents:
+                    content = content["richItemRenderer"]["content"]
+                    renderer = content.get("videoRenderer", content.get("compactVideoRenderer"))
+                    streams.append(renderer["videoId"])
+                break
+            except KeyError:
+                continue
+        sindex = youtube_sindex if youtube_sindex is not None else 0
+        vid = streams[sindex]
     except Exception:
         print(traceback.format_exc())
         return
-    page = net.http("https://m.youtube.com/watch?v=%s" % vid,
-                    useragent=ua,
-                    headers={"Cookie": COOKIE})
-    pconfig1 = re.search('ytInitialPlayerConfig = (\{.+?\})\;', page)
-    if pconfig1:
-        js = json.loads(pconfig1.group(1))
-        response = json.loads(js["args"]["player_response"])
-    else:
-        response = json.loads(re.search('ytInitialPlayerResponse\s*?\=\s*?(\{.+?\})\;', page).group(1))
-    # dash = response["streamingData"].get("dashManifestUrl")
-    # if dash:
-    #     yield mediaurl.mpdurl(dash)
-    yield mediaurl.hlsurl(response["streamingData"]["hlsManifestUrl"],
-                          adaptive=True,
-                          ffmpegdirect=False)
+    page = getconsent(net.http("https://www.youtube.com/watch?v=%s" % vid, useragent=ua))
+    hls = re.search("hlsManifestUrl(?:\"|\')\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", page).group(1)
+    yield mediaurl.hlsurl(hls, adaptive=True, ffmpegdirect=False)
