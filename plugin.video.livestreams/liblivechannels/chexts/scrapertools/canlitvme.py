@@ -74,4 +74,4 @@ def itermedias(keyword):
         except Exception:
             print(traceback.format_exc())
             continue
-        yield mediaurl.hlsurl(ylink, headers={"referer": domain + "/"}, adaptive=False, ffmpegdirect=False)
+        yield mediaurl.hlsurl(ylink, headers={"referer": domain + "/"}, adaptive=True, ffmpegdirect=False)

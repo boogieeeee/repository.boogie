@@ -30,5 +30,5 @@ def itermedias(chfilter):
                 found = True
                 break
         if found:
-            for media in libselcuk.getmedias(chid):
+            for media in libselcuk.getmedias(chid, True):
                 yield media

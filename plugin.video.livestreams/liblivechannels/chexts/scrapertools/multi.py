@@ -52,7 +52,6 @@ class multi:
 
     def get(self):
         for acestream in self.acestreams:
-            self.pvrinputstream = common.INPUTSTREAMFFMPEG
             yield mediaurl.acestreamurl(acestream)
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):

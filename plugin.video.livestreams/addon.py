@@ -193,6 +193,13 @@ class Base(container.container):
             if not error and not found:
                 error = "No playlist"
             if error is None:
+                if not c.pvrinputstream:
+                    if isinstance(url, mediaurl.acestreamurl):
+                        c.pvrinputstream = common.INPUTSTREAMFFMPEG
+                    elif isinstance(url, mediaurl.hlsurl) and url.adaptive:
+                        c.pvrinputstream = common.INPUTSTREAMADAPTIVE
+                    elif isinstance(url, mediaurl.hlsurl) and url.ffmpegdirect:
+                        c.pvrinputstream = common.INPUTSTREAMFFMPEG
                 channels.append([c.icon, c.title, c.index, c.categories, c.pvrinputstream])
                 error = "UP"
             pg.update(int(100 * index / len(chans)), "%s\n%s: %s" % (c.title, error, c.index))
