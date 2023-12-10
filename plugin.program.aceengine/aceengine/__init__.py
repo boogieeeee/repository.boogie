@@ -82,4 +82,4 @@ class acestream():
     
     @staticmethod
     def apiurl():
-        return settings.getstr(const.SETTING_ACTIVEADDRESS)
+        return settings.getint(const.SETTING_ACTIVEADDRESS)
