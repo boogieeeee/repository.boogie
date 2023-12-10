@@ -25,3 +25,4 @@ class tv100(multi, scraper):
     youtube_sindex = 1
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "100"
+    canlitvme_name = "TV100"

@@ -27,3 +27,4 @@ class teevee2(multi, scraper):
     youtube_chanid = "teve2"
     canlitv_ids = "teve2/1", "teve2/2"
     yayin_name = "teve2"
+    canlitvme_name = "Teve2"

@@ -24,3 +24,4 @@ class ntv(multi, scraper):
     youtube_chanid = "NTV"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "n"
+    canlitvme_name = "NTV"

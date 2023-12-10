@@ -25,3 +25,4 @@ class haberturk(multi, scraper):
     youtube_chanid = "haberturktv"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "haberturk"
+    canlitvme_name = "Habertürk Tv"

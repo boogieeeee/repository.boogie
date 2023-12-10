@@ -24,3 +24,4 @@ class cnnturk(multi, scraper):
     youtube_chanid = "cnnturk"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "cnnturk"
+    canlitvme_name = "CNN Türk"

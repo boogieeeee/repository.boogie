@@ -27,6 +27,7 @@ class atv(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Atv_logo_2010.svg/1280px-Atv_logo_2010.svg.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "atv"
+    canlitvme_name = "atv"
     youtube_chanid = "ATVTurkiye"
 
 
@@ -37,3 +38,4 @@ class ahaber(multi, scraper):
     yayin_id = "a-haber"
     youtube_chanid = "ahaber"
     canlitv_ids = ["a-haber-izle/1", "a-haber-izle/2"]
+    canlitvme_name = "A Haber"

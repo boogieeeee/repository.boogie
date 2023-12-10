@@ -33,6 +33,7 @@ class trt1(multi, scraper):
     yayin_id = "trt-1"
     selcuk_name = "trt1"
     canlitv_ids = ["trt1-izle", "trt1-izle/2"]
+    canltivme_name = "TRT 1"
 
 
 class trtspor(multi, scraper):
@@ -41,6 +42,7 @@ class trtspor(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_id = "trt-3"
     selcuk_name = "trtspor"
+    canlitvme_name = "TRT Spor"
 
 
 class trtsporyildiz(multi, scraper):
@@ -49,6 +51,7 @@ class trtsporyildiz(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"
+    canlitvme_name = "TRT Spor Yıldız"
     
 
 class trthaber(multi, scraper):
@@ -58,6 +61,7 @@ class trthaber(multi, scraper):
     yayin_id = "trt-haber"
     youtube_chanid = "trthaber"
     canlitv_ids = ["trt-haber/1", "trt-haber/2"]
+    canlitvme_name = "TRT Haber"
     
 
 class trtcocuk(multi, scraper):
@@ -66,3 +70,4 @@ class trtcocuk(multi, scraper):
     categories = [u"Türkçe", u"Çocuk"]
     yayin_id = "trt-cocuk"
     canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
+    canlitvme_name = "TRT Çocuk"

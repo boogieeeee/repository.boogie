@@ -2,6 +2,7 @@
 from liblivechannels.chexts.scrapertools import youtube
 from liblivechannels.chexts.scrapertools import selcuk
 from liblivechannels.chexts.scrapertools import canlitvcenter
+from liblivechannels.chexts.scrapertools import canlitvme
 from liblivechannels.chexts.scrapertools import dadylive
 
 from liblivechannels.chexts.scrapertools import yayinakisi
@@ -24,6 +25,9 @@ class multi:
     # youtube
     youtube_chanid = None
     youtube_sindex = None
+
+    # canlitvme
+    canlitvme_name = None
 
     # canlitvcenter
     canlitv_id = None
@@ -52,6 +56,9 @@ class multi:
             yield mediaurl.acestreamurl(acestream)
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
+                yield yayin
+        if self.canlitvme_name:
+            for yayin in safeiter(canlitvme.itermedias(self.canlitvme_name)):
                 yield yayin
         if self.canlitv_id or self.canlitv_ids:
             for yayin in safeiter(canlitvcenter.itermedias(self.canlitv_id, self.canlitv_ids)):

@@ -24,4 +24,5 @@ class bloomberght(multi, scraper):
     icon = "http://www.bloomberght.com/images/logo.png"
     youtube_chanid = "bloomberght"
     categories = [u"Türkçe", u"Haber"]
+    canlitvme_name = "Bloomberg HT"
     yayin_name = "bloomberght"

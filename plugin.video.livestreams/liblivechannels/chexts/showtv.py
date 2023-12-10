@@ -25,3 +25,4 @@ class showtv(multi, scraper):
     youtube_chanid = "ShowTV"
     categories = [u"Türkçe", u"Realiti"]
     yayin_name = "show"
+    canlitvme_name = "Show Tv"
