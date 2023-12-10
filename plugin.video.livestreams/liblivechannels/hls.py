@@ -62,7 +62,7 @@ def decodeurl(path):
 
 
 def encodeurl(**kwargs):
-    port = addon.kodisetting(common.addon_id).getstr("port")
+    port = addon.kodisetting(common.addon_id).getint("port")
     for kwarg in kwargs:
         kwargs[kwarg] = parse.quote_plus(json.dumps(kwargs[kwarg]))
     return "http://localhost:%s/?%s" % (port, parse.urlencode(kwargs))

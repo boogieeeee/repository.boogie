@@ -98,7 +98,7 @@ class config(object):
     
     @property
     def pvrtimer(self):
-        return int(self.setting.getstr("pvrtimer"))
+        return self.setting.getint("pvrtimer")
 
     @pvr.setter
     def pvr(self, value):
