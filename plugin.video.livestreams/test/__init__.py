@@ -8,6 +8,9 @@ from tinyxbmc import net
 from tinyxbmc import tools
 import addon
 
+if not stubmod.isstub():
+    raise ImportError
+
 stubmod.rootpath = os.path.realpath(os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".."))
 
 base = addon.Base()
