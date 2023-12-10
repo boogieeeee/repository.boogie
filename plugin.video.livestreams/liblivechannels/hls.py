@@ -82,7 +82,7 @@ class DecryptPayload:
         self.key = key
         self.method = method
         self.iv = iv
-        self.chunksize = None
+        self.chunksize = 10 * 1024 * 1024
         self.skipdec = method not in ["AES-128"]
 
     def decrypt(self, chunk):
