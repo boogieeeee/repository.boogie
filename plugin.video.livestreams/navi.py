@@ -109,33 +109,6 @@ class Navi(Base):
             item.context(cntx_plist, False, **cntx_plist_kwargs)
             item.resolve(index)
 
-    def validate_single(self, index):
-        channels = self.config.channels
-        for channel in channels:
-            icon, title, cindex, cats, _ = channel
-            if not cindex == index:
-                continue
-            chan = self.loadchannel(cindex)
-            if not channel:
-                continue
-            for url in chan.get():
-                msg = self.healthcheck(url)
-                if msg is None:
-                    break
-            if msg is None:
-                msg = "Channel is UP"
-                cats = chan.categories
-            else:
-                cats = ["Broken"]
-            channels.remove(channel)
-            channels.append([icon, title, cindex, cats, url if isinstance(url, mediaurl.url) else None])
-            gui.ok("Validation", msg)
-            self.config.hay.throw("channels", channels)
-            self.config.hay.snapshot()
-            container.refresh()
-            self.config.update_pvr = True
-            epg.write(self).start()
-
     def select_source(self, cid):
         chan = self.loadchannel(cid)
         art = {"icon": chan.icon, "thumb": chan.icon, "poster": chan.icon}
