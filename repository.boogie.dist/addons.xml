@@ -104,7 +104,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.11">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.12">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
