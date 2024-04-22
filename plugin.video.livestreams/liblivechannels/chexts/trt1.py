@@ -17,6 +17,10 @@ try:
         
     class testtrtcocuk(ChannelTest, unittest.TestCase):
         index = "trt1:trtcocuk:"
+        
+    class testtrtbelgesel(ChannelTest, unittest.TestCase):
+        index = "trt1:trtbelgesel:"
+
 
 except ImportError:
     pass
@@ -71,3 +75,11 @@ class trtcocuk(multi, scraper):
     yayin_id = "trt-cocuk"
     canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
     canlitvme_name = "TRT Çocuk"
+    
+class trtbelgesel(multi, scraper):
+    title = u"TRT Belgesel"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/TRT_Belgesel_kurumsal_logo_%282015-2019%29.png/800px-TRT_Belgesel_kurumsal_logo_%282015-2019%29.png"
+    categories = [u"Türkçe", u"Belgesel"]
+    yayin_id = "trt-belgesel"
+    canlitv_ids = ["trtbelgesel-canli/1", "trtbelgesel-canli/2", "trt-cocuk/3"]
+    canlitvme_name = "TRT Belgesel"
