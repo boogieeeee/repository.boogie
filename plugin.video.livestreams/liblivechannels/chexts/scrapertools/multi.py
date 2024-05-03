@@ -16,6 +16,8 @@ from tinyxbmc import mediaurl
 
 
 class multi:
+    directs = []
+
     #acestreams
     acestreams = []
 
@@ -53,6 +55,8 @@ class multi:
     def get(self):
         for acestream in self.acestreams:
             yield mediaurl.acestreamurl(acestream)
+        for direct in self.directs:
+            yield direct
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
                 yield yayin

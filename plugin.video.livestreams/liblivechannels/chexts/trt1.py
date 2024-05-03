@@ -29,6 +29,8 @@ except ImportError:
 from liblivechannels import scraper
 from liblivechannels.chexts.scrapertools.multi import multi
 
+from tinyxbmc import mediaurl
+
 
 class trt1(multi, scraper):
     title = u"TRT 1"
@@ -83,3 +85,4 @@ class trtbelgesel(multi, scraper):
     yayin_id = "trt-belgesel"
     canlitv_ids = ["trtbelgesel-canli/1", "trtbelgesel-canli/2", "trt-cocuk/3"]
     canlitvme_name = "TRT Belgesel"
+    directs = [mediaurl.hlsurl("https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8")] 
