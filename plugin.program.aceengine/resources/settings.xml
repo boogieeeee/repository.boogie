@@ -18,7 +18,7 @@
 		<setting default="0" id="ace_max_download_speed" label="Maximum Download speed (Kbyte/s, 0=no restrictions)" type="number" visible="eq(-6,false) + !System.Platform.Android()"/>
 		<setting default="false" id="ace_usecwd" label="Use Acestreamengine binary from a specific location" type="bool" visible="eq(-7,false) + !System.Platform.Android()"/>
 		<setting id="ace_cwd" label="Acestreamengine binary path" type="folder" source="local" visible="eq(-8,false) + !System.Platform.Android() + eq(-1,true)"/>
-		<setting id="ace_isrunnning" type="bool" default="false" visible="false"/>
+		<setting id="ace_isrunning" type="bool" default="false" visible="false"/>
 		<setting id="ace_address" type="text" visible="false"/>
 	</category>
 </settings>
