@@ -68,6 +68,7 @@ class trthaber(multi, scraper):
     youtube_chanid = "trthaber"
     canlitv_ids = ["trt-haber/1", "trt-haber/2"]
     canlitvme_name = "TRT Haber"
+    directs = [mediaurl.hlsurl("https://tv-trthaber.medya.trt.com.tr/master.m3u8")]
     
 
 class trtcocuk(multi, scraper):
@@ -77,7 +78,9 @@ class trtcocuk(multi, scraper):
     yayin_id = "trt-cocuk"
     canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
     canlitvme_name = "TRT Çocuk"
-    
+    directs = [mediaurl.hlsurl("https://tv-trtcocuk.medya.trt.com.tr/master.m3u8")]
+
+
 class trtbelgesel(multi, scraper):
     title = u"TRT Belgesel"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/TRT_Belgesel_kurumsal_logo_%282015-2019%29.png/800px-TRT_Belgesel_kurumsal_logo_%282015-2019%29.png"
