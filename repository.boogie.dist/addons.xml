@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.58">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.59">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -139,7 +139,7 @@
 	  </tinyxbmc>
 </addon>
 
-<addon id="service.vods.selcuk" name="Selcuk Sports module for VODS" provider-name="boogie" version="0.0.3">
+<addon id="service.vods.selcuk" name="Selcuk Sports module for VODS" provider-name="boogie" version="0.0.4">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.six"/>
@@ -182,7 +182,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.5">
+<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.6">
 	<requires>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.six" />
