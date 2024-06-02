@@ -36,8 +36,9 @@ def itermedias(youtube_chanid, youtube_sindex):
     try:
         u = "https://www.youtube.com/@%s/streams" % youtube_chanid
         page = getconsent(net.http(u, useragent=ua))
-        t = re.search("ytInitialData = (.+);<\/script>", page).group(1)
-        js = json.loads(t)
+        t = re.search("ytInitialData\s*?=\s*?(?:\'|\")(.+)(?:\'|\");<\/script>", page)
+        esc = t.group(1).encode().decode("unicode_escape")
+        js = json.loads(esc)
         streams = []
         for tab in js["contents"].get("twoColumnBrowseResultsRenderer", js["contents"].get("singleColumnBrowseResultsRenderer"))["tabs"]:
             try:
