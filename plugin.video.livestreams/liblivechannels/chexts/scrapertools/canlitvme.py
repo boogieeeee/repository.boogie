@@ -4,7 +4,7 @@ try:
 
     class testcalitvme(unittest.TestCase):
         def test_daddy_link(self):
-            test.testlink(self, itermedias("TRT Spor Yıldız"), 1, "TRT Spor Yildiz", 0)
+            test.testlink(self, itermedias("TRT 1"), 1, "TRT Spor Yildiz", 0)
 
 except ImportError:
     pass
