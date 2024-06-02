@@ -39,7 +39,7 @@ class trt1(multi, scraper):
     yayin_id = "trt-1"
     selcuk_name = "trt1"
     canlitv_ids = ["trt1-izle", "trt1-izle/2"]
-    canltivme_name = "TRT 1"
+    canlitvme_name = "TRT 1"
 
 
 class trtspor(multi, scraper):
