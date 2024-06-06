@@ -22,33 +22,24 @@ class acestream():
         self.command_url = None
         self.playback_url = None
         self.stats = {}
-        self.lastupdate = 0
 
-    def getstream(self, force=False):
-        if not self.playback_url or force:
-            jsdata = self.query("%s/ace/getstream?id=%s&format=json" % (acestream.apiurl(), self.id), ignore=False)
+    def getstream(self, pid="kodi"):
+        def _getstream():
+            jsdata = self.query("%s/ace/getstream?id=%s&format=json&pid=%s" % (acestream.apiurl(), self.id, pid), ignore=False)
             if jsdata:
                 self.stat_url = jsdata["stat_url"]
                 self.command_url = jsdata["command_url"]
                 self.playback_url = jsdata["playback_url"]
                 self.updatestats()
-    
+        _getstream()
+        if self.hasstarted:
+            self.stop()
+            _getstream()
+
     @property
     def httpurl(self):
-        self.stopall()
         self.getstream()
         return self.playback_url
-
-    def stopall(self, ignoreme=True):
-        with hay.stack(const.STREAMHAY, aid=const.ADDONID) as streamhay:
-            streams = streamhay.find(const.STREAMHAY_KEY).data
-            for sid in list(streams.keys()):
-                if ignoreme and sid == self.id:
-                    continue
-                self.stop(streams[sid][2])
-                streams.pop(sid)
-            streams[self.id] = (self.stat_url, self.command_url, self.playback_url)
-            streamhay.throw(const.STREAMHAY_KEY, streams)
 
     def query(self, uri, ignore=False):
         try:
@@ -62,11 +53,9 @@ class acestream():
         return jsdata.get("response")
         
     def updatestats(self):
-        if (time.time() - self.lastupdate) > 1:
-            stats = self.query(self.stat_url, ignore=True)
-            if stats:
-                self.stats = stats
-                self.lastupdate = time.time()
+        stats = self.query(self.stat_url, ignore=True)
+        if stats:
+            self.stats = stats
         
     @property
     def hasstarted(self):
@@ -78,7 +67,7 @@ class acestream():
             url = self.command_url
         if url:
             retval = self.query(url + "?method=stop", ignore=True) == "ok"
-            return retval is None or retval == "ok"
+            return retval is None or retval
     
     @staticmethod
     def apiurl():
