@@ -89,9 +89,9 @@ class Base(container.container):
         return None, None, None
 
     def check_acestreamurl(self, url):
-        for _sec in range(7):
+        for _sec in range(10):
             try:
-                url.aceurl.getstream(True)
+                url.aceurl.getstream("ls")
                 if url.aceurl.hasstarted:
                     return None, None, None
                 time.sleep(1)
