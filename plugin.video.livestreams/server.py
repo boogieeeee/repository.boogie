@@ -8,8 +8,8 @@ from tinyxbmc import const
 
 from addon import Base
 
+import time
 import xbmc
-
 
 PORT = 8000
 
@@ -46,26 +46,37 @@ class Server(addon.blockingloop):
         # stop the server
         self.httpd.shutdown()
         logger.info("Livechannels m3u8 proxy stopped")
+        
+    def validatechannels(self):
+        if not base.config.update_running:
+            deltat = time.time() - base.config.updatetime
+            if (deltat >= 0 and deltat <= 60 * 60 and base.config.lastupdate < base.config.updatetime) or base.config.validate:
+                if base.config.validate:
+                    base.config.validate = False
+                base.config.lastupdate = time.time()
+                Thread(target=base.do_validate, args=(True, self.isclosed)).start()
+                
+    def reloadpvr(self):
+        if self.pvrtimer:
+            self.pvrtimer -= self.wait
+            self.pvrtimer = -1 if not self.pvrtimer else self.pvrtimer
+        if base.config.update_pvr or self.pvrtimer < 0:
+            self.pvrtimer = 0
+            base.iptvsimple.reload_pvr()
+            base.config.update_pvr = False
+            base.iptvsimple.channels = base.iptvsimple.getchannels()
+            
+    def configpvr(self):
+        if base.config.pvr:
+            base.iptvsimple.config_pvr()
+            base.config.pvr = False
+            base.iptvsimple.reload_pvr()
 
     def onloop(self):
         # runs each self.wait seconds
         if base.iptvsimple.isenabled() and not xbmc.Player().isPlaying():
-            if not base.config.update_running and (base.config.lastupdate < base.config.updatetime or base.config.validate):
-                Thread(target=base.do_validate, args=(True, self.isclosed)).start()
-                # base.config.validate flag is reset in base.do_validate method
-            if self.pvrtimer and self.pvrtimer > 0:
-                self.pvrtimer -= self.wait
-            if base.config.update_pvr or (self.pvrtimer is not None and self.pvrtimer <= 0):
-                self.pvrtimer = None
-                base.iptvsimple.reload_pvr()
-                base.config.update_pvr = False
-                base.iptvsimple.channels = base.iptvsimple.getchannels()
-            if base.config.pvr:
-                base.iptvsimple.config_pvr()
-                base.config.pvr = False
-                base.iptvsimple.reload_pvr()
-            if False and base.config.pvrrecord and base.config.pvrlocation:
-                base.iptvsimple.shouldrecord()
-
+            self.validatechannels()
+            self.reloadpvr()
+            self.configpvr()
 
 Server()

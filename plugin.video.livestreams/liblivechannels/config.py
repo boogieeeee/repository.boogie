@@ -5,8 +5,6 @@
 
 from tinyxbmc import addon
 from tinyxbmc import hay
-from tinyxbmc import tools
-from tinyxbmc import gui
 
 from liblivechannels import common
 from datetime import datetime
@@ -103,31 +101,6 @@ class config(object):
     @pvr.setter
     def pvr(self, value):
         return self.setting.set("pvr", value)
-
-    @property
-    def pvrrecord(self):
-        return self.setting.getbool("record")
-
-    @property
-    def pvrlocation(self):
-        path = tools.translatePath(self.setting.getstr("pvrlocation"))
-        if tools.exists(path):
-            return path
-        else:
-            gui.warn("PVR storage path is not available", "Recording Disabled: %s" % path)
-            self.setting.set("record", False)
-
-    @property
-    def pvrtemp(self):
-        if self.setting.getbool("pvrusetemp"):
-            path = tools.translatePath(self.setting.getstr("pvrtemplocation"))
-            if not tools.exists(path):
-                npath = addon.get_addondir(common.addon_id)
-                gui.warn("PVR temp path is not available", "Using path %s instead of %s" % (npath, path))
-                path = npath
-        else:
-            path = addon.get_addondir()
-        return path
 
     @property
     def ffmpegdirect(self):
