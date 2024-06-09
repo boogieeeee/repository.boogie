@@ -148,7 +148,8 @@ class Handler(BaseHTTPRequestHandler):
                 if self.base.config.ffmpegdirect or pvrinputstream == common.INPUTSTREAMFFMPEG:
                     self.writeline("#KODIPROP:inputstreamaddon=inputstream.ffmpegdirect")
                     self.writeline("#KODIPROP:inputstreamclass=inputstream.ffmpegdirect")
-                    self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
+                    # TO-DO: Follow ffmpegdirect addons settings here
+                    # self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
                     self.writeline("#KODIPROP:inputstream.ffmpegdirect.is_realtime_stream=false")
                 elif pvrinputstream == common.INPUTSTREAMADAPTIVE:
                     self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
