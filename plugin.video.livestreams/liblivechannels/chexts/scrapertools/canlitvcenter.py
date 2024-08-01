@@ -45,9 +45,10 @@ def findmedias(src, links, baseaddr):
 
 def itersubpages(src):
     found = False
-    for iframe2 in re.findall('iframe.*?src=\\\\?"(.+?)"', src):
+    for iframe2 in re.findall('iframe.*?src=\\\\?"(.+?)\\\\"', src):
         found = True
-        yield iframe2.replace("\\", "")
+        link = iframe2.replace("\\", "").replace("\"+host_name+\"", dom)
+        yield link
     if not found:
         for script in re.findall('script src=\\\\?"(.+?)"', src):
             found = True
