@@ -10,43 +10,46 @@ except ImportError:
     pass
 
 from tinyxbmc import net
+from tinyxbmc import tools
 from tinyxbmc import mediaurl
 import htmlement
 import re
-import traceback
 
 domain = "https://www.canlitv.me"
 
 def deobfuslink(page):
-    fileaddr = re.search('file\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")', page).group(1)
-    shift = int(re.search("(^[0-9]+)", fileaddr).group(1))
-    prev_c = None
-    start_index = 0
-    for index, c in enumerate(fileaddr):
-        if c == prev_c:
-            # https:/(/)
-            if start_index and index == start_index + 7:
-                break
-            # ht(t)ps://
-            start_index = index - 2
-        prev_c = c
-    fileaddr = fileaddr[start_index:]
-    arrays = []
-    for arr in re.findall("\=\s*?(\[.+?\])", page):
-        try:
-            isvalid = True
-            arr = eval(arr)
-            for item in arr:
-                if len(item) != 1:
-                    isvalid = False
+    fileaddrs = re.findall('changeVideo\((?:\'|\")(.+?)(?:\'|\")\)', page)
+    if not fileaddrs:
+        fileaddrs = re.findall('file\s*?\:\s*?(?:\'|\")(.+?)(?:\'|\")', page)
+    for fileaddr in fileaddrs:
+        shift = int(re.search("(^[0-9]+)", fileaddr).group(1))
+        prev_c = None
+        start_index = 0
+        for index, c in enumerate(fileaddr):
+            if c == prev_c:
+                # https:/(/)
+                if start_index and index == start_index + 7:
                     break
-            if not isvalid:
+                # ht(t)ps://
+                start_index = index - 2
+            prev_c = c
+        fileaddr = fileaddr[start_index:]
+        arrays = []
+        for arr in re.findall("\=\s*?(\[.+?\])", page):
+            try:
+                isvalid = True
+                arr = eval(arr)
+                for item in arr:
+                    if len(item) != 1:
+                        isvalid = False
+                        break
+                if not isvalid:
+                    continue
+                arrays.append(arr)
+            except:
                 continue
-            arrays.append(arr)
-        except:
-            continue
-    translation = dict(zip(arrays[0][shift:] + arrays[0][:shift], arrays[3]))
-    return fileaddr.translate(fileaddr.maketrans(translation))
+        translation = dict(zip(arrays[0][shift:] + arrays[0][:shift], arrays[3]))
+        yield fileaddr.translate(fileaddr.maketrans(translation))
 
 def searchkw(kw):
     spage = htmlement.fromstring(net.http(domain, referer=domain))
@@ -69,9 +72,5 @@ def itermedias(keyword):
         yayin = re.findall('src="(.+?ulke.+?)"', gpage)[-1]
         yayin = yayin.replace("'+ulke+'", "DE")
         ypage = net.http(yayin, referer=geo)
-        try:
-            ylink = deobfuslink(ypage)
-        except Exception:
-            print(traceback.format_exc())
-            continue
-        yield mediaurl.hlsurl(ylink, headers={"referer": domain + "/"}, adaptive=True, ffmpegdirect=False)
+        for ylink in tools.safeiter(deobfuslink(ypage)):
+            yield mediaurl.hlsurl(ylink, headers={"referer": domain + "/"}, adaptive=True, ffmpegdirect=False)
