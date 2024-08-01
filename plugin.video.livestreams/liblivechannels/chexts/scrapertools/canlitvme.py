@@ -66,7 +66,7 @@ def itermedias(keyword):
         upage = htmlement.fromstring(net.http(u, referer=domain))
         geo = upage.find(".//iframe").get("src")
         gpage = net.http(geo, referer=u)
-        yayin = re.findall('src="(.+?)"', gpage)[-1]
+        yayin = re.findall('src="(.+?ulke.+?)"', gpage)[-1]
         yayin = yayin.replace("'+ulke+'", "DE")
         ypage = net.http(yayin, referer=geo)
         try:
