@@ -25,6 +25,6 @@ class teevee2(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/en/c/ca/Teve2_logo.png"
     categories = [u"Türkçe", u"Realiti"]
     youtube_chanid = "teve2"
-    canlitv_ids = "teve2/1", "teve2/2"
+    canlitv_ids = "teve-2/1", "teve-2/2"
     yayin_name = "teve2"
     canlitvme_name = "Teve2"
