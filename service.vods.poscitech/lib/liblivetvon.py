@@ -55,45 +55,34 @@ def getschdate(page):
         day = int(dtmatch.group(1))
         month = monthtoint[dtmatch.group(2).lower().strip()]
         year = int(dtmatch.group(3))
-        if today.month == month:
-            tz = tools.tz_utc()
-            tz.settimezone(1)
-            dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
-            return dtob
+        tz = tools.tz_utc()
+        tz.settimezone(1)
+        dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
+        return dtob
     return today
 
 def getevents():
-    events = []
-    page = net.http(domain)
-    lines = page.split("\n")
-    sch_date = getschdate(page)
+    allevents = []
     loctz = tools.tz_local()
-    for lineno, line in enumerate(lines):
-        sport = re.search("<h2 style.+?>.*?([A-Za-z0-9\s\-]+?)<", line)
-        if sport:
-            prevhour = -1
-            for m in re.finditer("hr\>(.+?)\<(.+?)(?:<\/p|<br\s\/>)", lines[lineno + 1]):
-                title = m.group(1)
-                evdtmatch = re.search("([0-9]{1,2})\:([0-9]{1,2})(.+)", title)
-                title = evdtmatch.group(3).strip()
-                hour = int(evdtmatch.group(1))
-                minute = int(evdtmatch.group(2))
-                evdate = datetime(hour=hour, minute=minute,
-                                  year=sch_date.year, month=sch_date.month, day=sch_date.day,
-                                  tzinfo=sch_date.tzinfo)
-                if prevhour > hour:
-                    evdate = evdate + timedelta(hours=24)
-                prevhour = hour
-                txt = m.group(2)
-                channels = []
-                for m in re.finditer("\<a.+?\>(.+?)\<\/a\>", txt):
-                    chnum = re.search("\(CH\-([0-9]+)\)", m.group(1))
-                    if chnum:
-                        chnum = int(chnum.group(1))
-                        channels.append((m.group(1), chnum))
-                if channels:
-                    events.append([evdate.astimezone(loctz), sport.group(1), title, channels])
-    return events
+    schedules = ["schedule-extra-generated.json", "schedule-generated.json", "extra2-schedule.php"]
+    for schedule in schedules:
+        js = net.http(f"{domain}/schedule/{schedule}", json=True)
+        for dt, members in js.items():
+            sch_date = getschdate(dt)
+            for category, events in members.items():
+                for event in events:
+                    title = event["event"]
+                    evdtmatch = re.search("([0-9]{1,2})\:([0-9]{1,2})(.+)", event["time"])
+                    hour = int(evdtmatch.group(1))
+                    minute = int(evdtmatch.group(2))
+                    evdate = datetime(hour=hour, minute=minute,
+                                      year=sch_date.year, month=sch_date.month, day=sch_date.day,
+                                      tzinfo=sch_date.tzinfo)
+                    channels = []
+                    for channel in event["channels"]:
+                        channels.append([channel["channel_name"], int(channel["channel_id"])])
+                    allevents.append([evdate.astimezone(loctz), category, title, channels])
+    return allevents
 
 
 def getchmeta(numbyname=False, nameidbynum=False):
