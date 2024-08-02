@@ -49,11 +49,11 @@ class poscitech(vods.movieextension):
                 self.additem(ctxt, cnum)
         else:
             chnames = liblivetvon.getchmeta(numbyname=True)
-            for i in range(1, 250 + 1):
-                chname = chnames.pop(i, "Channel")
-                self.additem("%s (#%s)" % (chname, i), i)
             for chid, chname in chnames.items():
                 self.additem("%s (#%s)" % (chname, chid), chid)
+            for i in range(1, 300 + 1):
+                if i not in chnames:
+                    self.additem("%s (#%s)" % (chname, i), i)
 
     def geturls(self, streamid):
         yield liblivetvon.geturl(streamid)
