@@ -39,8 +39,14 @@ def geturl(streamid):
     iframe = net.http(iframeu, referer=u)
     src = re.findall(mrgx, iframe)
     ref = parse.urlparse(iframeu)
+    host = re.search(",'([a-zA-Z0-9\.\-]+?)'\);", iframe).group(1)
+    orig = "%s://%s" % (ref.scheme, ref.netloc)
     ref = "%s://%s/" % (ref.scheme, ref.netloc)
-    return mediaurl.hlsurl(src[-1], headers={"Referer": ref}, adaptive=False, ffmpegdirect=True)
+    headers={"Host": host,
+             "Origin": orig,
+             "Referer": ref}
+    return mediaurl.hlsurl(src[-1], headers=headers, adaptive=True, ffmpegdirect=False,
+                           lurl="", lheaders=headers, lbody="", lresponse="", license=None)
 
 
 def getschdate(page):
