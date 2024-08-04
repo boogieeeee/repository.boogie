@@ -118,7 +118,7 @@ class polsatsportnews(multi, scraper):
             yield p
 
 class tvp(multi, scraper):
-    icon = "https://commons.wikimedia.org/wiki/File:TVP_HD_logo.png"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/8/8f/TVP_HD_logo.png"
     title = "TVP"
     categories = ["Polish", "Sport"]
     acestreams = ["acestream://0273a9a25ecde79d7bda2dafb897c7ca86afcaf0"]
