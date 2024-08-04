@@ -23,6 +23,26 @@ try:
         index = "polsat:polsatpremium2:"
         minepg = 1
 
+    class testtvp(ChannelTest, unittest.TestCase):
+        index = "polsat:tvp:"
+        minepg = 0
+        
+    class testtvp1(ChannelTest, unittest.TestCase):
+        index = "polsat:tvp1:"
+        minepg = 0
+
+    class testtvp2(ChannelTest, unittest.TestCase):
+        index = "polsat:tvp2:"
+        minepg = 0
+
+    class testtvp3(ChannelTest, unittest.TestCase):
+        index = "polsat:tvp3:"
+        minepg = 0
+
+    class testtvpsport(ChannelTest, unittest.TestCase):
+        index = "polsat:tvpsport:"
+        minepg = 1
+
 except ImportError:
     pass
 
@@ -92,6 +112,45 @@ class polsatsportnews(multi, scraper):
     title = "Polsat Sport News"
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportnewspoland"
+
+    def iterprogrammes(self):
+        for p in iterprogrammes(self.title):
+            yield p
+
+class tvp(multi, scraper):
+    icon = "https://commons.wikimedia.org/wiki/File:TVP_HD_logo.png"
+    title = "TVP"
+    categories = ["Polish", "Sport"]
+    acestreams = ["acestream://0273a9a25ecde79d7bda2dafb897c7ca86afcaf0"]
+
+
+class tvp1(multi, scraper):
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4a/TVP1_logo.svg/640px-TVP1_logo.svg.png"
+    title = "TVP 1"
+    categories = ["Polish", "Sport"]
+    acestreams = ["acestream://d31d828052a432246e59e7d0d640bd55a64f1859"]
+
+
+class tvp2(multi, scraper):
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/27/TVP2_logo.svg/640px-TVP2_logo.svg.png"
+    title = "TVP 2"
+    categories = ["Polish", "Sport"]
+    acestreams = ["acestream://dad9d9e595bcfd251469ed58d380e53bfb46bb18"]
+
+
+class tvp3(multi, scraper):
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5a/TVP3_logo.svg/640px-TVP3_logo.svg.png"
+    title = "TVP 3"
+    categories = ["Polish", "Sport"]
+    acestreams = ["acestream://38efc26a90d79b2d8c70024ab13631829292764c"]
+
+
+class tvpsport(multi, scraper):
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Logo_TVP_Sport.jpg/640px-Logo_TVP_Sport.jpg"
+    title = "TVP Sport"
+    categories = ["Polish", "Sport"]
+    acestreams = ["acestream://d6f0a6377c31f68b1c1c071e0a8f9f105a455867"]
+    dady_name = "tvpsportpoland"
 
     def iterprogrammes(self):
         for p in iterprogrammes(self.title):
