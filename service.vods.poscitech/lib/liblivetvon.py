@@ -80,7 +80,8 @@ def getevents():
                                       tzinfo=sch_date.tzinfo)
                     channels = []
                     for channel in event["channels"]:
-                        channels.append([channel["channel_name"], int(channel["channel_id"])])
+                        if(channel["channel_id"]).isdigit():
+                            channels.append([channel["channel_name"], int(channel["channel_id"])])
                     allevents.append([evdate.astimezone(loctz), category, title, channels])
     return allevents
 
