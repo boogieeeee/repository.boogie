@@ -5,7 +5,8 @@
 		<setting default="false" id="validate" label="Validate Channels on next run" type="bool"/>
 		<setting default="8010" id="port" label="Proxy Server Port" type="number"/>
 		<setting default="false" id="pvr" label="Configure PVR IPTV Simple to use Livestreams" type="bool" enable="System.HasAddon(pvr.iptvsimple)"/>
-		<setting default="false" id="ffmpegdirect" label="Force ffmpeg direct (Requires Restart, NO DRM!)" type="bool" enable="System.AddonIsEnabled(inputstream.ffmpegdirect)"/>
+		<setting default="false" id="blockffmpegdirect" label="Don't use inputstream ffmpegdirect" type="bool" enable="System.AddonIsEnabled(inputstream.ffmpegdirect)"/>
+		<setting default="false" id="blockadaptive" label="Don't use inputstream adaptive" type="bool" enable="System.AddonIsEnabled(inputstream.adaptive)"/>
 		<setting default="1.1.1.1" id="internetaddress" label="Address to check if internet is available" type="text"/>
 		<setting id="is1" label="Inputstream adaptive is not installed! You can't watch dash streams" type="text" visible="!System.HasAddon(inputstream.adaptive)" enable="System.HasAddon(inputstream.adaptive"/>
 	</category>

@@ -145,13 +145,13 @@ class Handler(BaseHTTPRequestHandler):
                     if index in indexes:
                         pnames.append(playlistname)
                 playlisturl = None
-                if self.base.config.ffmpegdirect or pvrinputstream == common.INPUTSTREAMFFMPEG:
+                if pvrinputstream == common.INPUTSTREAMFFMPEG and not self.base.config.blockffmpegdirect:
                     self.writeline("#KODIPROP:inputstreamaddon=inputstream.ffmpegdirect")
                     self.writeline("#KODIPROP:inputstreamclass=inputstream.ffmpegdirect")
                     # TO-DO: Follow ffmpegdirect addons settings here
                     # self.writeline("#KODIPROP:inputstream.ffmpegdirect.stream_mode=timeshift")
                     self.writeline("#KODIPROP:inputstream.ffmpegdirect.is_realtime_stream=false")
-                elif pvrinputstream == common.INPUTSTREAMADAPTIVE:
+                elif pvrinputstream == common.INPUTSTREAMADAPTIVE and not self.base.config.blockadaptive:
                     self.writeline("#KODIPROP:inputstreamaddon=inputstream.adaptive")
                     self.writeline("#KODIPROP:inputstreamclass=inputstream.adaptive")
                     self.writeline("#KODIPROP:inputstream.adaptive.manifest_type=hls")

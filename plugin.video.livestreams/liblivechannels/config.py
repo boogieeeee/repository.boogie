@@ -103,11 +103,12 @@ class config(object):
         return self.setting.set("pvr", value)
 
     @property
-    def ffmpegdirect(self):
-        if addon.has_addon("inputstream.ffmpegdirect"):
-            return self.setting.getbool("ffmpegdirect")
-        else:
-            return False
+    def blockffmpegdirect(self):
+        return not addon.has_addon("inputstream.ffmpegdirect") or self.setting.getbool("blockffmpegdirect")
+
+    @property
+    def blockadaptive(self):
+        return not addon.has_addon("inputstream.adaptive") or self.setting.getbool("blockadaptive")
 
     @property
     def port(self):
