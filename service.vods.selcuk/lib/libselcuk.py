@@ -16,12 +16,12 @@ from six.moves.urllib import parse
 
 maxlink = 5
 subpath = None
-rgx1 = "\s*[a-z]+\s?\:\s?(?:\'|\")(.+?)(?:\'|\")"
-rgx2 = "window\.streamradardomil\s*?\=\s*?(.+?)\;"
-rgx3 = "window\.streamradardomil\s*?\=\s*?(.+?)\;"
-rgx4 = "atob\((?:\"|\')([a-zA-Z0-9\=]+?)(?:\"|\')\)"
-rgx5 = "window._[a-f0-9]+\s*?\=\s*?window\[.atob.\]\((?:\'|\")([A-Za-z0-9\=]+)(?:\'|\")"
-rgx6 = "src\s*?\=\s*?(?:\"|\')(\/keslanorospu.+?)(?:\"|\')"
+rgx1 = r"\s*[a-z]+\s?\:\s?(?:\'|\")(.+?)(?:\'|\")"
+rgx2 = r"window\.streamradardomil\s*?\=\s*?(.+?)\;"
+rgx3 = r"window\.streamradardomil\s*?\=\s*?(.+?)\;"
+rgx4 = r"atob\((?:\"|\')([a-zA-Z0-9\=]+?)(?:\"|\')\)"
+rgx5 = r"window._[a-f0-9]+\s*?\=\s*?window\[.atob.\]\((?:\'|\")([A-Za-z0-9\=]+)(?:\'|\")"
+rgx6 = r"src\s*?\=\s*?(?:\"|\')(\/keslanorospu.+?)(?:\"|\')"
 setting = kodisetting("service.vods.selcuk")
 
 
@@ -30,8 +30,8 @@ def geturl():
     return htmlement.fromstring(entrypage).findall(".//a[@class='button']")[0].get("href")
 
 
-def iteratechannels():
-    xpage = htmlement.fromstring(net.http(geturl(), cache=None))
+def iteratechannels(mainurl):
+    xpage = htmlement.fromstring(net.http(mainurl, cache=None))
     links = xpage.findall(".//div[@class='channels']/div[2]/.//a")
     for link in links:
         chname = tools.elementsrc(link.find(".//div[@class='name']"), exclude=[link.find(".//b")]).strip()
@@ -44,23 +44,17 @@ def iteratechannels():
                 yield chdict["id"], chlink, chname
 
 
-def getmedias(chid, isadaptive=False, direct=False):
-    for _chid, url, _chname in iteratechannels():
+def getmedias(chid, mainurl, isadaptive=False, direct=False):
+    for _chid, url, _chname in iteratechannels(mainurl):
         if _chid == chid:
-            subpage = net.http(url, referer=geturl(), cache=None)
-            olmusmu = re.findall(rgx1, subpage)
-            if len(olmusmu) >= 3:
-                olmusmu = olmusmu[-3:]
-                #keslan = re.search(rgx6, subpage)
-                #kourl = "%s://%s/%s" % (up.scheme, up.netloc, keslan.group(1))
-                #kopage = net.http(kourl, referer=selcukurl, cache=None)
-                bases = [base64.b64decode(x).decode() for x in re.findall(rgx4, subpage)]
-                _data1 = bases.pop(0)
-                _reklam = bases.pop(0)
-                _iframe = bases.pop(-1)
-                doms = bases.pop(-1), bases.pop(-1)
-                subs = bases
-                for sub in subs:
-                    media = "https://" + sub + doms[0] + "/selcuksports/" + olmusmu[-1] + "/" + chid + "/playlist.m3u8" + olmusmu[-2]
-                    yield mediaurl.hlsurl(media, headers={"referer": "https://%s/" % parse.urlparse(url).netloc}, adaptive=isadaptive, ffmpegdirect=direct)
+            subpage = net.http(url, referer=mainurl)
+            bases = [base64.b64decode(x).decode() for x in re.findall(rgx4, subpage)]
+            _data1 = bases.pop(0)
+            _reklam = bases.pop(0)
+            _iframe = bases.pop(-1)
+            doms = bases.pop(-1), bases.pop(-1)
+            subs = bases
+            for sub in subs:
+                media = f"https://{sub}{doms[0]}/i/{parse.urlparse(mainurl).netloc}/{chid}/playlist.m3u8"
+                yield mediaurl.hlsurl(media, headers={"referer": "https://%s/" % parse.urlparse(url).netloc}, adaptive=isadaptive, ffmpegdirect=direct)
             break

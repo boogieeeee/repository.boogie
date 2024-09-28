@@ -27,14 +27,15 @@ class selcuk(vods.movieextension):
     dropboxtoken = DB_TOKEN
     uselinkplayers = False
     useaddonplayers = False
+    mainurl =  libselcuk.geturl()
 
     info = {"title": "Selcuk Sports"
             }
 
     def getmovies(self):
-        for chid, _chlink, chname in libselcuk.iteratechannels():
+        for chid, _chlink, chname in libselcuk.iteratechannels(self.mainurl):
             self.additem(chname, chid)
 
     def geturls(self, url):
-        for media in libselcuk.getmedias(url):
+        for media in libselcuk.getmedias(url, self.mainurl):
             yield media
