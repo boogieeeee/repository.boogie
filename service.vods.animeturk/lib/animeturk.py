@@ -50,14 +50,10 @@ class animeturk(vods.showextension):
     def init(self):
         self.masterkey = self.setting.getstr("masterkey").encode()
 
-    def ispagevalid(self, page):
-        if re.search(u"<span class=\"copyText\">. [0-9]+ Türk Anime TV", page, re.UNICODE):
-            return page
-        
     def iterkeys(self):
         yield self.masterkey
         with Browser() as browser:
-            page = browser.navigate(domain + "/embed/", domain,)
+            page = browser.navigate(domain + "/embed/", domain)
         for js in re.findall('"(\/embed\/js.*?)"', page):
             with Browser() as browser:
                 jspage = browser.navigate(domain + js, domain)
@@ -101,7 +97,7 @@ class animeturk(vods.showextension):
     def getshows(self, catargs=None):
         if catargs:
             with Browser() as browser:
-                page = browser.navigate(catargs, referer=domain, validate=self.ispagevalid)
+                page = browser.navigate(catargs, referer=domain)
             self.scrapegrid(htmlement.fromstring(page))
 
     def scrapegrid(self, xpage):
@@ -122,19 +118,19 @@ class animeturk(vods.showextension):
             self.additem(title, url, art=art)
 
     def searchshows(self, keyword=None):
-        with Browser(loadtimeout=0) as browser:
-            browser.navigate(domain, validate=self.ispagevalid)
+        with Browser(maxtimeout=20) as browser:
+            browser.navigate(domain, html=False)
             browser.elem_setattr("value", "'%s'" % keyword, tag="input")
             browser.elem_call("submit", tag="form")
-            browser.loadtimeout = 3
+            browser.waitloadevent()
             page = browser.html()
         self.scrapegrid(htmlement.fromstring(page))
         if not len(self.items):
             redirect = re.search("window\.location\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", page)
             if redirect and "anime/" in redirect.group(1):
                 url = net.absurl(redirect.group(1), domain)
-                with Browser(loadtimeout=0) as browser:
-                    page = browser.navigate(url, domain, validate=self.ispagevalid)
+                with Browser() as browser:
+                    page = browser.navigate(url, domain)
                 xpage = htmlement.fromstring(page)
                 div = xpage.find(".//div[@class='table-responsive']/")
                 title = div.find(".//tr[2]/td[3]").text
@@ -158,7 +154,7 @@ class animeturk(vods.showextension):
                     self.additem(title, url, art=art)
         else:
             with Browser() as browser:
-                self.scrapegrid(htmlement.fromstring(browser.navigate(domain, None, self.ispagevalid)))
+                self.scrapegrid(htmlement.fromstring(browser.navigate(domain, None)))
 
     def getlink(self, mirrorlink, xmirrorpage=None):
         if not xmirrorpage:
@@ -190,7 +186,7 @@ class animeturk(vods.showextension):
         mirrorxpath = ".//div[@class='panel-body']/div[4]/button"
 
         with Browser() as browser:
-            page = browser.navigate(uid, domain, self.ispagevalid)
+            page = browser.navigate(uid, domain)
         xpage = htmlement.fromstring(page)
 
         fansubs = {}
