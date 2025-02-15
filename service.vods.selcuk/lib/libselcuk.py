@@ -6,6 +6,7 @@ Created on Sep 23, 2022
 import htmlement
 import re
 import base64
+import json
 
 from tinyxbmc import tools
 from tinyxbmc import mediaurl
@@ -14,14 +15,8 @@ from tinyxbmc.addon import kodisetting
 
 from six.moves.urllib import parse
 
-maxlink = 5
-subpath = None
-rgx1 = r"\s*[a-z]+\s?\:\s?(?:\'|\")(.+?)(?:\'|\")"
-rgx2 = r"window\.streamradardomil\s*?\=\s*?(.+?)\;"
-rgx3 = r"window\.streamradardomil\s*?\=\s*?(.+?)\;"
-rgx4 = r"atob\((?:\"|\')([a-zA-Z0-9\=]+?)(?:\"|\')\)"
-rgx5 = r"window._[a-f0-9]+\s*?\=\s*?window\[.atob.\]\((?:\'|\")([A-Za-z0-9\=]+)(?:\'|\")"
-rgx6 = r"src\s*?\=\s*?(?:\"|\')(\/keslanorospu.+?)(?:\"|\')"
+rgx1 = r"baseStreamUrl\s?\=\s?(?:\'|\")(.+?)(?:\'|\")"
+rgx2 = r"window.mainSource\s?\=\s?\[(?:\'|\")(.+?)(?:\'|\")"
 setting = kodisetting("service.vods.selcuk")
 
 
@@ -37,24 +32,30 @@ def iteratechannels(mainurl):
         chname = tools.elementsrc(link.find(".//div[@class='name']"), exclude=[link.find(".//b")]).strip()
         chlink = link.get("data-url")
         if chlink.startswith("http"):
-            chlink = chlink.split("#")[0]
-            up = parse.urlparse(chlink)
-            chdict = dict(parse.parse_qsl(up.query))
-            if "id" in chdict:
-                yield chdict["id"], chlink, chname
+            yield chlink, chname
+
+def parse1(url, page):
+    baseurl = re.search(rgx1, page)
+    if not baseurl:
+        return
+    up = parse.urlparse(url)
+    params = dict(parse.parse_qsl(up.query))
+    if "id" not in params:
+        return
+    return baseurl.group(1) + params["id"] + "/playlist.m3u8"
 
 
-def getmedias(chid, mainurl, isadaptive=False, direct=False):
-    for _chid, url, _chname in iteratechannels(mainurl):
-        if _chid == chid:
-            subpage = net.http(url, referer=mainurl)
-            bases = [base64.b64decode(x).decode() for x in re.findall(rgx4, subpage)]
-            _data1 = bases.pop(0)
-            _reklam = bases.pop(0)
-            _iframe = bases.pop(-1)
-            doms = bases.pop(-1), bases.pop(-1)
-            subs = bases
-            for sub in subs:
-                media = f"https://{sub}{doms[0]}/i/{parse.urlparse(mainurl).netloc}/{chid}/playlist.m3u8"
-                yield mediaurl.hlsurl(media, headers={"referer": "https://%s/" % parse.urlparse(url).netloc}, adaptive=isadaptive, ffmpegdirect=direct)
-            break
+def parse2(page):
+    mainsource = re.search(rgx2, page)
+    if mainsource:
+        return mainsource.group(1) 
+
+
+def getmedias(url, mainurl, isadaptive=False, direct=False):
+    subpage = net.http(url, referer=mainurl)
+    link = parse1(url, subpage) or parse2(subpage)
+    if not link:
+        return
+    yield mediaurl.hlsurl(link,
+                          headers={"referer": "https://%s/" % parse.urlparse(url).netloc},
+                          adaptive=isadaptive, ffmpegdirect=direct)
