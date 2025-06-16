@@ -28,7 +28,7 @@ class base:
             query["genre[]"] = genre
         if search:
             query["s"] = search
-            index_pg = self.download(domain, referer=domain)
+            index_pg = self.download(search_uri, referer=domain)
             js_uri = re.search(JS_REGEX, index_pg)
             js_pg = self.download(absurl(js_uri.group(1), domain), params=query, referer=domain)
             search_suffix = re.search(SEARCH_REGEX, js_pg)
