@@ -21,7 +21,7 @@ class base:
     def scrapegrid(self, search=None, genre=None):
         domain =  "https://%s" % self.setting.getstr("domain")
         search_uri = "%s/filter" % domain
-        query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending"}
+        query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending Today"}
         if self.page:
             query["page"] = self.page
         if genre:
