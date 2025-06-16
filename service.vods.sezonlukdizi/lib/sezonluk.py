@@ -69,6 +69,7 @@ class dizi(vods.showextension):
                 self.additem(title, (info, art, a.get("href").replace("/diziler/", "/bolumler/")), info, art)
 
     def searchshows(self, keyword):
+        # FIXME: this is only giving top results but not all
         url = self.domain + "/ajax/arama.asp"
         results = self.download(url, referer=self.domain + "/", data={"q": keyword},
                                 method="POST", json=True,
