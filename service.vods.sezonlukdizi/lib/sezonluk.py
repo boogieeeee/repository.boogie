@@ -95,7 +95,7 @@ class dizi(vods.showextension):
                 img = a.find(".//img")
                 imgsrc = self.domain + img.get("src")
                 href = a.get("href")
-                ss = re.search(u"(.+?)\s([0-9]+)\.Sezon ([0-9]+)\.Bölüm", img.get("alt"))
+                ss = re.search(r"(.+?)\s([0-9]+)\.Sezon ([0-9]+)\.Bölüm", img.get("alt"))
                 title = ss.group(1)
                 season = int(ss.group(2))
                 epi = int(ss.group(3))
@@ -114,7 +114,7 @@ class dizi(vods.showextension):
                         continue
                     bid = i.get("bid")
                     e_val = tds[2].find(".//a").text
-                    e_val = re.search("([0-9]+)", e_val)
+                    e_val = re.search(r"([0-9]+)", e_val)
                     if e_val:
                         e_val = int(e_val.group(1))
                         epilink = tds[3].find(".//a")
@@ -138,25 +138,28 @@ class dizi(vods.showextension):
             dilmap = [diller[dilkeys[dil]]]
         for dil in dilmap:
             data = {"bid": bid, "dil": dil}
-            js = self.download(self.domain + "/ajax/dataAlternatif2.asp",
+            js = self.download(self.domain + "/ajax/dataAlternatif22.asp",
                                data=data,
-                               referer=url,
+                               referer=self.domain + url,
                                json=True,
                                method="POST",
                                headers={"x-requested-with": "XMLHttpRequest"})
             if js.get("status") == "success":
                 for data in js["data"]:
-                    iframe = self.download(self.domain + "/ajax/dataEmbed.asp",
+                    headers = {"x-requested-with": "XMLHttpRequest"}
+                    iframe = self.download(self.domain + "/ajax/dataEmbed22.asp",
                                            data={"id": data["id"]},
-                                           referer=url,
+                                           referer=self.domain + url,
                                            encoding=self.encoding,
-                                           method="POST")
-                    v_url = re.search("src\s*?\=\s*?(?:\"|')(.+?)(?:\"|')", iframe, re.IGNORECASE)
+                                           method="POST",
+                                           headers={"x-requested-with": "XMLHttpRequest"},
+                                           cache=None)
+                    v_url = re.search(r"src\s*?\=\s*?(?:\"|')(.+?)(?:\"|')", iframe, re.IGNORECASE)
                     if v_url:
                         v_url = v_url.group(1)
                         if v_url.startswith("/player/"):
                             subpage = self.download(self.domain + v_url, referer=url, encoding=self.encoding)
-                            iframe = re.search("iframe.+?src\s*?\=\s*?(?:\"|')(.+?)(?:\"|')", subpage)
+                            iframe = re.search(r"iframe.+?src\s*?\=\s*?(?:\"|')(.+?)(?:\"|')", subpage)
                             if iframe:
                                 v_url = iframe.group(1)
                             else:
