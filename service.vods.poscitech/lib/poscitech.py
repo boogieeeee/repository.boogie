@@ -45,15 +45,15 @@ class poscitech(vods.movieextension):
 
     def getmovies(self, cat=None):
         if cat:
-            for ctxt, cnum in cat:
-                self.additem(ctxt, cnum)
+            for ctxt, cnum, path in cat:
+                self.additem(ctxt, [cnum, path])
         else:
             chnames = liblivetvon.getchmeta(numbyname=True)
             for chid in sorted(chnames):
-                self.additem("%s (#%s)" % (chnames[chid], chid), chid)
+                self.additem("%s (#%s)" % (chnames[chid], chid), [chid])
             for i in range(1, 300 + 1):
                 if i not in chnames:
-                    self.additem("Channel (#%s)" % i, i)
+                    self.additem("Channel (#%s)" % i, [i])
 
-    def geturls(self, streamid):
-        yield liblivetvon.geturl(streamid)
+    def geturls(self, data):
+        yield liblivetvon.geturl(*data)

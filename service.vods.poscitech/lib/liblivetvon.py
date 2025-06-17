@@ -5,7 +5,7 @@ Created on Jun 6, 2022
 '''
 import htmlement
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 from tinyxbmc.addon import kodisetting
 from tinyxbmc import net
 from tinyxbmc import mediaurl
@@ -31,30 +31,30 @@ monthtoint = {"jan": 1,
               "dec": 12}
 
 
-def geturl(streamid):
-    u = "%s/stream/stream-%s.php" % (domain, streamid)
+def geturl(streamid, path="/stream/stream-%s.php"):
+    u = ("%s" + path) % (domain, streamid)
     xiframe = htmlement.fromstring(net.http(u, referer=domain))
     iframeu = xiframe.find(".//iframe[@id='thatframe']").get("src")
     iframe = net.http(iframeu, referer=u)
-    vars = {"channelKey": "",
+    jsvars = {"channelKey": "",
             "authTs": "",
             "authRnd": "",
             "authSig": "",}
-    for k, v in vars.items():
-        vars[k] = re.search(f"var\s+{k}\s+=\s+(?:\"|\')(.+?)(?:\"|\');", iframe).group(1)
+    for k in jsvars:
+        jsvars[k] = re.search(f"var\s+{k}\s+=\s+(?:\"|\')(.+?)(?:\"|\');", iframe).group(1)
     authurl = re.search(r"(?:\"|\')(.+?auth\.php.*?)\?", iframe).group(1)
-    params = {"channel_id": vars["channelKey"],
-              "ts": vars["authTs"],
-              "rnd": vars["authRnd"],
-              "sig": vars["authSig"]}
-    auth = net.http(net.absurl(authurl, iframeu), params=params, json=True)
+    params = {"channel_id": jsvars["channelKey"],
+              "ts": jsvars["authTs"],
+              "rnd": jsvars["authRnd"],
+              "sig": jsvars["authSig"]}
+    _auth = net.http(net.absurl(authurl, iframeu), params=params, json=True)
     lookupurl = authurl = re.search(r"(?:\"|\')(.+?server_lookup\.php.*?)\?", iframe).group(1)
-    params = {"channel_id": vars["channelKey"]}
+    params = {"channel_id": jsvars["channelKey"]}
     lookup = net.http(net.absurl(lookupurl, iframeu), params=params, json=True)
     server_key = lookup["server_key"]
     pre = server_key.split("/")[0]
     post = server_key
-    murl = f"https://{pre}new.newkso.ru/{post}/{vars['channelKey']}/mono.m3u8"
+    murl = f"https://{pre}new.newkso.ru/{post}/{jsvars['channelKey']}/mono.m3u8"
     
     iframeu_p = parse.urlparse(iframeu)
     orig = iframeu_p.scheme + "://" + iframeu_p.netloc
@@ -81,13 +81,17 @@ def getschdate(page):
 def getevents():
     allevents = []
     loctz = tools.tz_local()
-    schedules = ["schedule-extra-generated.php", "schedule-generated.php", "extra2-schedule-2.php"]
-    for schedule in schedules:
+    schedules = {"schedule-extra-generated.php": "/extra/stream-%s.php",
+                 "schedule-generated.php": "/stream/stream-%s.php",
+                 "extra2-schedule-2.php": "/stream/bet.php?id=%s"}
+    for schedule, path in schedules.items():
         js = net.http(f"{domain}/schedule/{schedule}", referer=domain, json=True)
         for dt, members in js.items():
             sch_date = getschdate(dt)
             for category, events in members.items():
                 category = re.sub(r"<.*?>", "", category).strip()
+                if category == "All matches":
+                    pass
                 for event in events:
                     title = event["event"]
                     evdtmatch = re.search(r"([0-9]{1,2})\:([0-9]{1,2})(.*)", event["time"])
@@ -99,7 +103,8 @@ def getevents():
                     channels = []
                     for channel in event["channels"]:
                         if(channel["channel_id"]).isdigit():
-                            channels.append([channel["channel_name"], int(channel["channel_id"])])
+                            name = f"{channel['channel_name']}({channel['channel_id']})"
+                            channels.append([name, int(channel["channel_id"]), path])
                     allevents.append([evdate.astimezone(loctz), category, title, channels])
     allevents.sort()
     return allevents
