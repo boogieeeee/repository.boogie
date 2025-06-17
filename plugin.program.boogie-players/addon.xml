@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.12">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.13">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -7,6 +7,7 @@
 		<import addon="script.module.ghub"/>
 		<import addon="plugin.program.vods-players"/>
         <import addon="script.module.certifi" />
+        <import addon="script.module.kodi-six" />
         <import addon="plugin.video.youtube" optional="true" />
         <import addon="script.module.python.twitch" optional="true" />
 	</requires>
