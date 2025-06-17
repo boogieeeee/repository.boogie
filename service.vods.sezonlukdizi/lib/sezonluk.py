@@ -73,7 +73,8 @@ class dizi(vods.showextension):
         url = self.domain + "/ajax/arama.asp"
         results = self.download(url, referer=self.domain + "/", data={"q": keyword},
                                 method="POST", json=True,
-                                headers={"x-requested-with": "XMLHttpRequest"})
+                                headers={"x-requested-with": "XMLHttpRequest"},
+                                cache=None)
         for dizi in results.get("results", {}).get("diziler", {}).get("results", []):
             title = dizi["title"]
             img = None
