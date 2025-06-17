@@ -74,7 +74,8 @@ class dizi(vods.showextension):
         results = self.download(url, referer=self.domain + "/", data={"q": keyword},
                                 method="POST", json=True,
                                 headers={"x-requested-with": "XMLHttpRequest"},
-                                cache=None)
+                                cache=None,
+                                stream=False)
         for dizi in results.get("results", {}).get("diziler", {}).get("results", []):
             title = dizi["title"]
             img = None
