@@ -144,10 +144,10 @@ class dizi(vods.showextension):
                                referer=self.domain + url,
                                json=True,
                                method="POST",
-                               headers={"x-requested-with": "XMLHttpRequest"})
+                               headers={"x-requested-with": "XMLHttpRequest"},
+                               cache=None)
             if js.get("status") == "success":
                 for data in js["data"]:
-                    headers = {"x-requested-with": "XMLHttpRequest"}
                     iframe = self.download(self.domain + "/ajax/dataEmbed22.asp",
                                            data={"id": data["id"]},
                                            referer=self.domain + url,
