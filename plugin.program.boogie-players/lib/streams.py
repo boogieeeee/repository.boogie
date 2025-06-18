@@ -13,7 +13,7 @@ import os
 ppath = os.path.join(os.path.dirname(__file__), "libstreams")
 
 
-class StreamsBase(object):
+class StreamsBase:
     regex = None
 
     def resolve(self, url, headers):
