@@ -5,12 +5,14 @@ Created on Jun 6, 2022
 '''
 import htmlement
 import re
+import traceback
 from datetime import datetime
 from tinyxbmc.addon import kodisetting
 from tinyxbmc import net
 from tinyxbmc import mediaurl
 from tinyxbmc import tools
 from six.moves.urllib import parse
+# from chromium import Browser
 
 
 setting = kodisetting("service.vods.poscitech")
@@ -30,12 +32,12 @@ monthtoint = {"jan": 1,
               "sep": 11,
               "dec": 12}
 
-
-def geturl(streamid, path="/stream/stream-%s.php"):
-    u = ("%s" + path) % (domain, streamid)
-    xiframe = htmlement.fromstring(net.http(u, referer=domain))
-    iframeu = xiframe.find(".//iframe[@id='thatframe']").get("src")
-    iframe = net.http(iframeu, referer=u)
+def get_forcedplay(xpage, iframeu, url):
+    iframe = net.http(iframeu, referer=url)
+    subiframe =  htmlement.fromstring(iframe).find(".//iframe[@id='thatframe']")
+    if subiframe is not None:
+        iframeu = subiframe.get("src")
+        iframe = net.http(iframeu, referer=iframeu)
     jsvars = {"channelKey": "",
             "authTs": "",
             "authRnd": "",
@@ -62,8 +64,21 @@ def geturl(streamid, path="/stream/stream-%s.php"):
              "Origin": orig,
              "Referer": orig + "/",
              }
-    return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False,
+    return mediaurl.hlsurl(murl, headers=headers, adaptive=False, ffmpegdirect=False,
                            lurl="", lheaders=headers, lbody="", lresponse="", license=None)
+
+
+def geturl(streamid, path="/stream/stream-%s.php"):
+    u = ("%s" + path) % (domain, streamid)
+    xpage = htmlement.fromstring(net.http(u, referer=domain))
+    iframes = xpage.findall(".//iframe")
+    for cb in [get_forcedplay]:
+        for iframe in iframes:
+            iframeu = iframe.get("src")
+            try:
+                return cb(xpage, iframeu, u)
+            except Exception:
+                print(traceback.format_exc())
 
 
 def getschdate(page):
@@ -73,7 +88,7 @@ def getschdate(page):
         month = monthtoint[dtmatch.group(2).lower().strip()]
         year = int(dtmatch.group(3))
         tz = tools.tz_utc()
-        tz.settimezone(1)
+        tz.settimezone(0)
         dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
         return dtob
     return today
