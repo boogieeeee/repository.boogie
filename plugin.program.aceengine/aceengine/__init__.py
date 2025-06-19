@@ -16,16 +16,45 @@ class AcestreamError(Exception):
 
 class acestream():
     def __init__(self, url):
-        self.url = url
-        self.id = url.lower().replace("acestream://", "").strip()
+        self.id = None
+        self.infohash = None
+        if url.startswith("acestream://"):
+            self.id = url.lower().replace("acestream://", "").strip()
+        else:
+            self.infohash = url
         self.stat_url = None
         self.command_url = None
         self.playback_url = None
         self.stats = {}
+        self._token = None
+        
+    @property
+    def token(self):
+        if not self._token:
+            params = {"method": "get_api_access_token"}
+            jsdata = self.query("/server/api", params, ignore=True, key="result")
+            if jsdata:
+                self._token = jsdata.get("token")
+        return self._token
+    
+    def search(self, keyw, category="", page=0, pagesize=200, group_by_channels=1, show_epg=1):
+        params = {"method": "search",
+                  "token": self.token,
+                  "query": keyw,
+                  "category": category,
+                  "page": page,
+                  "page_size": pagesize,
+                  "group_by_channels": group_by_channels,
+                  "show_epg": show_epg}
+        return self.query("/server/api", params, ignore=True, key="result")
 
     def getstream(self, pid="kodi"):
         def _getstream():
-            jsdata = self.query("%s/ace/getstream?id=%s&format=json&pid=%s" % (acestream.apiurl(), self.id, pid), ignore=False)
+            params = {"format": "json",
+                      "pid": pid,
+                      "id": self.id,
+                      "infohash": self.infohash}
+            jsdata = self.query("/ace/getstream", params, ignore=True)
             if jsdata:
                 self.stat_url = jsdata["stat_url"]
                 self.command_url = jsdata["command_url"]
@@ -41,19 +70,25 @@ class acestream():
         self.getstream()
         return self.playback_url
 
-    def query(self, uri, ignore=False):
+    def query(self, uri, params, ignore=False, key="response"):
         try:
-            jsdata = net.http(uri, cache=None)
+            if uri.startswith("/"):
+                uri = self.apiurl() + uri
+            jsdata = net.http(uri, params=params, cache=None)
             jsdata = json.loads(jsdata)
         except Exception as e:
             jsdata = {"error": "Query Error %s" % e,
                       "response": None}
         if jsdata.get("error") and not ignore:
             raise AcestreamError(jsdata["error"])
-        return jsdata.get("response")
+        if key:
+            return jsdata.get(key)
+        else:
+            return jsdata
+        
         
     def updatestats(self):
-        stats = self.query(self.stat_url, ignore=True)
+        stats = self.query(self.stat_url, None, ignore=True)
         if stats:
             self.stats = stats
         
@@ -66,7 +101,8 @@ class acestream():
         if not url:
             url = self.command_url
         if url:
-            retval = self.query(url + "?method=stop", ignore=True) == "ok"
+            params = {"method": "stop"}
+            retval = self.query(url, params, ignore=True) == "ok"
             return retval is None or retval
     
     @staticmethod
