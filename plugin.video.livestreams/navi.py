@@ -113,6 +113,8 @@ class Navi(Base):
         chan = self.loadchannel(cid)
         art = {"icon": chan.icon, "thumb": chan.icon, "poster": chan.icon}
         for url in chan.get():
+            if not url:
+                continue
             item = self.item("%s:%s" % (chan.title, url), art=art)
             item.resolve(self.geturl(url))
 
@@ -128,6 +130,8 @@ class Navi(Base):
         else:
             chan = self.loadchannel(cid)
             for url in chan.get():
+                if not url:
+                    continue
                 yield self.geturl(url)
 
 
