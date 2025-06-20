@@ -169,4 +169,4 @@ class dizi(vods.showextension):
                                 continue
                         if v_url.startswith("//"):
                             v_url = "https:" + v_url
-                        yield v_url
+                        yield net.tokodiurl(v_url, headers={"Referer": self.domain})
