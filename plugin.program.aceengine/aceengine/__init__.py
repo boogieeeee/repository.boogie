@@ -37,7 +37,7 @@ class acestream():
                 self._token = jsdata.get("token")
         return self._token
     
-    def search(self, keyw, category="", page=0, pagesize=200, group_by_channels=1, show_epg=1):
+    def search(self, keyw, category="", page=0, pagesize=200, group_by_channels=1, show_epg=1, cache=None, ignore=True):
         params = {"method": "search",
                   "token": self.token,
                   "query": keyw,
@@ -46,7 +46,8 @@ class acestream():
                   "page_size": pagesize,
                   "group_by_channels": group_by_channels,
                   "show_epg": show_epg}
-        return self.query("/server/api", params, ignore=True, key="result")
+        print(self.token)
+        return self.query("/server/api", params, key="result", cache=cache, ignore=ignore)
 
     def getstream(self, pid="kodi"):
         def _getstream():
@@ -70,11 +71,11 @@ class acestream():
         self.getstream()
         return self.playback_url
 
-    def query(self, uri, params, ignore=False, key="response"):
+    def query(self, uri, params, ignore=False, key="response", cache=None):
         try:
             if uri.startswith("/"):
                 uri = self.apiurl() + uri
-            jsdata = net.http(uri, params=params, cache=None)
+            jsdata = net.http(uri, params=params, cache=cache)
             jsdata = json.loads(jsdata)
         except Exception as e:
             jsdata = {"error": "Query Error %s" % e,
