@@ -38,7 +38,7 @@
 	</extension>
 </addon>
 
-<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.14">
+<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.15">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -103,7 +103,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.14">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.15">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -111,6 +111,7 @@
 		<import addon="script.module.ghub"/>
 		<import addon="plugin.program.vods-players"/>
         <import addon="script.module.certifi" />
+        <import addon="script.module.htmlement" />
         <import addon="script.module.kodi-six" />
         <import addon="plugin.video.youtube" optional="true" />
         <import addon="script.module.python.twitch" optional="true" />
@@ -182,7 +183,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.9">
+<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.10">
 	<requires>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.six" />
