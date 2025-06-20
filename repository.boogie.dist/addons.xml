@@ -182,7 +182,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.8">
+<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.9">
 	<requires>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.six" />
@@ -208,7 +208,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.13">
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.14">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
