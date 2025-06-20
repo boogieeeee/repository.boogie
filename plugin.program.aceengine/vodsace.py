@@ -3,9 +3,8 @@
 import vods
 from tinyxbmc import const
 from tinyxbmc import mediaurl
+from tinyxbmc import iso
 import aceengine
-import iso3166
-import iso639
 
 
 adult_filter = True
@@ -33,10 +32,10 @@ class ace(vods.movieextension):
             for cat in item.get("categories", []):
                 _add_cat(cat)
             for lang in item.get("languages", []):
-                lang = iso639.one.get(lang.lower()[:2], lang)
+                lang = iso.languages_3letter.get(lang.lower(), lang)
                 _add_cat(lang)
             for country in item.get("countries", []):
-                country = iso3166.letter2.get(country.upper(), country)
+                country = iso.countries_3letter.get(country.upper(), country)
                 _add_cat(country)
             if item.get("disabled"):
                 _add_cat("disabled")
