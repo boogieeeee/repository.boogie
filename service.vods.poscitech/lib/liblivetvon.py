@@ -5,6 +5,7 @@ Created on Jun 6, 2022
 '''
 import htmlement
 import re
+import base64
 import traceback
 from datetime import datetime
 from tinyxbmc.addon import kodisetting
@@ -38,18 +39,26 @@ def get_forcedplay(xpage, iframeu, url):
     if subiframe is not None:
         iframeu = subiframe.get("src")
         iframe = net.http(iframeu, referer=iframeu)
-    jsvars = {"channelKey": "",
-            "authTs": "",
-            "authRnd": "",
-            "authSig": "",}
-    for k in jsvars:
-        jsvars[k] = re.search(f"var\s+{k}\s+=\s+(?:\"|\')(.+?)(?:\"|\');", iframe).group(1)
-    authurl = re.search(r"(?:\"|\')(.+?auth\.php.*?)\?", iframe).group(1)
+    jsvars = {"auth": "",
+              "subdomain": "",
+              "channelKey": "",
+              "authTs": "",
+              "authRnd": "",
+              "authSig": "",}
+    base64_map = {"__a": "subdomain",
+                  "__b": "auth",
+                  "__c": "authTs",
+                  "__d": "authRnd",
+                  "__e": "authSig"}
+    for k, v in base64_map.items():
+        val = re.search(f"var\s+{k}\s+=\s+atob\((?:\"|\')(.+?)(?:\"|\')\);", iframe).group(1)
+        jsvars[v] = base64.b64decode(val).decode()
+    jsvars["channelKey"] =  re.search(r"var\s+channelKey\s+=\s+(?:\"|\')(.+?)(?:\"|\')\;", iframe).group(1)
     params = {"channel_id": jsvars["channelKey"],
               "ts": jsvars["authTs"],
               "rnd": jsvars["authRnd"],
               "sig": jsvars["authSig"]}
-    _auth = net.http(net.absurl(authurl, iframeu), params=params, json=True)
+    _auth = net.http(f"{jsvars['subdomain']}/{jsvars['auth']}", params=params)
     lookupurl = authurl = re.search(r"(?:\"|\')(.+?server_lookup\.php.*?)\?", iframe).group(1)
     params = {"channel_id": jsvars["channelKey"]}
     lookup = net.http(net.absurl(lookupurl, iframeu), params=params, json=True)
