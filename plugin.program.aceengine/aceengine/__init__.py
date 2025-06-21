@@ -43,7 +43,6 @@ class acestream():
                   "page_size": pagesize,
                   "group_by_channels": group_by_channels,
                   "show_epg": show_epg}
-        print(self.token)
         return self.query("/server/api", params, key="result", cache=cache, ignore=ignore)
 
     def getstream(self, pid="kodi"):
