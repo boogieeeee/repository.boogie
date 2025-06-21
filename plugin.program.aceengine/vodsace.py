@@ -6,7 +6,6 @@ from tinyxbmc import mediaurl
 from tinyxbmc import iso
 import aceengine
 
-
 adult_filter = True
 adult_kw = ["18+", "+18", "18 plus", "plus 18", "adult", "porn", "sex", "erotic"]
 
@@ -16,18 +15,18 @@ class ace(vods.movieextension):
     uselinkplayers = False
     loadtimeout = 3
     dropboxtoken = const.DB_TOKEN
-    
+
     def searchmovies(self, keyw):
         self.getmovies(cat="", keyw=keyw)
-        
+
     def getcats(self, result):
         cats = []
-        
+
         def _add_cat(name):
             name = name.replace("_", " ").title().strip()
             if name and name not in cats:
                 cats.append(name)
-        
+
         for item in result.get("items", []):
             for cat in item.get("categories", []):
                 _add_cat(cat)
@@ -41,7 +40,7 @@ class ace(vods.movieextension):
                 _add_cat("disabled")
             status = item.get("status")
             if status == 1:
-                _add_=_add_cat("health status yellow")
+                _add_cat("health status yellow")
             if status == 2:
                 _add_cat("health status green")
             epg = result.get("epg")
@@ -57,12 +56,12 @@ class ace(vods.movieextension):
                     cats[subcat] = 1
                 else:
                     cats[subcat] += 1
-        
+
         for cat, count in sorted(cats.items()):
             if adult_filter and self.isadult(cat, []):
                 continue
             self.additem(f"{cat} ({count})", cat)
-    
+
     def iterresults(self, cat="", keyw=""):
         engine = aceengine.acestream("")
         page = 0
@@ -80,7 +79,7 @@ class ace(vods.movieextension):
                 yield result
             if total <= 0:
                 break
-    
+
     def isadult(self, name, cats):
         name = name.lower()
         for kw in adult_kw:
@@ -114,12 +113,11 @@ class ace(vods.movieextension):
             if epg:
                 name += f" [{epg[0]['name']}]"
             channels.append([name, items, None, art])
-        
+
         channels.sort()
-        
+
         for channel in channels:
             self.additem(*channel)
-
 
     def geturls(self, items):
         for item in items:

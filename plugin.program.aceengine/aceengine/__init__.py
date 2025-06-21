@@ -1,14 +1,11 @@
-import time
 import json
 
 from . import const
 from tinyxbmc import addon
 from tinyxbmc import net
-from tinyxbmc import hay
-import aceengine
-
 
 settings = addon.kodisetting(const.ADDONID)
+
 
 class AcestreamError(Exception):
     pass
@@ -27,7 +24,7 @@ class acestream():
         self.playback_url = None
         self.stats = {}
         self._token = None
-        
+
     @property
     def token(self):
         if not self._token:
@@ -36,7 +33,7 @@ class acestream():
             if jsdata:
                 self._token = jsdata.get("token")
         return self._token
-    
+
     def search(self, keyw, category="", page=0, pagesize=200, group_by_channels=1, show_epg=1, cache=None, ignore=True):
         params = {"method": "search",
                   "token": self.token,
@@ -50,6 +47,7 @@ class acestream():
         return self.query("/server/api", params, key="result", cache=cache, ignore=ignore)
 
     def getstream(self, pid="kodi"):
+
         def _getstream():
             params = {"format": "json",
                       "pid": pid,
@@ -61,6 +59,7 @@ class acestream():
                 self.command_url = jsdata["command_url"]
                 self.playback_url = jsdata["playback_url"]
                 self.updatestats()
+
         _getstream()
         if self.hasstarted:
             self.stop()
@@ -86,18 +85,17 @@ class acestream():
             return jsdata.get(key)
         else:
             return jsdata
-        
-        
+
     def updatestats(self):
         stats = self.query(self.stat_url, None, ignore=True)
         if stats:
             self.stats = stats
-        
+
     @property
     def hasstarted(self):
         self.updatestats()
         return self.stats.get("status") == "dl"
-        
+
     def stop(self, url=None):
         if not url:
             url = self.command_url
@@ -105,7 +103,7 @@ class acestream():
             params = {"method": "stop"}
             retval = self.query(url, params, ignore=True) == "ok"
             return retval is None or retval
-    
+
     @staticmethod
     def apiurl():
         return settings.getstr(const.SETTING_ACTIVEADDRESS)
