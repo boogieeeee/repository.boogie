@@ -32,7 +32,7 @@ class acestream():
     def token(self):
         if not self._token:
             params = {"method": "get_api_access_token"}
-            jsdata = self.query("/server/api", params, ignore=True, key="result")
+            jsdata = self.query("/server/api", params, ignore=True, key="result", cache=60)
             if jsdata:
                 self._token = jsdata.get("token")
         return self._token

@@ -35,7 +35,7 @@ class ace(vods.movieextension):
                 lang = iso.languages_3letter.get(lang.lower(), lang)
                 _add_cat(lang)
             for country in item.get("countries", []):
-                country = iso.countries_3letter.get(country.upper(), country)
+                country = iso.countries_2letter.get(country.lower(), country)
                 _add_cat(country)
             if item.get("disabled"):
                 _add_cat("disabled")
@@ -113,7 +113,7 @@ class ace(vods.movieextension):
             epg = result.get("epg")
             if epg:
                 name += f" [{epg[0]['name']}]"
-            channels.append([name, items, art])
+            channels.append([name, items, None, art])
         
         channels.sort()
         
