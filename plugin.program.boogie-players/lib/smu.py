@@ -18,7 +18,6 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
 
-from tinyxbmc import addon
 from tinyxbmc import tools
 from tinyxbmc import hay
 from tinyxbmc import const
@@ -30,29 +29,18 @@ from bplay import getconfig
 import ghub
 import os
 import re
-import shutil
-import traceback
 import json
 
 
 def patchsmu(smudir):
-    # a very dirty hack to make smu work portable, not happy with this :(
-    def getstr(content):
-        r = re.search(r"<settings>(.*?)</settings>", content, re.DOTALL)
-        if r:
-            return r.group(1)
-        else:
-            return ""
-
     smudir = os.path.join(smudir, "script.module.resolveurl")
     with hay.stack("smupatch") as smuhay:
         smupatch = smuhay.find("smupatch").data
         with open(os.path.join(smudir, "..", "..", "ResolveURL.json")) as vf:
             versioncommit = json.load(vf)
         versioncommit = versioncommit.get("latest")
-        pldir = addon.get_addon("plugin.program.boogie-players").getAddonInfo("path")
 
-        if smupatch.get("versioncommit_v2") == versioncommit:
+        if smupatch.get("versioncommit_v3") == versioncommit:
             return
 
         # first remove xbmcaddon referenced to script.module.urlresolver
@@ -79,35 +67,7 @@ def patchsmu(smudir):
                 with open(fpath, "w") as f:
                     f.write(re.sub(pattern, sub, contents))
 
-        # synchronize resources folder with xbmcvfs in case of permission problem
-        for root, folders, files in os.walk(os.path.join(smudir, "resources")):
-            relfolder = os.path.relpath(root, smudir)
-            for folder in folders:
-                tools.mkdirs(os.path.join(pldir, relfolder, folder))
-            for f in files:
-                sfile = os.path.join(smudir, relfolder, f)
-                tfile = os.path.join(pldir, relfolder, f)
-                with tools.File(sfile) as sfileo:
-                    with tools.File(tfile, "w") as tfileo:
-                        tfileo.write(sfileo.readBytes())
-
-        from resolveurl import _update_settings_xml
-        from resolveurl import common
-        _update_settings_xml()
-        smuxmlp = common.settings_file
-        plxmlop = os.path.join(pldir, "resources", "settings_orig.xml")
-        plxmlp = os.path.join(pldir, "resources", "settings.xml")
-        with tools.File(smuxmlp, "r") as smuxml:
-            with tools.File(plxmlop, "r") as plxmlo:
-                with tools.File(plxmlp, "w") as plxml:
-                    try:
-                        plxml.write('<?xml version="1.0" ?><settings>%s%s</settings>' % 
-                                    (getstr(plxmlo.read()), getstr(smuxml.read())))
-                    except Exception:
-                        print(traceback.format_exc())
-                        shutil.copyfile(plxmlop, plxmlp)
-
-            smupatch["versioncommit_v2"] = versioncommit
+            smupatch["versioncommit_v3"] = versioncommit
             smuhay.throw("smupatch", smupatch)
             tools.builtin("UpdateLocalAddons()")
             # gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
@@ -125,6 +85,6 @@ class smu(linkplayerextension):
         self.hmf = hmf.HostedMediaFile
 
     def geturls(self, link, headers=None):
-        hmf = self.hmf(link, include_universal=False)
+        hmf = self.hmf(link, include_universal=True, include_disabled=True, include_popups=False)
         ret = hmf.resolve()
         yield ret
