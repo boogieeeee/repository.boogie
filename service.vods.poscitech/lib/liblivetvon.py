@@ -125,7 +125,12 @@ def getevents():
                                       year=sch_date.year, month=sch_date.month, day=sch_date.day,
                                       tzinfo=sch_date.tzinfo)
                     channels = []
-                    for channel in event["channels"]:
+                    if isinstance(event["channels"], dict):
+                        evchannels = list(event["channels"].values())
+                    else:
+                        evchannels = event["channels"]
+                    for channel in evchannels:
+                        channel["channel_id"].isdigit()
                         if(channel["channel_id"]).isdigit():
                             name = f"{channel['channel_name']}({channel['channel_id']})"
                             channels.append([name, int(channel["channel_id"]), path])
