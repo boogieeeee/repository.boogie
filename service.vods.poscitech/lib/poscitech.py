@@ -51,7 +51,7 @@ class poscitech(vods.movieextension):
             chnames = liblivetvon.getchmeta(numbyname=True)
             for chid in sorted(chnames):
                 self.additem("%s (#%s)" % (chnames[chid], chid), [chid])
-            for i in range(1, 300 + 1):
+            for i in range(1, 500 + 1):
                 if i not in chnames:
                     self.additem("Channel (#%s)" % i, [i])
 

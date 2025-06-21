@@ -33,9 +33,10 @@ monthtoint = {"jan": 1,
               "sep": 11,
               "dec": 12}
 
+
 def get_forcedplay(xpage, iframeu, url):
-    iframe = net.http(iframeu, referer=url)
-    subiframe =  htmlement.fromstring(iframe).find(".//iframe[@id='thatframe']")
+    iframe = net.http(iframeu, referer=url, cache=None)
+    subiframe = htmlement.fromstring(iframe).find(".//iframe[@id='thatframe']")
     if subiframe is not None:
         iframeu = subiframe.get("src")
         iframe = net.http(iframeu, referer=iframeu)
@@ -44,7 +45,7 @@ def get_forcedplay(xpage, iframeu, url):
               "channelKey": "",
               "authTs": "",
               "authRnd": "",
-              "authSig": "",}
+              "authSig": ""}
     base64_map = {"__a": "subdomain",
                   "__b": "auth",
                   "__c": "authTs",
@@ -53,28 +54,26 @@ def get_forcedplay(xpage, iframeu, url):
     for k, v in base64_map.items():
         val = re.search(f"var\s+{k}\s+=\s+atob\((?:\"|\')(.+?)(?:\"|\')\);", iframe).group(1)
         jsvars[v] = base64.b64decode(val).decode()
-    jsvars["channelKey"] =  re.search(r"var\s+channelKey\s+=\s+(?:\"|\')(.+?)(?:\"|\')\;", iframe).group(1)
+    jsvars["channelKey"] = re.search(r"var\s+channelKey\s+=\s+(?:\"|\')(.+?)(?:\"|\')\;", iframe).group(1)
     params = {"channel_id": jsvars["channelKey"],
               "ts": jsvars["authTs"],
               "rnd": jsvars["authRnd"],
               "sig": jsvars["authSig"]}
     _auth = net.http(f"{jsvars['subdomain']}/{jsvars['auth']}", params=params)
-    lookupurl = authurl = re.search(r"(?:\"|\')(.+?server_lookup\.php.*?)\?", iframe).group(1)
+    lookupurl = re.search(r"(?:\"|\')(.+?server_lookup\.php.*?)\?", iframe).group(1)
     params = {"channel_id": jsvars["channelKey"]}
     lookup = net.http(net.absurl(lookupurl, iframeu), params=params, json=True)
     server_key = lookup["server_key"]
     pre = server_key.split("/")[0]
     post = server_key
     murl = f"https://{pre}new.newkso.ru/{post}/{jsvars['channelKey']}/mono.m3u8"
-    
+
     iframeu_p = parse.urlparse(iframeu)
     orig = iframeu_p.scheme + "://" + iframeu_p.netloc
-    headers={
-             "Origin": orig,
-             "Referer": orig + "/",
-             }
-    return mediaurl.hlsurl(murl, headers=headers, adaptive=False, ffmpegdirect=False,
-                           lurl="", lheaders=headers, lbody="", lresponse="", license=None)
+    headers = {"Origin": orig,
+               "Referer": orig + "/",
+               }
+    return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
 def geturl(streamid, path="/stream/stream-%s.php"):
@@ -91,8 +90,8 @@ def geturl(streamid, path="/stream/stream-%s.php"):
 
 
 def getschdate(page):
-    today =  datetime.now()
-    for dtmatch in re.finditer(dtrgx, page, re.IGNORECASE): 
+    today = datetime.now()
+    for dtmatch in re.finditer(dtrgx, page, re.IGNORECASE):
         day = int(dtmatch.group(1))
         month = monthtoint[dtmatch.group(2).lower().strip()]
         year = int(dtmatch.group(3))
@@ -101,6 +100,7 @@ def getschdate(page):
         dtob = datetime(day=day, month=month, year=year, tzinfo=tz)
         return dtob
     return today
+
 
 def getevents():
     allevents = []
