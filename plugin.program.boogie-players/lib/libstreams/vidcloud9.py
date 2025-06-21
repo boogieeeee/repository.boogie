@@ -9,7 +9,7 @@ import json
 
 
 class vidcloud9(StreamsBase):
-    regex = "vidcloud9\.com|vidnode\.net"
+    regex = r"vidcloud9\.com|vidnode\.net"
     domain = "https://vidcloud9.com"
 
     def resolve(self, url, headers):

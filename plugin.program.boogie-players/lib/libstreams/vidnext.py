@@ -13,7 +13,7 @@ from six.moves.urllib import parse
 
 
 class Vidnext(StreamsBase):
-    regex = "movcloud\.net|vidnext\.net"
+    regex = r"movcloud\.net|vidnext\.net"
 
     def resolve(self, url, headers):
         if "vidnext" in url:

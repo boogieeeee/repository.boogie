@@ -13,14 +13,14 @@ from six.moves.urllib import parse
 
 
 class Vidsrc(StreamsBase):
-    regex = "vidsrc\.me"
+    regex = r"vidsrc\.me"
     domain = "https://vidsrc.me"
 
     def resolve(self, url, headers):
         iframe = htmlement.fromstring(net.http(url, headers=headers)).find(".//iframe").get("src")
         url2 = self.domain + iframe
         page = net.http(url2, referer=url)
-        vidpage = re.search('var\s*?query\s*?=\s*?(?:\'|")(.+?)(?:\'|")\;', page).group(1)
+        vidpage = re.search(r'var\s*?query\s*?=\s*?(?:\'|")(.+?)(?:\'|")\;', page).group(1)
         resp = net.http(self.domain + "/watching" + vidpage, referer=url2, text=False)
         url3 = resp.url.replace("/v/", "/api/source/")
         headers = {"X-Requested-With": "XMLHttpRequest", "referer": resp.url}

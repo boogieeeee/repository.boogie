@@ -11,11 +11,11 @@ from six.moves.urllib.parse import urlparse
 
 
 class Vidlink(StreamsBase):
-    regex = "vidlink\.org|ronemo\.com"
+    regex = r"vidlink\.org|ronemo\.com"
 
     def resolve(self, url, headers):
         if "vidlink.org" in url:
-            postid = re.search("postID\s?\=\s?(?:\'|\")(.+?)(?:\'|\")", net.http(url, headers=headers))
+            postid = re.search(r"postID\s?\=\s?(?:\'|\")(.+?)(?:\'|\")", net.http(url, headers=headers))
             up = urlparse(url)
             jsurl = "https://%s/embed/info?postID=%s" % (up.netloc, postid.group(1))
             js = json.loads(net.http(jsurl, referer=url))

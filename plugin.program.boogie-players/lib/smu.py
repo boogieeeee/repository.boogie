@@ -21,7 +21,6 @@
 from tinyxbmc import addon
 from tinyxbmc import tools
 from tinyxbmc import hay
-from tinyxbmc import gui
 from tinyxbmc import const
 
 from vods import linkplayerextension
@@ -39,7 +38,7 @@ import json
 def patchsmu(smudir):
     # a very dirty hack to make smu work portable, not happy with this :(
     def getstr(content):
-        r = re.search("<settings>(.*?)</settings>", content, re.DOTALL)
+        r = re.search(r"<settings>(.*?)</settings>", content, re.DOTALL)
         if r:
             return r.group(1)
         else:
@@ -68,13 +67,13 @@ def patchsmu(smudir):
             with open(fpath, "r") as f:
                 contents = f.read()
             if patchtype == 1:
-                pattern = "script\.module\.resolveurl"
+                pattern = r"script\.module\.resolveurl"
                 sub = "plugin.program.boogie-players"
             elif patchtype == 2:
-                pattern = "settings_file \= os\.path\.join\(addon_path, 'resources', 'settings.xml'\)"
+                pattern = r"settings_file \= os\.path\.join\(addon_path, 'resources', 'settings.xml'\)"
                 sub = "settings_file = os.path.join(os.path.dirname(__file__), '..', '..', 'settings.xml')"
             elif patchtype == 3:
-                pattern = "xbmcaddon.Addon\(\)"
+                pattern = r"xbmcaddon.Addon\(\)"
                 sub = "xbmcaddon.Addon('plugin.program.boogie-players')"
             if re.search(pattern, contents):
                 with open(fpath, "w") as f:
@@ -102,13 +101,11 @@ def patchsmu(smudir):
             with tools.File(plxmlop, "r") as plxmlo:
                 with tools.File(plxmlp, "w") as plxml:
                     try:
-                        plxml.write('<?xml version="1.0" ?><settings>%s%s</settings>' %
+                        plxml.write('<?xml version="1.0" ?><settings>%s%s</settings>' % 
                                     (getstr(plxmlo.read()), getstr(smuxml.read())))
                     except Exception:
                         print(traceback.format_exc())
                         shutil.copyfile(plxmlop, plxmlp)
-
-            
 
             smupatch["versioncommit_v2"] = versioncommit
             smuhay.throw("smupatch", smupatch)

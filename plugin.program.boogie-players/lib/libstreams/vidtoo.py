@@ -9,8 +9,8 @@ import re
 
 
 class vidoo(StreamsBase):
-    regex = "vidoo\.tv"
+    regex = r"vidoo\.tv"
 
     def resolve(self, url, headers):
-        for vid in re.finditer("file\s?\:\s?(?:\'|\")(.+?)(?:\'|\")", net.http(url, headers=headers)):
+        for vid in re.finditer(r"file\s?\:\s?(?:\'|\")(.+?)(?:\'|\")", net.http(url, headers=headers)):
             yield net.tokodiurl(vid.group(1), headers={"referer": url})
