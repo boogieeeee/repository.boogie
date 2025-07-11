@@ -66,7 +66,9 @@ class dizi(vods.showextension):
                 img = self.domain + a.find(".//img").get("data-src")
                 info = {"tvshowtitle": title}
                 art = {"icon": img, "thumb": img, "poster": img}
-                self.additem(title, (info, art, a.get("href").replace("/diziler/", "/bolumler/")), info, art)
+                href = a.get("href")
+                info = self.getimdb(href, info)
+                self.additem(title, (info, art, href.replace("/diziler/", "/bolumler/")), info, art)
 
     def searchshows(self, keyword):
         # FIXME: this is only giving top results but not all
@@ -74,7 +76,7 @@ class dizi(vods.showextension):
         results = self.download(url, referer=self.domain + "/", data={"q": keyword},
                                 method="POST", json=True,
                                 headers={"x-requested-with": "XMLHttpRequest"},
-                                cache=None,
+                                cache=0,
                                 stream=False)
         for dizi in results.get("results", {}).get("diziler", {}).get("results", []):
             title = dizi["title"]
@@ -82,14 +84,19 @@ class dizi(vods.showextension):
             if dizi.get("image"):
                 img = self.domain + dizi["image"]
             info = {"tvshowtitle": title}
+            info = self.getimdb(dizi["url"], info)
             art = {"icon": img, "thumb": img, "poster": img}
             self.additem(title, (info, art, dizi["url"].replace("/diziler/", "/bolumler/")), info, art)
 
     def getseasons(self, showargs=None):
         if showargs:
             info, art, url = showargs
-            for a in self.gettree(url).iterfind(".//div[@class='two wide column']/.//a"):
-                self.additem("Season %s" % a.get("data-tab"), a.get("data-tab"), info, art)
+            tree = self.gettree(url)
+            for a in tree.iterfind(".//div[@class='two wide column']/.//a"):
+                season = int(a.get("data-tab").strip())
+                s_info = info.copy()
+                s_info["season"] = season
+                self.additem("Season %s" % season, season, s_info, art)
 
     def getepisodes(self, showargs=None, seaargs=None):
         if not showargs:
@@ -99,23 +106,23 @@ class dizi(vods.showextension):
                 imgsrc = self.domain + img.get("src")
                 href = a.get("href")
                 ss = re.search(r"(.+?)\s([0-9]+)\.Sezon ([0-9]+)\.Bölüm", img.get("alt"))
-                title = ss.group(1)
+                title = ss.group(1).strip()
                 season = int(ss.group(2))
                 epi = int(ss.group(3))
                 info = {"tvshowtitle": title, "season": season, "episode": epi}
+                serieurl = "/diziler" + "/".join(href.split("/")[:-1])
+                info = self.getimdb(serieurl, info)
                 art = {"icon": imgsrc, "thumb": imgsrc, "poster": imgsrc}
-                args = (None, href)
+                args = (info, href)
                 self.additem("%s S%sE%s" % (title, season, epi), args, info, art)
         if seaargs:
             info, art, url = showargs
             seanum = int(seaargs)
-            for tr in self.gettree(url).iterfind(".//div[@data-tab='%s']/.//tr" % seanum):
+            tree = self.gettree(url)
+            info["season"] = seanum
+            for tr in tree.iterfind(".//div[@data-tab='%s']/.//tr" % seanum):
                 tds = tr.findall(".//td")
                 if len(tds) > 3:
-                    i = tds[0].find(".//i")
-                    if i is None:
-                        continue
-                    bid = i.get("bid")
                     e_val = tds[2].find(".//a").text
                     e_val = re.search(r"([0-9]+)", e_val)
                     if e_val:
@@ -124,9 +131,22 @@ class dizi(vods.showextension):
                         e_info = info.copy()
                         e_info["title"] = epilink.text
                         e_info["episode"] = e_val
-                        e_info["season"] = seanum
-                        args = (bid, self.domain + epilink.get("href"))
-                        self.additem("S%sE%s: %s" % (seanum, e_val, epilink.text), args, info, art)
+                        args = (e_info, epilink.get("href"))
+                        self.additem("S%sE%s: %s" % (seanum, e_val, epilink.text), args, e_info, art)
+
+    def getimdb(self, url, info, tree=None):
+        if not tree:
+            tree = self.gettree(url)
+        for link in tree.iterfind(".//div[@class='right menu']/.//a"):
+            href = link.get("href")
+            if not href:
+                continue
+            imdb = re.search(r"\/(tt[0-9]+)", href)
+            if not imdb:
+                continue
+            info["imdbnumber"] = imdb.group(1)
+            break
+        return info
 
     def geturls(self, args):
         _, url = args
