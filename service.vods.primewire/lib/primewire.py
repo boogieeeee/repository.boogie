@@ -10,8 +10,9 @@ import blowfish
 import hashlib
 
 
-SEARCH_REGEX=r"e\.target\.elements\.s\.value.+?\"(.+?)\""
-JS_REGEX=r'script.+?type="text\/javascript" src=\"(.+?)"'
+SEARCH_REGEX = r"e\.target\.elements\.s\.value.+?\"(.+?)\""
+JS_REGEX = r'script.+?type="text\/javascript" src=\"(.+?)"'
+
 
 class base:
     page = 1
@@ -19,7 +20,7 @@ class base:
     useaddonplayers = False
 
     def scrapegrid(self, search=None, genre=None):
-        domain =  "https://%s" % self.setting.getstr("domain")
+        domain = "https://%s" % self.setting.getstr("domain")
         search_uri = "%s/filter" % domain
         query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending Today"}
         if self.page:
@@ -48,17 +49,15 @@ class base:
                             year = int(yearre.group(1))
                         else:
                             year = None
-                    img = subdiv.find(".//img")
-                    if img is not None:
-                        img = absurl(img.get("src"), search_uri)
-                    else:
-                        img = None
-                    info = {"title": title, "year": year}
+                    url = absurl(subdiv.find(".//a").get("href"), search_uri)
+                    info, art, _episodes = self.scrapeinfo(url)
+                    if year and not info.get("year"):
+                        info["year"] = year
                     if self.section == "tv":
                         info["tvshowtitle"] = title
-                    art = {"icon": img, "thumb": img, "poster": img}
-                    url = absurl(subdiv.find(".//a").get("href"), search_uri)
-                    self.additem(title, (url, info, art), info, art)
+                    elif self.section == "movie":
+                        info["title"] = title
+                    self.additem(title, url, info, art)
 
     def scrapeinfo(self, link):
         domain = "https://%s" % self.setting.getstr("domain")
@@ -75,10 +74,6 @@ class base:
                 if imdbnumber:
                     info["imdbnumber"] = imdbnumber.group(1)
                     break
-            """
-            if "trailer" in subtext:
-                info["trailer"] = sublink.get("href")
-            """
 
         infodiv = page.find(".//div[@class='movie_info']")
         if infodiv is not None:
@@ -91,14 +86,6 @@ class base:
                     released = re.search("([0-9]{4})", elementsrc(tds[1]))
                     if released:
                         info["year"] = int(released.group(1))
-                if "genre" in infotype:
-                    info["genre"] = [elem.text for elem in tds[1].findall(".//a")]
-                if "cast" in infotype:
-                    info["cast"] = [elem.get("href").split("cast=")[-1].strip().title() for elem in tds[1].findall(".//a")]
-                if "runtime" in infotype:
-                    runtime = re.search("([0-9]+)\s?min", elementsrc(tds[1]))
-                    if runtime:
-                        info["duration"] = int(runtime.group(1)) * 60
             img = infodiv.find(".//img")
             if img is not None:
                 art["icon"] = art["poster"] = art["thumb"] = absurl(img.get("src"), domain)
@@ -151,23 +138,21 @@ class pwseries(vods.showextension, base):
     def getshows(self, catargs=None):
         self.scrapegrid()
 
-    def getseasons(self, showargs=None):
-        url, info, art = showargs
-        info2, art2, episodes = self.scrapeinfo(url)
-        info.update(info2)
-        art.update(art2)
+    def getseasons(self, url):
+        info, art, episodes = self.scrapeinfo(url)
         for snum in sorted(episodes):
-            self.additem("Season %s" % snum, (snum, episodes[snum]), info, art)
-
-    def getepisodes(self, showargs=None, seaargs=None):
-        _url, info, art = showargs
-        snum, episodes = seaargs
-        for epinum, title, url in episodes:
             sinfo = info.copy()
             sinfo["season"] = snum
-            sinfo["episode"] = epinum
-            sinfo["title"] = title
-            self.additem(title, url, sinfo, art)
+            self.additem("Season %s" % snum, snum, sinfo, art)
+
+    def getepisodes(self, url, snum):
+        info, art, episodes = self.scrapeinfo(url)
+        for epinum, title, url in episodes.get(snum, []):
+            einfo = info.copy()
+            einfo["season"] = snum
+            einfo["episode"] = epinum
+            einfo["title"] = title
+            self.additem(title, url, einfo, art)
 
     def geturls(self, link):
         for url in self.itermedias(link):
@@ -187,12 +172,6 @@ class pwmovies(vods.movieextension, base):
     def getmovies(self, catargs=None):
         self.scrapegrid()
 
-    def cachemovies(self, args):
-        link, _info, _art = args
-        info, art, _ = self.scrapeinfo(link)
-        return info, art
-
-    def geturls(self, args):
-        link, _info, _art = args
+    def geturls(self, link):
         for url in self.itermedias(link):
             yield url
