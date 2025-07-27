@@ -209,10 +209,11 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.16">
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.17">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
+		<import addon="script.module.chromium" optional="true"/>
 	</requires>
 	<extension point="xbmc.service"></extension>
 	<extension library="lib" point="xbmc.python.module" />
