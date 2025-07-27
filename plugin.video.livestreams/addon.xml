@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.73">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.76">
     <requires>
 		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>

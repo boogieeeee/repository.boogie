@@ -23,4 +23,5 @@ def itermedias(dadyid=None, dadyname=None):
         raise StopIteration
     if not dadyid:
         dadyid = liblivetvon.getchmeta(nameidbynum=True)[dadyname]
-    yield liblivetvon.geturl(dadyid)
+    for media in liblivetvon.geturls(dadyid):
+        yield media
