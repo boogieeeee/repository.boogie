@@ -76,7 +76,7 @@ def get_forcedplay(iframe, iframeu, referer):
     return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
-def get_fromchromium(iframe, iframeu, referer, timeout=2, maxxhr=10):
+def get_fromchromium(iframe, iframeu, referer, timeout=4, maxxhr=10):
     if not chromium:
         return
     with chromium.Browser(maxtimeout=timeout) as browser:
@@ -100,12 +100,12 @@ def geturls(streamid, path="/stream/stream-%s.php"):
     xpage = htmlement.fromstring(net.http(u, referer=domain))
     for a in xpage.iterfind(".//center/center/a"):
         iframeu = net.absurl(a.get("href"), u)
-        iframe = net.http(iframeu, referer=u, cache=None)
+        iframe = net.http(iframeu, referer=u)
         xiframe = htmlement.fromstring(iframe)
         for subiframe in xiframe.iterfind(".//iframe"):
             if subiframe.get("src") and subiframe.get("src").startswith("https://"):
                 iframeu2 = subiframe.get("src")
-                iframe2 = net.http(iframeu2, referer=u, cache=None)
+                iframe2 = net.http(iframeu2, referer=u)
                 for cb in [get_forcedplay, get_fromchromium]:
                     try:
                         media = cb(iframe2, iframeu2, u)
