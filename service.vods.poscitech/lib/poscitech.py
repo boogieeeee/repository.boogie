@@ -56,4 +56,4 @@ class poscitech(vods.movieextension):
                     self.additem("Channel (#%s)" % i, [i])
 
     def geturls(self, data):
-        yield liblivetvon.geturl(*data)
+        return liblivetvon.geturls(*data)

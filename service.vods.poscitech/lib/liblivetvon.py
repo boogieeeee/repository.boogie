@@ -13,6 +13,11 @@ from tinyxbmc import net
 from tinyxbmc import mediaurl
 from tinyxbmc import tools
 from six.moves.urllib import parse
+
+try:
+    import chromium
+except ImportError:
+    chromium = None
 # from chromium import Browser
 
 
@@ -34,12 +39,7 @@ monthtoint = {"jan": 1,
               "dec": 12}
 
 
-def get_forcedplay(xpage, iframeu, url):
-    iframe = net.http(iframeu, referer=url, cache=None)
-    subiframe = htmlement.fromstring(iframe).find(".//iframe[@id='thatframe']")
-    if subiframe is not None:
-        iframeu = subiframe.get("src")
-        iframe = net.http(iframeu, referer=iframeu)
+def get_forcedplay(iframe, iframeu, referer):
     jsvars = {"auth": "",
               "subdomain": "",
               "channelKey": "",
@@ -76,17 +76,45 @@ def get_forcedplay(xpage, iframeu, url):
     return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
-def geturl(streamid, path="/stream/stream-%s.php"):
+def get_fromchromium(iframe, iframeu, referer, timeout=2, maxxhr=10):
+    if not chromium:
+        return
+    with chromium.Browser(maxtimeout=timeout) as browser:
+        browser.navigate(iframeu, referer=referer, wait=False)
+        for i in range(maxxhr):
+            message = browser.wait_message(timeout, msg_method="Network.requestWillBeSentExtraInfo")
+            if not message:
+                break
+            headers = message["params"]["headers"].copy()
+            method =headers.pop(":method")
+            scheme = headers.pop(":scheme")
+            authority = headers.pop(":authority")
+            path = headers.pop(":path")
+            u = f'{scheme}://{authority}{path}'
+            if "m3u8" in path:
+                return mediaurl.hlsurl(u, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
+
+
+def geturls(streamid, path="/stream/stream-%s.php"):
     u = ("%s" + path) % (domain, streamid)
     xpage = htmlement.fromstring(net.http(u, referer=domain))
-    iframes = xpage.findall(".//iframe")
-    for cb in [get_forcedplay]:
-        for iframe in iframes:
-            iframeu = iframe.get("src")
-            try:
-                return cb(xpage, iframeu, u)
-            except Exception:
-                print(traceback.format_exc())
+    for a in xpage.iterfind(".//center/center/a"):
+        iframeu = net.absurl(a.get("href"), u)
+        iframe = net.http(iframeu, referer=u, cache=None)
+        xiframe = htmlement.fromstring(iframe)
+        for subiframe in xiframe.iterfind(".//iframe"):
+            if subiframe.get("src") and subiframe.get("src").startswith("https://"):
+                iframeu2 = subiframe.get("src")
+                iframe2 = net.http(iframeu2, referer=u, cache=None)
+                for cb in [get_forcedplay, get_fromchromium]:
+                    try:
+                        media = cb(iframe2, iframeu2, u)
+                        if media:
+                            yield media
+                            break
+                    except Exception:
+                        print(traceback.format_exc())
+                break
 
 
 def getschdate(page):
