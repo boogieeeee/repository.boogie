@@ -86,7 +86,7 @@ def get_fromchromium(iframe, iframeu, referer, timeout=4, maxxhr=10):
             if not message:
                 break
             headers = message["params"]["headers"].copy()
-            method =headers.pop(":method")
+            method = headers.pop(":method")
             scheme = headers.pop(":scheme")
             authority = headers.pop(":authority")
             path = headers.pop(":path")
@@ -98,8 +98,11 @@ def get_fromchromium(iframe, iframeu, referer, timeout=4, maxxhr=10):
 def geturls(streamid, path="/stream/stream-%s.php"):
     u = ("%s" + path) % (domain, streamid)
     xpage = htmlement.fromstring(net.http(u, referer=domain))
-    for a in xpage.iterfind(".//center/center/a"):
-        iframeu = net.absurl(a.get("href"), u)
+    iframeus = [net.absurl(a.get("href"), u) for a in xpage.findall(".//center/center/a")]
+    if not iframeus:
+        iframeus = [u]
+    iframeus = set(iframeus)
+    for iframeu in iframeus:
         iframe = net.http(iframeu, referer=u)
         xiframe = htmlement.fromstring(iframe)
         for subiframe in xiframe.iterfind(".//iframe"):
