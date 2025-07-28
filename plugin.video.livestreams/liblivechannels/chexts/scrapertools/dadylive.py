@@ -13,9 +13,12 @@ from tinyxbmc import addon
 from tinyxbmc import stubmod
 
 daddyaddon = "service.vods.poscitech"
+chromiumaddon = "script.module.chromium"
 
 
 def itermedias(dadyid=None, dadyname=None):
+    if addon.has_addon(chromiumaddon):
+        addon.depend_addon(chromiumaddon)
     if addon.has_addon(daddyaddon):
         addon.depend_addon(daddyaddon)
         import liblivetvon
