@@ -61,6 +61,8 @@ class dizi(vods.showextension):
 
     def getshows(self, cat=None):
         if cat:
+            pagenum = self.page or 1
+            cat = f"{cat}&s={pagenum}"
             for a in self.gettree(cat).iterfind(".//a[@class='column']"):
                 title = a.find(".//div[@class='description']").text
                 img = self.domain + a.find(".//img").get("data-src")
@@ -69,6 +71,7 @@ class dizi(vods.showextension):
                 href = a.get("href")
                 info = self.getimdb(href, info)
                 self.additem(title, (info, art, href.replace("/diziler/", "/bolumler/")), info, art)
+            self.setnextpage(pagenum + 1)
 
     def searchshows(self, keyword):
         # FIXME: this is only giving top results but not all
@@ -76,7 +79,7 @@ class dizi(vods.showextension):
         results = self.download(url, referer=self.domain + "/", data={"q": keyword},
                                 method="POST", json=True,
                                 headers={"x-requested-with": "XMLHttpRequest"},
-                                cache=0,
+                                cache=None,
                                 stream=False)
         for dizi in results.get("results", {}).get("diziler", {}).get("results", []):
             title = dizi["title"]
@@ -100,7 +103,13 @@ class dizi(vods.showextension):
 
     def getepisodes(self, showargs=None, seaargs=None):
         if not showargs:
-            tree = self.gettree("")
+            pagenum = self.page or 1
+            url = f"{self.domain}/ajax/dataDefaultSonCikan.asp?d=-1&k=0&s={pagenum}"
+            page = self.download(url, referer=self.domain + "/",
+                                 method="POST",
+                                 headers={"x-requested-with": "XMLHttpRequest"},
+                                 encoding=self.encoding)
+            tree = htmlement.fromstring(page)
             for a in tree.iterfind(".//div[@class='content']/a"):
                 img = a.find(".//img")
                 imgsrc = self.domain + img.get("src")
@@ -115,6 +124,7 @@ class dizi(vods.showextension):
                 art = {"icon": imgsrc, "thumb": imgsrc, "poster": imgsrc}
                 args = (info, href)
                 self.additem("%s S%sE%s" % (title, season, epi), args, info, art)
+            self.setnextpage(pagenum + 1)
         if seaargs:
             info, art, url = showargs
             seanum = int(seaargs)
