@@ -22,8 +22,9 @@ class base:
 
     def scrapegrid(self, search=None, genre=None):
         domain = "https://%s" % self.setting.getstr("domain")
+        pagenum = self.page or 1
         search_uri = "%s/filter" % domain
-        query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending Today"}
+        query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending Today", "page": pagenum}
         if self.page:
             query["page"] = self.page
         if genre:
@@ -36,6 +37,8 @@ class base:
             search_suffix = re.search(SEARCH_REGEX, js_pg)
             search_hash = hashlib.sha1(((search + search_suffix.group(1))).encode()).hexdigest()[:10]
             query["ds"] = search_hash
+        else:
+            self.setnextpage(pagenum + 1)
         page = htmlement.fromstring(self.download(search_uri, params=query, referer=search_uri))
         div = page.find(".//div[@class='index_container']")
         if div is not None:
@@ -123,7 +126,7 @@ class base:
                 break
         jspage = self.download(absurl(src, domain), referer=domain)
         token = re.search(TOKEN_REGEX, jspage).group(1)
-        
+
         userdata = xpage.find(r".//span[@id='user-data']").get("v")
         codes = blowfish.decrypt(userdata)
         for code in codes:
