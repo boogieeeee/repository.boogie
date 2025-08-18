@@ -110,6 +110,7 @@ class Handler(BaseHTTPRequestHandler):
                     pass
                     # skip mpds for now, partly broken
                 elif isinstance(url, mediaurl.acestreamurl):
+                    continue
                     # todo: check if ffmpegdirect is the player
                     if self.base.check_acestreamurl(url)[0] is None:
                         self.send_response(307)
