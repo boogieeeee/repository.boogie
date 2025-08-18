@@ -88,4 +88,4 @@ class trtbelgesel(multi, scraper):
     yayin_id = "trt-belgesel"
     canlitv_ids = ["trtbelgesel-canli/1", "trtbelgesel-canli/2", "trt-cocuk/3"]
     canlitvme_name = "TRT Belgesel"
-    directs = [mediaurl.hlsurl("https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8")] 
+    # directs = [mediaurl.hlsurl("https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8")]

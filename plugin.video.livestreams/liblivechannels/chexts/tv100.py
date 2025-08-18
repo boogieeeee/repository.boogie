@@ -21,8 +21,6 @@ from liblivechannels.chexts.scrapertools.multi import multi
 class tv100(multi, scraper):
     title = u"TV 100"
     icon = "https://upload.wikimedia.org/wikipedia/tr/0/0f/TV100_logo.png"
-    youtube_chanid = "tv100"
-    youtube_sindex = 1
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "100"
     canlitvme_name = "TV100"

@@ -28,7 +28,6 @@ class atv(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "atv"
     canlitvme_name = "atv"
-    youtube_chanid = "ATVTurkiye"
 
 
 class ahaber(multi, scraper):
