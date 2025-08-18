@@ -12,6 +12,7 @@ import hashlib
 
 SEARCH_REGEX = r"e\.target\.elements\.s\.value.+?\"(.+?)\""
 JS_REGEX = r'script.+?type="text\/javascript" src=\"(.+?)"'
+TOKEN_REGEX = r';t="(.+?)"'
 
 
 class base:
@@ -112,11 +113,23 @@ class base:
 
     def itermedias(self, link):
         domain = "https://%s" % self.setting.getstr("domain")
-        page = htmlement.fromstring(self.download(link, referer=domain))
-        userdata = page.find(".//span[@id='user-data']").get("v")
+        xpage = htmlement.fromstring(self.download(link, referer=domain))
+        src = None
+        for js in xpage.iterfind(".//script"):
+            src = js.get("src")
+            if not src:
+                continue
+            if src.startswith("/js/app-"):
+                break
+        jspage = self.download(absurl(src, domain), referer=domain)
+        token = re.search(TOKEN_REGEX, jspage).group(1)
+        
+        userdata = xpage.find(r".//span[@id='user-data']").get("v")
         codes = blowfish.decrypt(userdata)
         for code in codes:
-            sublink = "https://%s/links/go/%s?embed=true" % (self.setting.getstr("domain"), code)
+            sublink = "https://%s/links/go/%s?token=%sembed=true" % (self.setting.getstr("domain"),
+                                                                     code,
+                                                                     token)
             subpage = self.download(sublink, referer=link, json=True)
             media = subpage.get("link")
             if media:
