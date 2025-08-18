@@ -62,7 +62,7 @@ class base:
 
     def scrapeinfo(self, link):
         domain = "https://%s" % self.setting.getstr("domain")
-        pg = self.download(link, referer=domain, cache=None)
+        pg = self.download(link, referer=domain)
         pg = re.sub("<script.*?script>", " ", pg, re.DOTALL)
         page = htmlement.fromstringlist(pg)
         info = {}
