@@ -67,7 +67,7 @@ class base:
         domain = "https://%s" % self.setting.getstr("domain")
         pg = self.download(link, referer=domain)
         pg = re.sub("<script.*?script>", " ", pg, re.DOTALL)
-        page = htmlement.fromstringlist(pg)
+        page = htmlement.fromstring(pg)
         info = {}
         art = {}
         episodes = {}
