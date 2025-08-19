@@ -231,7 +231,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.13">
+<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.14">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
