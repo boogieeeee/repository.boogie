@@ -5,6 +5,7 @@ Created on Jun 6, 2022
 '''
 import htmlement
 import re
+import json
 import base64
 import traceback
 from datetime import datetime
@@ -40,33 +41,24 @@ monthtoint = {"jan": 1,
 
 
 def get_forcedplay(iframe, iframeu, referer):
-    jsvars = {"auth": "",
-              "subdomain": "",
-              "channelKey": "",
-              "authTs": "",
-              "authRnd": "",
-              "authSig": ""}
-    base64_map = {"__a": "subdomain",
-                  "__b": "auth",
-                  "__c": "authTs",
-                  "__d": "authRnd",
-                  "__e": "authSig"}
-    for k, v in base64_map.items():
-        val = re.search(f"var\s+{k}\s+=\s+atob\((?:\"|\')(.+?)(?:\"|\')\);", iframe).group(1)
-        jsvars[v] = base64.b64decode(val).decode()
-    jsvars["channelKey"] = re.search(r"var\s+channelKey\s+=\s+(?:\"|\')(.+?)(?:\"|\')\;", iframe).group(1)
-    params = {"channel_id": jsvars["channelKey"],
-              "ts": jsvars["authTs"],
-              "rnd": jsvars["authRnd"],
-              "sig": jsvars["authSig"]}
-    _auth = net.http(f"{jsvars['subdomain']}/{jsvars['auth']}", params=params)
+    jsvars = {}
+    bstr = re.search(r"BUNDLE\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
+    jstr = base64.b64decode(bstr).decode()
+    for k, v in json.loads(jstr).items():
+        jsvars[k] = base64.b64decode(v).decode()
+    channelid = re.search(r"CHANNEL_KEY\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
+    params = {"channel_id": channelid,
+              "ts": jsvars["b_ts"],
+              "rnd": jsvars["b_rnd"],
+              "sig": jsvars["b_sig"]}
+    _auth = net.http(f"{jsvars['b_host']}{jsvars['b_script']}", params=params)
     lookupurl = re.search(r"(?:\"|\')(.+?server_lookup\.php.*?)\?", iframe).group(1)
-    params = {"channel_id": jsvars["channelKey"]}
+    params = {"channel_id": channelid}
     lookup = net.http(net.absurl(lookupurl, iframeu), params=params, json=True)
     server_key = lookup["server_key"]
     pre = server_key.split("/")[0]
     post = server_key
-    murl = f"https://{pre}new.newkso.ru/{post}/{jsvars['channelKey']}/mono.m3u8"
+    murl = f"https://{pre}new.newkso.ru/{post}/{channelid}/mono.m3u8"
 
     iframeu_p = parse.urlparse(iframeu)
     orig = iframeu_p.scheme + "://" + iframeu_p.netloc
@@ -81,12 +73,12 @@ def get_fromchromium(iframe, iframeu, referer, timeout=4, maxxhr=10):
         return
     with chromium.Browser(maxtimeout=timeout) as browser:
         browser.navigate(iframeu, referer=referer, wait=False)
-        for i in range(maxxhr):
+        for _i in range(maxxhr):
             message = browser.wait_message(timeout, msg_method="Network.requestWillBeSentExtraInfo")
             if not message:
                 break
             headers = message["params"]["headers"].copy()
-            method = headers.pop(":method")
+            _method = headers.pop(":method")
             scheme = headers.pop(":scheme")
             authority = headers.pop(":authority")
             path = headers.pop(":path")
@@ -97,7 +89,7 @@ def get_fromchromium(iframe, iframeu, referer, timeout=4, maxxhr=10):
 
 def geturls(streamid, path="/stream/stream-%s.php"):
     u = ("%s" + path) % (domain, streamid)
-    xpage = htmlement.fromstring(net.http(u, referer=domain))
+    xpage = htmlement.fromstring(net.http(u, referer=domain + "/"))
     iframeus = [net.absurl(a.get("href"), u) for a in xpage.findall(".//center/center/a")]
     if not iframeus:
         iframeus = [u]
@@ -108,7 +100,10 @@ def geturls(streamid, path="/stream/stream-%s.php"):
         for subiframe in xiframe.iterfind(".//iframe"):
             if subiframe.get("src") and subiframe.get("src").startswith("https://"):
                 iframeu2 = subiframe.get("src")
-                iframe2 = net.http(iframeu2, referer=u)
+                try:
+                    iframe2 = net.http(iframeu2, referer=u)
+                except Exception:
+                    continue
                 for cb in [get_forcedplay, get_fromchromium]:
                     try:
                         media = cb(iframe2, iframeu2, u)
