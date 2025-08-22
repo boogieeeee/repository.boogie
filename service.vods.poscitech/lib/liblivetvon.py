@@ -166,9 +166,12 @@ def getevents():
 
 
 def getchmeta(numbyname=False, nameidbynum=False):
-    page = net.http(domain + "/24-7-channels.php", cache=60 * 24)
+    response = net.http(domain + "/24-7-channels.php", cache=60 * 24, text=False)
+    up = parse.urlparse(response.url)
+    if not up.hostname == setting.getstr("domain"):
+        setting.set("domain", up.hostname)
     chnames = {}
-    for a in htmlement.fromstring(page).iterfind(".//div[@class='grid-item']/a"):
+    for a in htmlement.fromstring(response.content.decode()).iterfind(".//div[@class='grid-item']/a"):
         href = a.get("href")
         if href is not None:
             chnum = re.search(r"stream\-([0-9]+)\.", href)
