@@ -5,8 +5,6 @@ Created on Sep 23, 2022
 '''
 import htmlement
 import re
-import base64
-import json
 
 from tinyxbmc import tools
 from tinyxbmc import mediaurl
@@ -22,7 +20,10 @@ setting = kodisetting("service.vods.selcuk")
 
 def geturl():
     entrypage = net.http("https://%s/" % setting.getstr("domain"), cache=10)
-    return htmlement.fromstring(entrypage).findall(".//a[@class='button']")[0].get("href")
+    for url in htmlement.fromstring(entrypage).findall(".//a"):
+        url = url.get("href")
+        if url and "selcuksportshd" in url:
+            return url
 
 
 def iteratechannels(mainurl):
@@ -33,6 +34,7 @@ def iteratechannels(mainurl):
         chlink = link.get("data-url")
         if chlink.startswith("http"):
             yield chlink, chname
+
 
 def parse1(url, page):
     baseurl = re.search(rgx1, page)
@@ -48,7 +50,7 @@ def parse1(url, page):
 def parse2(page):
     mainsource = re.search(rgx2, page)
     if mainsource:
-        return mainsource.group(1) 
+        return mainsource.group(1)
 
 
 def getmedias(url, mainurl, isadaptive=False, direct=False):

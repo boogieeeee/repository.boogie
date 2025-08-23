@@ -27,7 +27,7 @@ class selcuk(vods.movieextension):
     dropboxtoken = DB_TOKEN
     uselinkplayers = False
     useaddonplayers = False
-    mainurl =  libselcuk.geturl()
+    mainurl = libselcuk.geturl()
 
     info = {"title": "Selcuk Sports"
             }
