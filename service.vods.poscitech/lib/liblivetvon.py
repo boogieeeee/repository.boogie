@@ -42,7 +42,8 @@ monthtoint = {"jan": 1,
 
 def get_forcedplay(iframe, iframeu, referer):
     jsvars = {}
-    bstr = re.search(r"BUNDLE\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
+    varname = re.search(r"JSON\.parse\(atob\((.+?)\)\)", iframe).group(1)
+    bstr = re.search(varname + r"\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
     jstr = base64.b64decode(bstr).decode()
     for k, v in json.loads(jstr).items():
         jsvars[k] = base64.b64decode(v).decode()
@@ -68,7 +69,7 @@ def get_forcedplay(iframe, iframeu, referer):
     return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
-def get_fromchromium(iframe, iframeu, referer, timeout=4, maxxhr=10):
+def get_fromchromium(iframe, iframeu, referer, timeout=6, maxxhr=10):
     if not chromium:
         return
     with chromium.Browser(maxtimeout=timeout) as browser:
