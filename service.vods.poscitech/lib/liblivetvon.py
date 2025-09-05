@@ -42,17 +42,21 @@ monthtoint = {"jan": 1,
 
 def get_forcedplay(iframe, iframeu, referer):
     jsvars = {}
-    varname = re.search(r"JSON\.parse\(atob\((.+?)\)\)", iframe).group(1)
-    bstr = re.search(varname + r"\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
-    jstr = base64.b64decode(bstr).decode()
-    for k, v in json.loads(jstr).items():
-        jsvars[k] = base64.b64decode(v).decode()
-    channelid = re.search(r"CHANNEL_KEY\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
-    params = {"channel_id": channelid,
-              "ts": jsvars["b_ts"],
-              "rnd": jsvars["b_rnd"],
-              "sig": jsvars["b_sig"]}
-    _auth = net.http(f"{jsvars['b_host']}{jsvars['b_script']}", params=params)
+    for varname in re.findall(r"JSON\.parse\(atob\((.+?)\)\)", iframe):
+        try:
+            bstr = re.search(varname + r"\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
+            jstr = base64.b64decode(bstr).decode()
+            for k, v in json.loads(jstr).items():
+                jsvars[k] = base64.b64decode(v).decode()
+            channelid = re.search(r"CHANNEL_KEY\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
+            params = {"channel_id": channelid,
+                      "ts": jsvars["b_ts"],
+                      "rnd": jsvars["b_rnd"],
+                      "sig": jsvars["b_sig"]}
+            _auth = net.http(f"{jsvars['b_host']}{jsvars['b_script']}", params=params)
+            break
+        except Exception:
+            pass
     lookupurl = re.search(r"(?:\"|\')(.+?server_lookup\.php.*?)\?", iframe).group(1)
     params = {"channel_id": channelid}
     lookup = net.http(net.absurl(lookupurl, iframeu), params=params, json=True)
@@ -67,6 +71,23 @@ def get_forcedplay(iframe, iframeu, referer):
                "Referer": orig + "/",
                }
     return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
+
+
+def getzippy(iframe, iframeu, referer):
+    new_iframeu = re.search(r"<iframe\s*?src=(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
+    if new_iframeu.endswith("="):
+        new_iframeu += domain
+    new_iframe = net.http(new_iframeu, referer=iframeu)
+    new_xiframe = htmlement.fromstring(new_iframe)
+    url = new_xiframe.find(".//input[@id='crf__']").get("value")
+    url = base64.b64decode(url).decode()
+    channel = json.loads(re.search(r"CHANNEL\s*?=\s*?({.+?})", new_iframe).group(1))
+    origin = "https://" + channel["origin"]
+    headers = {"Referer": origin + "/",
+               "Origin": origin,
+               "Xauth": channel["auth"],
+               }
+    return mediaurl.hlsurl(url, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
 def get_fromchromium(iframe, iframeu, referer, timeout=6, maxxhr=10):
@@ -105,7 +126,7 @@ def geturls(streamid, path="/stream/stream-%s.php"):
                     iframe2 = net.http(iframeu2, referer=u)
                 except Exception:
                     continue
-                for cb in [get_forcedplay, get_fromchromium]:
+                for cb in [get_forcedplay, getzippy, get_fromchromium]:
                     try:
                         media = cb(iframe2, iframeu2, u)
                         if media:
