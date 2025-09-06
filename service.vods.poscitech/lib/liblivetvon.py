@@ -42,6 +42,11 @@ monthtoint = {"jan": 1,
 
 def get_forcedplay(iframe, iframeu, referer):
     jsvars = {}
+    iframeu_p = parse.urlparse(iframeu)
+    orig = iframeu_p.scheme + "://" + iframeu_p.netloc
+    headers = {"Origin": orig,
+               "Referer": orig + "/",
+               }
     for varname in re.findall(r"JSON\.parse\(atob\((.+?)\)\)", iframe):
         try:
             bstr = re.search(varname + r"\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", iframe).group(1)
@@ -53,7 +58,14 @@ def get_forcedplay(iframe, iframeu, referer):
                       "ts": jsvars["b_ts"],
                       "rnd": jsvars["b_rnd"],
                       "sig": jsvars["b_sig"]}
-            _auth = net.http(f"{jsvars['b_host']}{jsvars['b_script']}", params=params)
+            try:
+                auth = re.search(r"Array\(\[([0-9,\s]+?)\]\).+\^([0-9]+)", iframe)
+                auth_chars = [int(c.strip()) for c in auth.group(1).split(",")]
+                auth_page = "".join([chr(c ^ int(auth.group(2))) for c in auth_chars])
+            except:
+                auth_page = "auth.php"
+            authurl = f"{jsvars['b_host']}{auth_page}" 
+            _auth = net.http(authurl, params=params, headers=headers)
             break
         except Exception:
             pass
@@ -64,12 +76,6 @@ def get_forcedplay(iframe, iframeu, referer):
     pre = server_key.split("/")[0]
     post = server_key
     murl = f"https://{pre}new.newkso.ru/{post}/{channelid}/mono.m3u8"
-
-    iframeu_p = parse.urlparse(iframeu)
-    orig = iframeu_p.scheme + "://" + iframeu_p.netloc
-    headers = {"Origin": orig,
-               "Referer": orig + "/",
-               }
     return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
