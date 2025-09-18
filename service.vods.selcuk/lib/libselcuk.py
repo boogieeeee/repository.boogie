@@ -9,6 +9,7 @@ import re
 from tinyxbmc import tools
 from tinyxbmc import mediaurl
 from tinyxbmc import net
+from tinyxbmc import proxy
 from tinyxbmc.addon import kodisetting
 
 from six.moves.urllib import parse
@@ -16,10 +17,11 @@ from six.moves.urllib import parse
 rgx1 = r"baseStreamUrl\s?\=\s?(?:\'|\")(.+?)(?:\'|\")"
 rgx2 = r"window.mainSource\s?\=\s?\[(?:\'|\")(.+?)(?:\'|\")"
 setting = kodisetting("service.vods.selcuk")
+webproxy = proxy.getrandom()()
 
 
 def geturl():
-    entrypage = net.http("https://%s/" % setting.getstr("domain"), cache=10)
+    entrypage = webproxy.get("https://%s/" % setting.getstr("domain"))
     for url in htmlement.fromstring(entrypage).findall(".//a"):
         url = url.get("href")
         if url and "selcuksportshd" in url:
@@ -27,7 +29,7 @@ def geturl():
 
 
 def iteratechannels(mainurl):
-    xpage = htmlement.fromstring(net.http(mainurl, cache=None))
+    xpage = htmlement.fromstring(webproxy.get(mainurl))
     links = xpage.findall(".//div[@class='channels']/div[2]/.//a")
     for link in links:
         chname = tools.elementsrc(link.find(".//div[@class='name']"), exclude=[link.find(".//b")]).strip()
