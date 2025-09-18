@@ -60,6 +60,9 @@ class multi:
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
                 yield yayin
+        if self.selcuk_name:
+            for yayin in safeiter(selcuk.itermedias(self.selcuk_name)):
+                yield yayin
         if self.canlitvme_name:
             for yayin in safeiter(canlitvme.itermedias(self.canlitvme_name)):
                 yield yayin
@@ -68,9 +71,6 @@ class multi:
                 yield yayin
         if self.dady_id or self.dady_name:
             for yayin in safeiter(dadylive.itermedias(self.dady_id, self.dady_name)):
-                yield yayin
-        if self.selcuk_name:
-            for yayin in safeiter(selcuk.itermedias(self.selcuk_name)):
                 yield yayin
 
     def iterprogrammes(self):
