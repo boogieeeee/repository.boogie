@@ -12,7 +12,7 @@ import hashlib
 
 SEARCH_REGEX = r"e\.target\.elements\.s\.value.+?\"(.+?)\""
 JS_REGEX = r'script.+?type="text\/javascript" src=\"(.+?)"'
-TOKEN_REGEX = r';t="(.+?)"'
+TOKEN_REGEX = r';t="([^,|=]+?)"'
 
 
 class base:
