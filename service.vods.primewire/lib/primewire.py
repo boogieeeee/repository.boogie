@@ -20,10 +20,23 @@ class base:
     usedirect = False
     useaddonplayers = False
 
+    @property
+    def domain(self):
+        return "https://%s" % self.setting.getstr("domain")
+
+    def getpage(self, link, referer=None, parse=False, removescr=False, rel=None, **kwargs):
+        if rel is not None:
+            link = absurl(link, rel)
+        pg = self.download(link, referer=referer or self.domain, **kwargs)
+        if removescr:
+            pg = re.sub("<script.*?script>", " ", pg, re.DOTALL)
+        if not parse:
+            return pg
+        return htmlement.fromstring(pg)
+
     def scrapegrid(self, search=None, genre=None):
-        domain = "https://%s" % self.setting.getstr("domain")
         pagenum = self.page or 1
-        search_uri = "%s/filter" % domain
+        search_uri = "%s/filter" % self.domain
         query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending Today", "page": pagenum}
         if self.page:
             query["page"] = self.page
@@ -31,15 +44,15 @@ class base:
             query["genre[]"] = genre
         if search:
             query["s"] = search
-            index_pg = self.download(search_uri, referer=domain)
+            index_pg = self.getpage(search_uri)
             js_uri = re.search(JS_REGEX, index_pg)
-            js_pg = self.download(absurl(js_uri.group(1), domain), params=query, referer=domain)
+            js_pg = self.getpage(js_uri.group(1), params=query, rel=self.domain)
             search_suffix = re.search(SEARCH_REGEX, js_pg)
             search_hash = hashlib.sha1(((search + search_suffix.group(1))).encode()).hexdigest()[:10]
             query["ds"] = search_hash
         else:
             self.setnextpage(pagenum + 1)
-        page = htmlement.fromstring(self.download(search_uri, params=query, referer=search_uri))
+        page = self.getpage(search_uri, parse=True, params=query)
         div = page.find(".//div[@class='index_container']")
         if div is not None:
             for subdiv in div.iterfind(".//div"):
@@ -54,8 +67,12 @@ class base:
                         else:
                             year = None
                     url = absurl(subdiv.find(".//a").get("href"), search_uri)
-                    info, art, _episodes = self.scrapeinfo(url)
-                    if year and not info.get("year"):
+                    img = subdiv.find(".//img")
+                    art = {}
+                    if img is not None:
+                        art["icon"] = art["poster"] = art["thumb"] = absurl(img.get("src"), self.domain)
+                    info = {}
+                    if year:
                         info["year"] = year
                     if self.section == "tv":
                         info["tvshowtitle"] = title
@@ -63,21 +80,23 @@ class base:
                         info["title"] = title
                     self.additem(title, url, info, art)
 
-    def scrapeinfo(self, link):
-        domain = "https://%s" % self.setting.getstr("domain")
-        pg = self.download(link, referer=domain)
-        pg = re.sub("<script.*?script>", " ", pg, re.DOTALL)
-        page = htmlement.fromstring(pg)
-        info = {}
-        art = {}
-        episodes = {}
+    def scrapeimdb(self, link, page=None):
+        page = page or self.getpage(link, removescr=True, parse=True)
         for sublink in page.findall(".//div[@class='movie_info_actions']/div/a"):
             subtext = sublink.text.lower()
             if "imdb" in subtext:
                 imdbnumber = re.search("(tt[0-9]+)", sublink.get("href"))
                 if imdbnumber:
-                    info["imdbnumber"] = imdbnumber.group(1)
-                    break
+                    return imdbnumber.group(1)
+
+    def scrapeinfo(self, link):
+        page = self.getpage(link, removescr=True, parse=True)
+        info = {}
+        art = {}
+        episodes = {}
+        imdb = self.scrapeimdb(link, page)
+        if imdb:
+            info["imdbnumber"] = imdb
 
         infodiv = page.find(".//div[@class='movie_info']")
         if infodiv is not None:
@@ -92,7 +111,7 @@ class base:
                         info["year"] = int(released.group(1))
             img = infodiv.find(".//img")
             if img is not None:
-                art["icon"] = art["poster"] = art["thumb"] = absurl(img.get("src"), domain)
+                art["icon"] = art["poster"] = art["thumb"] = absurl(img.get("src"), self.domain)
 
         for season in page.iterfind(".//div[@class='show_season']"):
             snum = int(season.get("data-id"))
@@ -102,7 +121,7 @@ class base:
                 if snum not in episodes:
                     episodes[snum] = []
                 a = episode.find(".//a")
-                url = absurl(a.get("href"), domain)
+                url = absurl(a.get("href"), self.domain)
                 epi = a.text
                 enum = re.search("([0-9]+)", epi)
                 if enum:
@@ -115,8 +134,7 @@ class base:
         return info, art, episodes
 
     def itermedias(self, link):
-        domain = "https://%s" % self.setting.getstr("domain")
-        xpage = htmlement.fromstring(self.download(link, referer=domain))
+        xpage = self.getpage(link, parse=True)
         src = None
         for js in xpage.iterfind(".//script"):
             src = js.get("src")
@@ -124,16 +142,18 @@ class base:
                 continue
             if src.startswith("/js/app-"):
                 break
-        jspage = self.download(absurl(src, domain), referer=domain)
+        jspage = self.getpage(src, rel=self.domain)
         token = re.search(TOKEN_REGEX, jspage).group(1)
 
         userdata = xpage.find(r".//span[@id='user-data']").get("v")
         codes = blowfish.decrypt(userdata)
         for code in codes:
-            sublink = "https://%s/links/go/%s?token=%sembed=true" % (self.setting.getstr("domain"),
-                                                                     code,
-                                                                     token)
-            subpage = self.download(sublink, referer=link, json=True)
+            sublink = "https://%s/links/go/%s" % (self.setting.getstr("domain"), code)
+            try:
+                subpage = self.getpage(sublink, json=True, params={"token": token,
+                                                                   "emded": "true"})
+            except Exception:
+                continue
             media = subpage.get("link")
             if media:
                 if "streamz.ws" in media:
@@ -174,6 +194,9 @@ class pwseries(vods.showextension, base):
         for url in self.itermedias(link):
             yield url
 
+    def getimdb(self, url):
+        return self.scrapeimdb(url)
+
 
 class pwmovies(vods.movieextension, base):
     info = {"title": "Primewire Movies"}
@@ -191,3 +214,6 @@ class pwmovies(vods.movieextension, base):
     def geturls(self, link):
         for url in self.itermedias(link):
             yield url
+
+    def getimdb(self, url):
+        return self.scrapeimdb(url)
