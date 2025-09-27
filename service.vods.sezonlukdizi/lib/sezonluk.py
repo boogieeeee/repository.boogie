@@ -69,8 +69,7 @@ class dizi(vods.showextension):
                 info = {"tvshowtitle": title}
                 art = {"icon": img, "thumb": img, "poster": img}
                 href = a.get("href")
-                info = self.getimdb(href, info)
-                self.additem(title, (info, art, href.replace("/diziler/", "/bolumler/")), info, art)
+                self.additem(title, href.replace("/diziler/", "/bolumler/"), info, art)
             self.setnextpage(pagenum + 1)
 
     def searchshows(self, keyword):
@@ -87,22 +86,18 @@ class dizi(vods.showextension):
             if dizi.get("image"):
                 img = self.domain + dizi["image"]
             info = {"tvshowtitle": title}
-            info = self.getimdb(dizi["url"], info)
             art = {"icon": img, "thumb": img, "poster": img}
-            self.additem(title, (info, art, dizi["url"].replace("/diziler/", "/bolumler/")), info, art)
+            self.additem(title, dizi["url"].replace("/diziler/", "/bolumler/"), info, art)
 
-    def getseasons(self, showargs=None):
-        if showargs:
-            info, art, url = showargs
-            tree = self.gettree(url)
-            for a in tree.iterfind(".//div[@class='two wide column']/.//a"):
-                season = int(a.get("data-tab").strip())
-                s_info = info.copy()
-                s_info["season"] = season
-                self.additem("Season %s" % season, season, s_info, art)
+    def getseasons(self, url):
+        tree = self.gettree(url)
+        for a in tree.iterfind(".//div[@class='two wide column']/.//a"):
+            season = int(a.get("data-tab").strip())
+            s_info = {"season": season}
+            self.additem("Season %s" % season, [url, season], s_info)
 
-    def getepisodes(self, showargs=None, seaargs=None):
-        if not showargs:
+    def getepisodes(self, link=None, seasonargs=None):
+        if not link:
             pagenum = self.page or 1
             url = f"{self.domain}/ajax/dataDefaultSonCikan.asp?d=-1&k=0&s={pagenum}"
             page = self.download(url, referer=self.domain + "/",
@@ -120,16 +115,15 @@ class dizi(vods.showextension):
                 epi = int(ss.group(3))
                 info = {"tvshowtitle": title, "season": season, "episode": epi}
                 serieurl = "/diziler" + "/".join(href.split("/")[:-1])
-                info = self.getimdb(serieurl, info)
                 art = {"icon": imgsrc, "thumb": imgsrc, "poster": imgsrc}
-                args = (info, href)
+                args = [serieurl, href]
                 self.additem("%s S%sE%s" % (title, season, epi), args, info, art)
             self.setnextpage(pagenum + 1)
-        if seaargs:
-            info, art, url = showargs
-            seanum = int(seaargs)
+        if seasonargs:
+            url, season = seasonargs
+            seanum = int(season)
             tree = self.gettree(url)
-            info["season"] = seanum
+            info = {"season": seanum}
             for tr in tree.iterfind(".//div[@data-tab='%s']/.//tr" % seanum):
                 tds = tr.findall(".//td")
                 if len(tds) > 3:
@@ -141,12 +135,14 @@ class dizi(vods.showextension):
                         e_info = info.copy()
                         e_info["title"] = epilink.text
                         e_info["episode"] = e_val
-                        args = (e_info, epilink.get("href"))
-                        self.additem("S%sE%s: %s" % (seanum, e_val, epilink.text), args, e_info, art)
+                        args = [url, epilink.get("href")]
+                        self.additem("S%sE%s: %s" % (seanum, e_val, epilink.text), args, e_info)
 
-    def getimdb(self, url, info, tree=None):
-        if not tree:
-            tree = self.gettree(url)
+    def getimdb(self, url):
+        if isinstance(url, list):
+            # for cat args
+            url = url[0]
+        tree = self.gettree(url)
         for link in tree.iterfind(".//div[@class='right menu']/.//a"):
             href = link.get("href")
             if not href:
@@ -154,9 +150,7 @@ class dizi(vods.showextension):
             imdb = re.search(r"\/(tt[0-9]+)", href)
             if not imdb:
                 continue
-            info["imdbnumber"] = imdb.group(1)
-            break
-        return info
+            return imdb.group(1)
 
     def geturls(self, args):
         _, url = args
