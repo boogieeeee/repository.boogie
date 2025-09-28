@@ -31,6 +31,8 @@ import os
 import re
 import json
 
+PATCHVER = "versioncommit_v4"
+
 
 def patchsmu(smudir):
     smudir = os.path.join(smudir, "script.module.resolveurl")
@@ -40,15 +42,16 @@ def patchsmu(smudir):
             versioncommit = json.load(vf)
         versioncommit = versioncommit.get("latest")
 
-        if smupatch.get("versioncommit_v3") == versioncommit:
+        if smupatch.get(PATCHVER) == versioncommit:
             return
 
         # first remove xbmcaddon referenced to script.module.urlresolver
         files = [(["lib", "resolveurl", "lib", "log_utils.py"], 1),
                  (["lib", "resolveurl", "lib", "kodi.py"], 1),
-                 (["lib", "resolveurl", "lib", "kodi.py"], 3),
-                 (["lib", "resolveurl", "common.py"], 2),
                  (["lib", "resolveurl", "lib", "CustomProgressDialog.py"], 1),
+                 (["lib", "resolveurl", "common.py"], 2),
+                 (["lib", "resolveurl", "lib", "kodi.py"], 3),
+                 (["lib", "resolveurl", "lib", "helpers.py"], 4)
                  ]
         for fpaths, patchtype in files:
             fpath = os.path.join(smudir, *fpaths)
@@ -63,11 +66,14 @@ def patchsmu(smudir):
             elif patchtype == 3:
                 pattern = r"xbmcaddon.Addon\(\)"
                 sub = "xbmcaddon.Addon('plugin.program.boogie-players')"
+            elif patchtype == 4:
+                pattern = r"auto_pick=None"
+                sub = "auto_pick=True"
             if re.search(pattern, contents):
                 with open(fpath, "w") as f:
                     f.write(re.sub(pattern, sub, contents))
 
-            smupatch["versioncommit_v3"] = versioncommit
+            smupatch[PATCHVER] = versioncommit
             smuhay.throw("smupatch", smupatch)
             tools.builtin("UpdateLocalAddons()")
             # gui.ok("URL Resolvers", "SMU has just been updated\nSome changes will be active on the next run")
