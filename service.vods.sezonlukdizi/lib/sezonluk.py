@@ -165,6 +165,8 @@ class dizi(vods.showextension):
             dilmap = [diller[dilkeys[dil]]]
         for dil in dilmap:
             data = {"bid": bid, "dil": dil}
+            undesireds = ["rubyvid"]
+            lowprios = []
             js = self.download(self.domain + "/ajax/dataAlternatif22.asp",
                                data=data,
                                referer=self.domain + url,
@@ -184,13 +186,15 @@ class dizi(vods.showextension):
                     v_url = re.search(r"src\s*?\=\s*?(?:\"|')(.+?)(?:\"|')", iframe, re.IGNORECASE)
                     if v_url:
                         v_url = v_url.group(1)
-                        if v_url.startswith("/player/"):
-                            subpage = self.download(self.domain + v_url, referer=url, encoding=self.encoding)
-                            iframe = re.search(r"iframe.+?src\s*?\=\s*?(?:\"|')(.+?)(?:\"|')", subpage)
-                            if iframe:
-                                v_url = iframe.group(1)
-                            else:
-                                continue
                         if v_url.startswith("//"):
                             v_url = "https:" + v_url
-                        yield net.tokodiurl(v_url, headers={"Referer": self.domain})
+                        media = net.tokodiurl(v_url, headers={"Referer": self.domain})
+                        for undesired in undesireds:
+                            if undesired in v_url:
+                                lowprios.append(media)
+                                break
+                        if media not in lowprios:
+                            yield media
+            for lowprio in lowprios:
+                yield lowprio
+                        
