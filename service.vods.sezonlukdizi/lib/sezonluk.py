@@ -156,15 +156,29 @@ class dizi(vods.showextension):
         _, url = args
         tree = self.gettree(url)
         bid = tree.find(".//div[@id='dilsec']").get("data-id")
-        diller = dict([(tools.elementsrc(x).strip(), x.get("data-dil")) for x in tree.findall(".//div[@id='dilsec']/a")])
-        dilkeys = list(diller.keys())
-        dil = gui.select("Choose Language", dilkeys)
-        if dil == -1:
-            dilmap = diller.values()
+        langsetting = self.setting.getstr("lang")
+        langs = dict([(tools.elementsrc(x).strip(), x.get("data-dil")) for x in tree.findall(".//div[@id='dilsec']/a")])
+        langkeys = list(langs.keys())
+        langvals = list(langs.values())
+        preflang = None
+        if langsetting == "subtitled":
+            preflang = "1"
+        elif langsetting == "dubbed":
+            preflang = "0"
+        if preflang:
+            if preflang in langvals:
+                langvals.remove(preflang)
+                langmap = [preflang] + langvals
+            else:
+                langmap = langvals
         else:
-            dilmap = [diller[dilkeys[dil]]]
-        for dil in dilmap:
-            data = {"bid": bid, "dil": dil}
+            lang = gui.select("Choose Language", langkeys)
+            if lang == -1:
+                langmap = langs.values()
+            else:
+                langmap = [langs[langkeys[lang]]]
+        for lang in langmap:
+            data = {"bid": bid, "dil": lang}
             undesireds = ["rubyvid"]
             lowprios = []
             js = self.download(self.domain + "/ajax/dataAlternatif22.asp",
@@ -197,4 +211,3 @@ class dizi(vods.showextension):
                             yield media
             for lowprio in lowprios:
                 yield lowprio
-                        

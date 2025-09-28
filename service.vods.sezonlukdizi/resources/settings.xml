@@ -1,5 +1,6 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
 		<setting default="sezonlukdizi8.com" id="domain" label="Domain" type="text"/>
+		<setting default="subtitled" id="lang" type="select" label="Media Languagee" values="subtitled|dubbed|ask" />
 	</category>
 </settings>
