@@ -55,11 +55,11 @@ def parse2(page):
         return mainsource.group(1)
 
 
-def getmedias(url, mainurl, isadaptive=False, direct=False):
+def getmedias(url, mainurl, isadaptive=True, direct=True):
     subpage = net.http(url, referer=mainurl)
     link = parse1(url, subpage) or parse2(subpage)
     if not link:
         return
-    yield mediaurl.hlsurl(link,
+    yield mediaurl.HlsUrl(link,
                           headers={"referer": "https://%s/" % parse.urlparse(url).netloc},
                           adaptive=isadaptive, ffmpegdirect=direct)
