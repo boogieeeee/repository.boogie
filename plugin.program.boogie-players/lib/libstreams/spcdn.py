@@ -1,5 +1,6 @@
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import re
 from urllib.parse import urlparse
 
@@ -14,4 +15,4 @@ class spcdn(StreamsBase):
             up = urlparse(url)
             domain = "%s://%s" % (up.scheme, up.netloc)
             link = link.group(1).replace("\\", "")
-            yield net.tokodiurl(domain + link + "?s=1&d=", headers={"referer": url})
+            yield mediaurl.LinkUrl(domain + link + "?s=1&d=", headers={"referer": url})

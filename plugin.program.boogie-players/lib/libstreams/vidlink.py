@@ -5,6 +5,7 @@ Created on Nov 21, 2019
 '''
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import re
 import json
 from six.moves.urllib.parse import urlparse
@@ -24,4 +25,4 @@ class Vidlink(StreamsBase):
             up = urlparse(url)
             jsurl = "https://%s/api/video/get-link?idVid=%s" % (up.netloc, up.path.split("/")[-1])
             js = json.loads(net.http(jsurl, referer=url))
-            yield net.tokodiurl("https://hls.ronemo.com/%s" % js["link"], headers={"referer": url})
+            yield mediaurl.LinkUrl("https://hls.ronemo.com/%s" % js["link"], headers={"referer": url})

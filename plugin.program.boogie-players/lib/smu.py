@@ -20,7 +20,9 @@
 
 from tinyxbmc import tools
 from tinyxbmc import hay
+from tinyxbmc import net
 from tinyxbmc import const
+from tinyxbmc import mediaurl
 
 from vods import linkplayerextension
 
@@ -80,7 +82,6 @@ def patchsmu(smudir):
 
 
 class smu(linkplayerextension):
-    builtin = "PlayMedia(%s)"
     dropboxtoken = const.DB_TOKEN
 
     def init(self):
@@ -92,5 +93,6 @@ class smu(linkplayerextension):
 
     def geturls(self, link, headers=None):
         hmf = self.hmf(link, include_universal=True, include_disabled=True, include_popups=False)
-        ret = hmf.resolve()
-        yield ret
+        resolved = hmf.resolve()
+        if resolved:
+            yield mediaurl.LinkUrl(*net.fromkodiurl(resolved))

@@ -8,6 +8,7 @@ import htmlement
 import json
 from operator import itemgetter
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 
 from six.moves.urllib import parse
 
@@ -30,13 +31,13 @@ class Vidnext(StreamsBase):
                 js = json.loads(net.http(jsurl, params=jsq, referer=url, headers={"x-requested-with": "XMLHttpRequest"}))
                 for k in ["source", "source_bk"]:
                     for vid in js.get(k, []):
-                        yield net.tokodiurl(vid["file"], headers={"referer": url})
+                        yield mediaurl.LinkUrl(vid["file"], headers={"referer": url})
         up = parse.urlparse(url)
         if "movcloud.net" in url:
             vid = up.path.split("/")[-1]
             jsurl = "https://api.%s/stream/%s" % (up.netloc, vid)
             js = json.loads(net.http(jsurl, referer=url))
             for vid in sorted(js["data"]["sources"], key=itemgetter("height"), reverse=True):
-                yield net.tokodiurl(vid["file"], headers={"referer": url})
+                yield mediaurl.LinkUrl(vid["file"], headers={"referer": url})
         else:
             raise Exception("unknown url:%s" % url)

@@ -5,6 +5,7 @@ Created on Nov 21, 2019
 '''
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import json
 
 
@@ -14,7 +15,7 @@ class vidcloud9(StreamsBase):
 
     def resolve(self, url, headers):
         if url.endswith(".m3u8"):
-            yield net.tokodiurl(url, headers=headers)
+            yield mediaurl.LinkUrl(url, headers=headers)
         else:
             url = url.replace("/streaming.php", "/ajax.php")
             url = url.replace("/load.php", "/ajax.php")
@@ -22,4 +23,4 @@ class vidcloud9(StreamsBase):
             jpage = net.http(url, headers=headers, referer=self.domain)
             js = json.loads(jpage)
             for src in js["source"]:
-                yield net.tokodiurl(src["file"], headers={"referer": self.domain})
+                yield mediaurl.LinkUrl(src["file"], headers={"referer": self.domain})

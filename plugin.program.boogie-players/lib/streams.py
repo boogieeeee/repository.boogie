@@ -7,6 +7,7 @@ from vods import linkplayerextension
 from tinyxbmc import extension
 from tinyxbmc import tools
 from tinyxbmc import const
+from tinyxbmc import mediaurl
 import re
 import os
 
@@ -17,7 +18,7 @@ class StreamsBase:
     regex = None
 
     def resolve(self, url, headers):
-        return url
+        return mediaurl.LinkUrl(url, headers)
 
 
 class streams(linkplayerextension):
@@ -30,6 +31,6 @@ class streams(linkplayerextension):
     def geturls(self, url, headers=None):
         for provider in self.providers:
             if provider.regex and re.search(provider.regex, url):
-                for url in tools.safeiter(provider().resolve(url, headers)):
-                    yield url
+                for linkurl in tools.safeiter(provider().resolve(url, headers)):
+                    yield linkurl
                 break

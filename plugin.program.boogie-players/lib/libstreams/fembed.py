@@ -5,6 +5,7 @@ Created on Nov 21, 2019
 '''
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import json
 
 from six.moves.urllib.parse import urlparse
@@ -24,4 +25,4 @@ class Fembed(StreamsBase):
         data = {"r": "", "d": up.netloc}
         jsdata = net.http(api_url, referer=resp.url, data=data, method="POST")
         for data in sorted(json.loads(jsdata)["data"], key=sorter, reverse=True):
-            yield data["file"]
+            yield mediaurl.LinkUrl(data["file"])

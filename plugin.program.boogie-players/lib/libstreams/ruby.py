@@ -1,5 +1,6 @@
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from libstreams.third import packer
 
 import re
@@ -13,4 +14,4 @@ class spcdn(StreamsBase):
         if packer.detect(page):
             page = packer.unpack(page)
         media = re.search(r"sources.+?file:(?:\"|\')(.+?)(?:\"|\')", page)
-        yield media.group(1)
+        yield mediaurl.LinkUrl(media.group(1))

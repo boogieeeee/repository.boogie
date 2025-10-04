@@ -1,5 +1,6 @@
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import htmlement
 
 from libstreams.third import packer
@@ -16,4 +17,4 @@ class filemoon(StreamsBase):
         if packer.detect(iframe):
             iframe = packer.unpack(iframe)
         media = re.search(r"file\s*?:\s*?(?:\'|\")(.+?)(?:\'|\")", iframe)
-        yield net.tokodiurl(net.absurl(media.group(1), url), headers=headers)
+        yield mediaurl.LinkUrl(net.absurl(media.group(1), url), headers=headers)

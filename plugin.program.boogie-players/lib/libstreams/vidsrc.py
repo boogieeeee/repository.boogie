@@ -5,6 +5,7 @@ Created on Nov 21, 2019
 '''
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 import htmlement
 import re
 import json
@@ -30,4 +31,4 @@ class Vidsrc(StreamsBase):
             print("VIDSRC ERROR: %s, %s" % (js["data"], url))
             yield
         for vid in js["data"]:
-            yield net.tokodiurl(vid["file"], headers={"referer": resp.url})
+            yield mediaurl.LinkUrl(vid["file"], headers={"referer": resp.url})

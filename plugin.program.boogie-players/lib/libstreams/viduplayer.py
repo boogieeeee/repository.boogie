@@ -5,6 +5,7 @@ Created on Nov 21, 2019
 '''
 from streams import StreamsBase
 from tinyxbmc import net
+from tinyxbmc import mediaurl
 from libstreams.third import packer
 import re
 
@@ -19,4 +20,4 @@ class Vidsrc(StreamsBase):
         for vid in re.findall(r"file\s*?\:\s*?(?:'|\")(.+?)(?:'|\")", page):
             if vid.endswith(".m3u8") or vid.endswith(".mp4"):
                 headers = {"referer": url}
-                yield net.tokodiurl(vid, headers=headers)
+                yield mediaurl.LinkUrl(vid, headers=headers)

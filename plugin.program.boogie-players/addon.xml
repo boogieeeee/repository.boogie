@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='UTF-8' standalone='yes'?>
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.17">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -29,9 +29,6 @@
 	  </extension>
 	  <tinyxbmc>
 	  	<plugin path="lib" id="vodslinkplayer" module="smu" instance="smu"/>
-	  	<plugin path="lib" id="vodslinkplayer" module="players" instance="streamlink"/>
-	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="plexus"/>
-	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="elementum"/>
 	  	<plugin path="lib" id="vodslinkplayer" module="streams" instance="streams"/>
 	  </tinyxbmc>
 </addon>
