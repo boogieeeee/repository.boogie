@@ -11,9 +11,9 @@ domain = "https://racereplay.net"
 regex1 = ".//div[@class='container']/div[@class='row']/div/ul/li"
 regex2 = ".//div[@class='container-fluid']/div[@class='row']/div/ul/li"
 
+
 class replay(vods.showextension):
     info = {"title": "Race Replay"}
-    usedirect = False
     useaddonplayers = False
     loadtimeout = 3
     dropboxtoken = const.DB_TOKEN
@@ -27,8 +27,8 @@ class replay(vods.showextension):
                 desc = img.get("alt")
                 img = img.get("src")
                 self.additem(desc, link.get("href"), art={"icon": img,
-                                                                     "thumb": img,
-                                                                     "poster":img})
+                                                          "thumb": img,
+                                                          "poster": img})
 
     def getshows(self, catargs=None):
         if not catargs:
@@ -48,7 +48,7 @@ class replay(vods.showextension):
                 img = img.get("src")
                 self.additem(desc, link, art={"icon": img,
                                               "thumb": img,
-                                              "poster":img})
+                                              "poster": img})
         for ul in xpage.iterfind(".//div[@class='row']/.//ul"):
             if ul.get("class") is not None and "pagination" in ul.get("class"):
                 li = ul.findall(".//li")[-1]
@@ -77,11 +77,4 @@ class replay(vods.showextension):
         iframesrc = htmlement.fromstring(self.download(iframe, referer=referer))
         for src in iframesrc.iterfind(".//div[@class='list-servers']/ul/li"):
             link = re.search("loadMovieServer\(\'(.+?)\'", src.get("onclick")).group(1)
-            """
-            if "spcdn" in link:
-                sublinkpage = self.download(link, referer=iframe)
-                for medialink in re.finditer("(?:\"|\')videoUrl(?:\"|\')\s*?:\s*?(?:\"|\')(.+?)(?:\"|\')", sublinkpage):
-                    media = net.absurl(medialink.group(1).replace("\\", ""), link) + "?s=1&d="
-                    yield mediaurl.hlsurl(media, headers={"referer":link}, adaptive=False, ffmpegdirect=False)
-            """
             yield link
