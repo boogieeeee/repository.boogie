@@ -121,4 +121,4 @@ class ace(vods.movieextension):
 
     def geturls(self, items):
         for item in items:
-            yield mediaurl.acestreamurl(item["infohash"])
+            yield mediaurl.AceUrl(item["infohash"])
