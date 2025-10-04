@@ -17,7 +17,6 @@ TOKEN_REGEX = r';t="([^,|=]+?)"'
 
 class base:
     page = 1
-    usedirect = False
     useaddonplayers = False
 
     @property
@@ -164,7 +163,6 @@ class base:
 class pwseries(vods.showextension, base):
     info = {"title": "Primewire Series"}
     section = "tv"
-    usedirect = False
     useaddonplayers = False
     dropboxtoken = const.DB_TOKEN
 
@@ -201,7 +199,6 @@ class pwseries(vods.showextension, base):
 class pwmovies(vods.movieextension, base):
     info = {"title": "Primewire Movies"}
     section = "movie"
-    usedirect = False
     useaddonplayers = False
     dropboxtoken = const.DB_TOKEN
 
