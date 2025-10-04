@@ -31,7 +31,6 @@ from tinyxbmc import gui
 
 class dizi(vods.showextension):
     dropboxtoken = const.DB_TOKEN
-    usedirect = False
     useaddonplayers = False
 
     info = {"title": "Sezonluk Dizi"
