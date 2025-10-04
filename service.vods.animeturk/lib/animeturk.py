@@ -38,15 +38,15 @@ from chromium import Browser
 
 domain = "https://www.turkanime.net"
 
+
 class animeturk(vods.showextension):
-    usedirect = False
     useaddonplayers = False
     dropboxtoken = const.DB_TOKEN
 
     info = {"title": u"Türk Anime TV"
             }
     ismovie = False
-    
+
     def init(self):
         self.masterkey = self.setting.getstr("masterkey").encode()
 
@@ -60,7 +60,7 @@ class animeturk(vods.showextension):
             # find sub jspages
             if jspage is None:
                 continue
-            for subjs in re.findall('([a-f0-9]{8,})',jspage):
+            for subjs in re.findall('([a-f0-9]{8,})', jspage):
                 with Browser() as browser:
                     subjspage = browser.navigate(domain + "/embed/js/embeds." + subjs + ".js", domain)
                 if subjspage is None:
@@ -70,7 +70,7 @@ class animeturk(vods.showextension):
                     # search for strings greater than 64 chars length (normally 100)
                     for keycandidate in re.findall("'([^\']{64,})'", stringlist):
                         yield html.unescape(keycandidate).encode()
-                        
+
     def decrypt(self, data, iv, salt):
         for password in self.iterkeys():
             try:
