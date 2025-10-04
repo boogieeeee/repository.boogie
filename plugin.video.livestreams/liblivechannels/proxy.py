@@ -3,8 +3,8 @@ Created on Jan 31, 2020
 
 @author: z0042jww
 '''
-from six.moves.BaseHTTPServer import HTTPServer, BaseHTTPRequestHandler
-from six.moves.socketserver import ThreadingMixIn
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from socketserver import ThreadingMixIn
 
 import socket
 import re
@@ -106,11 +106,7 @@ class Handler(BaseHTTPRequestHandler):
                 return
             pgen = hls.PlaylistGenerator(self.base)
             for url in tools.safeiter(chan.get()):
-                if isinstance(url, mediaurl.mpdurl) and url.inputstream:
-                    pass
-                    # skip mpds for now, partly broken
-                elif isinstance(url, mediaurl.acestreamurl):
-                    continue
+                if isinstance(url, mediaurl.AceUrl):
                     # todo: check if ffmpegdirect is the player
                     if self.base.check_acestreamurl(url)[0] is None:
                         self.send_response(307)

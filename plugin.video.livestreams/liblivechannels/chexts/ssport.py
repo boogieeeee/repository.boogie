@@ -17,7 +17,7 @@ except ImportError:
 
 from liblivechannels import scraper
 from liblivechannels.chexts.scrapertools.multi import multi
-from liblivechannels.chexts.scrapertools.mynetyayin import trmonmap, utctz, trtz, now
+from liblivechannels.chexts.scrapertools.mynetyayin import trmonmap, trtz, now
 from liblivechannels import programme
 import re
 import datetime
@@ -37,6 +37,7 @@ class ssport1(multi, scraper):
         for prog in iterprogrammes(""):
             yield prog
 
+
 class ssport2(multi, scraper):
     title = u"S Sport 2"
     icon = "https://upload.wikimedia.org/wikipedia/tr/thumb/e/ed/S_Sport_2_logo.jpg/800px-S_Sport_2_logo.png"
@@ -55,7 +56,7 @@ def iterprogrammes(suffix):
     for day in pagex.iterfind('.//ul[@id="switcher-day-s-sport%s"]/li' % suffix):
         datadate = day.get("data-date")
         if datadate is not None:
-            curmatch = re.search("([0-9]+)\s(.+?)\s", datadate)
+            curmatch = re.search(r"([0-9]+)\s(.+?)\s", datadate)
             curd = int(curmatch.group(1))
             curm = trmonmap[curmatch.group(2).lower().strip()]
             for prog in day.iterfind("./ul/li"):

@@ -24,24 +24,25 @@ import base64
 dom = "canlitv.center"
 domain = "https://" + dom
 
-rgxlink = "yayin[a-zA-Z0-9]+[\s\t]*?\=[\s\t]*?(?:\"|\')(.*?)(?:\"|\')"
+rgxlink = r"yayin[a-zA-Z0-9]+[\s\t]*?\=[\s\t]*?(?:\"|\')(.*?)(?:\"|\')"
 
 
 def findmedias(src, links, baseaddr):
     found = False
-    media = re.search("file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
+    media = re.search(r"file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
     if media:
         link = base64.b64decode(media.group(1)).decode()
-        links.append(mediaurl.hlsurl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
+        links.append(mediaurl.HlsUrl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
         found = True
     else:
         for link in re.findall(rgxlink, src):
             if "anahtar" in link:
                 link = net.absurl(link, baseaddr)
-                links.append(mediaurl.hlsurl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
+                links.append(mediaurl.HlsUrl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
                 found = True
                 break
     return found
+
 
 def itersubpages(src):
     found = False

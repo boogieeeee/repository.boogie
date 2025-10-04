@@ -76,5 +76,7 @@ def itermedias(kw):
                     yayin = yayin.replace("'+ulke+'", "DE")
                     ypage = net.http(yayin, referer=geo)
                     for ylink in tools.safeiter(deobfuslink(ypage)):
-                        yield mediaurl.hlsurl(ylink, headers={"referer": domain + "/",
-                                                              "origin": domain}, adaptive=True, ffmpegdirect=False)
+                        yield mediaurl.HlsUrl(ylink,
+                                              headers={"referer": domain + "/", "origin": domain},
+                                              adaptive=True,
+                                              ffmpegdirect=False)

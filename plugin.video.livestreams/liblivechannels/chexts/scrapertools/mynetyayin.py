@@ -29,7 +29,7 @@ def iterprogrammes(channame):
     for i in range(len(suffixes)):
         pagex = htmlement.fromstring(net.http(url % (channame, suffixes[i])))
         curtxt = pagex.find(".//a[%d]/div[@class='day-date']" % (i + 1)).text
-        m1 = re.search("([0-9]+)\s(.+)", curtxt)
+        m1 = re.search(r"([0-9]+)\s(.+)", curtxt)
         curd = int(m1.group(1))
         curm = trmonmap[m1.group(2).lower().strip()]
         for li in pagex.iterfind(".//div[@class='container']/div/ul/li"):

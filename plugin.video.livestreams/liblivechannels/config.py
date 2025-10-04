@@ -12,6 +12,7 @@ from tinyxbmc.tools import tz_local
 
 loc_tz = tz_local()
 
+
 class config(object):
     def __init__(self):
         self.setting = addon.kodisetting(common.addon_id)
@@ -93,7 +94,7 @@ class config(object):
         hourmin = self.setting.getstr("updatetime").split(":")
         td = datetime.today()
         return datetime(td.year, td.month, td.day, int(hourmin[0]), int(hourmin[1]), tzinfo=loc_tz).timestamp()
-    
+
     @property
     def pvrtimer(self):
         return self.setting.getint("pvrtimer")

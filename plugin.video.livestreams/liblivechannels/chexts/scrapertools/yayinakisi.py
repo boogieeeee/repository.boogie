@@ -32,7 +32,7 @@ def find(chname):
 
 def todate(txt):
     if txt.count("T") == 2:
-        txt = re.sub("T[0-9\:]+T", "T", txt)
+        txt = re.sub(r"T[0-9\:]+T", "T", txt)
 
     formats = ["%Y-%m-%dT%H:%M:%S",
                "%Y-%m-%d %H:%M:%S",
@@ -55,8 +55,8 @@ def iterprogrammes(chname=None, chid=None):
         link = find(chname)
     if link:
         subpage = net.http(link, referer=domain, cache=5)
-        apilink = re.search("kanal_detay\:\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
-        dslug = re.search("data-slug\=\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
+        apilink = re.search(r"kanal_detay\:\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
+        dslug = re.search(r"data-slug\=\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
         if apilink and dslug:
             js = json.loads(net.http(apilink.group(1) + dslug.group(1), referer=domain))
             for i in range(len(js["content"])):

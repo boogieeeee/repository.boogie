@@ -11,7 +11,6 @@ from liblivechannels import common
 
 
 import time
-import os
 import xml.etree.ElementTree as ET
 
 IPTVSIMPLE = "pvr.iptvsimple"

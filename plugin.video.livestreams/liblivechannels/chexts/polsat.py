@@ -19,14 +19,14 @@ try:
         index = "polsat:polsatpremium1:"
         minepg = 1
 
-    class testpolsatnews(ChannelTest, unittest.TestCase):
+    class testpolsatpremium2(ChannelTest, unittest.TestCase):
         index = "polsat:polsatpremium2:"
         minepg = 1
 
     class testtvp(ChannelTest, unittest.TestCase):
         index = "polsat:tvp:"
         minepg = 0
-        
+
     class testtvp1(ChannelTest, unittest.TestCase):
         index = "polsat:tvp1:"
         minepg = 0
@@ -100,11 +100,10 @@ class polsatsportextra(multi, scraper):
     categories = ["Polish", "Sport"]
     dady_name = "polsatsportextrapoland"
     acestreams = ["acestream://ef2cf11fc83f4f15a33c9a514a7afd2bce73122f"]
-    
+
     def iterprogrammes(self):
         for p in iterprogrammes(self.title):
             yield p
-
 
 
 class polsatsportnews(multi, scraper):
@@ -116,6 +115,7 @@ class polsatsportnews(multi, scraper):
     def iterprogrammes(self):
         for p in iterprogrammes(self.title):
             yield p
+
 
 class tvp(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/8/8f/TVP_HD_logo.png"

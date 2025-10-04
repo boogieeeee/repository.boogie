@@ -30,5 +30,5 @@ class tv8(multi, scraper):
             yield stream
         tv8url = "https://www.tv8.com.tr/canli-yayin"
         page = net.http(tv8url)
-        yield mediaurl.hlsurl(re.findall("file\s?:\s?(?:\"|\')(https:\/\/.+?)(?:\"|\')", page)[0],
-                         headers={"Referer": tv8url})
+        yield mediaurl.HlsUrl(re.findall(r"file\s?:\s?(?:\"|\')(https:\/\/.+?)(?:\"|\')", page)[0],
+                              headers={"Referer": tv8url})

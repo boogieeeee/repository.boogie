@@ -97,11 +97,10 @@ class Base(container.container):
                 time.sleep(1)
             except Exception:
                 return "Acestream Error", None, None
-        return "Slow Acestream", None, None 
-
+        return "Slow Acestream", None, None
 
     def check_hlsurl(self, url, forceget=False):
-        if isinstance(url, mediaurl.hlsurl):
+        if isinstance(url, mediaurl.HlsUrl):
             headers = url.headers
             u = url.url
         else:
@@ -133,11 +132,8 @@ class Base(container.container):
             return None, manifest, headers
 
     def healthcheck(self, url):
-        # MPD url
-        if isinstance(url, mediaurl.mpdurl):
-            return self.check_mpdurl(url)
         # Acestream URLs
-        if isinstance(url, mediaurl.acestreamurl):
+        if isinstance(url, mediaurl.AceUrl):
             return self.check_acestreamurl(url)
         # HLS URLs
         return self.check_hlsurl(url)
@@ -194,11 +190,11 @@ class Base(container.container):
                 error = "No playlist"
             if error is None:
                 if not c.pvrinputstream:
-                    if isinstance(url, mediaurl.acestreamurl):
+                    if isinstance(url, mediaurl.AceUrl):
                         c.pvrinputstream = common.INPUTSTREAMFFMPEG
-                    elif isinstance(url, mediaurl.hlsurl) and url.adaptive:
+                    elif isinstance(url, mediaurl.HlsUrl) and url.adaptive:
                         c.pvrinputstream = common.INPUTSTREAMADAPTIVE
-                    elif isinstance(url, mediaurl.hlsurl) and url.ffmpegdirect:
+                    elif isinstance(url, mediaurl.HlsUrl) and url.ffmpegdirect:
                         c.pvrinputstream = common.INPUTSTREAMFFMPEG
                 channels.append([c.icon, c.title, c.index, c.categories, c.pvrinputstream])
                 error = "UP"

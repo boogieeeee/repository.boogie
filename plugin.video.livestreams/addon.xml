@@ -1,29 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.81">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.2.0">
     <requires>
-		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.htmlement"/>
 		<import addon="script.module.ghub"/>
-		<import addon="plugin.program.aceengine"/>
 	</requires>
 	<extension library="navi.py" point="xbmc.python.pluginsource">
 		<provides>video</provides>
 	</extension>
-	<!--
-	<extension point="kodi.context.item">
-		<menu id="kodi.core.main">
-  			<item library="context/epgitem2.py">
-    			<label>IPTV Recorder Timer</label>
-    			<visible>Window.isActive(tvchannels)</visible>
-  			</item>
-  			<item library="context/epgitem.py">
-    			<label>Schedule IPTV Recorder</label>
-    			<visible>Window.isActive(tvguide)</visible>
-  			</item>
-		</menu>
-	</extension>
-	-->
 	<extension point="xbmc.service" library="server.py" />
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">

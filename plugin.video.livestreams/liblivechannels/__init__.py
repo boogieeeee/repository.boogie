@@ -17,11 +17,7 @@
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 '''
-import os
-import datetime
-import binascii
-from six import string_types, PY2
-from tinyxbmc import tools
+from tinyxbmc import const
 from tinyxbmc.tools import tz_utc, tz_local
 
 utc_tz = tz_utc()
@@ -64,7 +60,7 @@ class programme(object):
 
 class scraper(object):
     title = "Unknown Channel"
-    icon = "DefaultFolder.png"
+    icon = const.DEFAULT_FOLDER
     categories = []
     index = None
     checkerrors = None

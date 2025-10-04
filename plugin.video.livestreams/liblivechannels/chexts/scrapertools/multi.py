@@ -9,8 +9,6 @@ from liblivechannels.chexts.scrapertools import yayinakisi
 from liblivechannels.chexts.scrapertools import vercel
 from liblivechannels.chexts.scrapertools import mynetyayin
 
-from liblivechannels import common
-
 from tinyxbmc.tools import safeiter
 from tinyxbmc import mediaurl
 
@@ -18,7 +16,7 @@ from tinyxbmc import mediaurl
 class multi:
     directs = []
 
-    #acestreams
+    # acestreams
     acestreams = []
 
     # selcuk sports
@@ -54,7 +52,7 @@ class multi:
 
     def get(self):
         for acestream in self.acestreams:
-            yield mediaurl.acestreamurl(acestream)
+            yield mediaurl.AceUrl(acestream)
         for direct in self.directs:
             yield direct
         if self.youtube_chanid:

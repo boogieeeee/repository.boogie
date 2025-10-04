@@ -6,6 +6,7 @@ sys.argv[0] = "plugin://plugin.video.livestreams"
 from tinyxbmc import stubmod
 from tinyxbmc import net
 from tinyxbmc import tools
+from tinyxbmc import const
 import addon
 
 if not stubmod.isstub():
@@ -56,7 +57,7 @@ class ChannelTest():
     def test_thumbnail(self):
         if self.thumbnail:
             self.assertFalse(self.channel.icon is None)
-            self.assertFalse(self.channel.icon == "DefaultFolder.png")
+            self.assertFalse(self.channel.icon == const.DEFAULT_FOLDER)
             if self.channel.icon.startswith("http"):
                 self.assertFalse(net.http(self.channel.icon, method="HEAD") is None)
 

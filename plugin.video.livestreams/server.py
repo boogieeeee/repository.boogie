@@ -46,7 +46,7 @@ class Server(addon.blockingloop):
         # stop the server
         self.httpd.shutdown()
         logger.info("Livechannels m3u8 proxy stopped")
-        
+
     def validatechannels(self):
         if not base.config.update_running:
             deltat = time.time() - base.config.updatetime
@@ -55,7 +55,7 @@ class Server(addon.blockingloop):
                     base.config.validate = False
                 base.config.lastupdate = time.time()
                 Thread(target=base.do_validate, args=(True, self.isclosed)).start()
-                
+
     def reloadpvr(self):
         if self.pvrtimer:
             self.pvrtimer -= self.wait
@@ -65,7 +65,7 @@ class Server(addon.blockingloop):
             base.iptvsimple.reload_pvr()
             base.config.update_pvr = False
             base.iptvsimple.channels = base.iptvsimple.getchannels()
-            
+
     def configpvr(self):
         if base.config.pvr:
             base.iptvsimple.config_pvr()
@@ -78,5 +78,6 @@ class Server(addon.blockingloop):
             self.validatechannels()
             self.reloadpvr()
             self.configpvr()
+
 
 Server()

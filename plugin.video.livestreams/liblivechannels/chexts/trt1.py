@@ -14,10 +14,10 @@ try:
 
     class testtrthaber(ChannelTest, unittest.TestCase):
         index = "trt1:trthaber:"
-        
+
     class testtrtcocuk(ChannelTest, unittest.TestCase):
         index = "trt1:trtcocuk:"
-        
+
     class testtrtbelgesel(ChannelTest, unittest.TestCase):
         index = "trt1:trtbelgesel:"
 
@@ -58,7 +58,7 @@ class trtsporyildiz(multi, scraper):
     selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"
     canlitvme_name = "TRT Spor Yıldız"
-    
+
 
 class trthaber(multi, scraper):
     title = u"TRT Haber"
@@ -68,8 +68,8 @@ class trthaber(multi, scraper):
     youtube_chanid = "trthaber"
     canlitv_ids = ["trt-haber/1", "trt-haber/2"]
     canlitvme_name = "TRT Haber"
-    directs = [mediaurl.hlsurl("https://tv-trthaber.medya.trt.com.tr/master.m3u8")]
-    
+    directs = [mediaurl.HlsUrl("https://tv-trthaber.medya.trt.com.tr/master.m3u8")]
+
 
 class trtcocuk(multi, scraper):
     title = u"TRT Çocuk"
@@ -78,7 +78,7 @@ class trtcocuk(multi, scraper):
     yayin_id = "trt-cocuk"
     canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
     canlitvme_name = "TRT Çocuk"
-    directs = [mediaurl.hlsurl("https://tv-trtcocuk.medya.trt.com.tr/master.m3u8")]
+    directs = [mediaurl.HlsUrl("https://tv-trtcocuk.medya.trt.com.tr/master.m3u8")]
 
 
 class trtbelgesel(multi, scraper):
