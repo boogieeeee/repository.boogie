@@ -11,6 +11,7 @@ from tinyxbmc import net, mediaurl
 dom = "https://soccerstreamslive.co"
 streamdom = "https://cloudstreams.org"
 
+
 def get(streamid):
     u = "%s/hdl%s.html" % (dom, streamid)
     iframeu = htmlement.fromstring(net.http(u)).find(".//iframe")
@@ -21,4 +22,4 @@ def get(streamid):
             cloud = net.http("%s/cloud.php?player=desktop&live=%s" % (streamdom, fid.group(1)), cache=None)
             url = re.search('return\((\[.+?\])', cloud).group(1)
             url = "".join(json.loads(url))
-            return mediaurl.hlsurl(url, headers={"Referer": streamdom}, adaptive=True, ffmpegdirect=True)
+            return mediaurl.HlsUrl(url, headers={"Referer": streamdom}, adaptive=True, ffmpegdirect=True)

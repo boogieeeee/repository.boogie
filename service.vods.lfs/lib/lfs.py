@@ -28,7 +28,6 @@ MAXCHAN = 30
 
 
 class lfs(vods.movieextension):
-    usedirect = True
     useaddonplayers = False
     uselinkplayers = False
     dropboxtoken = const.DB_TOKEN
