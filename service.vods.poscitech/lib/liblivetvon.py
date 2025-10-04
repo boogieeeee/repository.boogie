@@ -76,7 +76,7 @@ def get_forcedplay(iframe, iframeu, referer):
     pre = server_key.split("/")[0]
     post = server_key
     murl = f"https://{pre}new.newkso.ru/{post}/{channelid}/mono.m3u8"
-    return mediaurl.hlsurl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
+    return mediaurl.HlsUrl(murl, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
 def getzippy(iframe, iframeu, referer):
@@ -93,7 +93,7 @@ def getzippy(iframe, iframeu, referer):
                "Origin": origin,
                "Xauth": channel["auth"],
                }
-    return mediaurl.hlsurl(url, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
+    return mediaurl.HlsUrl(url, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
 def get_fromchromium(iframe, iframeu, referer, timeout=6, maxxhr=10):
@@ -112,7 +112,7 @@ def get_fromchromium(iframe, iframeu, referer, timeout=6, maxxhr=10):
             path = headers.pop(":path")
             u = f'{scheme}://{authority}{path}'
             if "m3u8" in path:
-                return mediaurl.hlsurl(u, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
+                return mediaurl.HlsUrl(u, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
 def geturls(streamid, path="/stream/stream-%s.php"):

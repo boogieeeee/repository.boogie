@@ -25,7 +25,6 @@ import liblivetvon
 
 
 class poscitech(vods.movieextension):
-    usedirect = True
     useaddonplayers = False
     uselinkplayers = False
     dropboxtoken = const.DB_TOKEN
