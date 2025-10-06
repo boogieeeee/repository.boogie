@@ -1,30 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <addons>
-<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.1.81">
+<addon id="plugin.video.livestreams" name="Live Streams" provider-name="boogie" version="0.2.0">
     <requires>
-		<import addon="script.module.six"/>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.htmlement"/>
 		<import addon="script.module.ghub"/>
-		<import addon="plugin.program.aceengine"/>
 	</requires>
 	<extension library="navi.py" point="xbmc.python.pluginsource">
 		<provides>video</provides>
 	</extension>
-	<!--
-	<extension point="kodi.context.item">
-		<menu id="kodi.core.main">
-  			<item library="context/epgitem2.py">
-    			<label>IPTV Recorder Timer</label>
-    			<visible>Window.isActive(tvchannels)</visible>
-  			</item>
-  			<item library="context/epgitem.py">
-    			<label>Schedule IPTV Recorder</label>
-    			<visible>Window.isActive(tvguide)</visible>
-  			</item>
-		</menu>
-	</extension>
-	-->
 	<extension point="xbmc.service" library="server.py" />
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
@@ -38,7 +22,7 @@
 	</extension>
 </addon>
 
-<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.0.19">
+<addon id="service.vods.sezonlukdizi" name="SezonlukDIZI module for VODS" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -59,7 +43,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.lfs" name="LFS module for VODS" provider-name="boogie" version="0.0.5">
+<addon id="service.vods.lfs" name="LFS module for VODS" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -81,7 +65,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.0.11">
+<addon id="service.vods.animeturk" name="Animeturk module for VODS" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -103,7 +87,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.0.17">
+<addon id="plugin.program.boogie-players" name="Boogie Players" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.tinyxbmc"/>
@@ -133,14 +117,11 @@
 	  </extension>
 	  <tinyxbmc>
 	  	<plugin path="lib" id="vodslinkplayer" module="smu" instance="smu"/>
-	  	<plugin path="lib" id="vodslinkplayer" module="players" instance="streamlink"/>
-	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="plexus"/>
-	  	<plugin path="lib" id="vodsaddonplayer" module="players" instance="elementum"/>
 	  	<plugin path="lib" id="vodslinkplayer" module="streams" instance="streams"/>
 	  </tinyxbmc>
 </addon>
 
-<addon id="service.vods.selcuk" name="Selcuk Sports module for VODS" provider-name="boogie" version="0.0.8">
+<addon id="service.vods.selcuk" name="Selcuk Sports module for VODS" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.six"/>
@@ -162,7 +143,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.f1full" name="Racereplay module for VODS" provider-name="boogie" version="0.0.3">
+<addon id="service.vods.taraftarium" name="Tarafatarium module for VODS" provider-name="boogie" version="0.0.1">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -170,6 +151,28 @@
 	<extension point="xbmc.service"></extension>
 	<extension library="lib" point="xbmc.python.module" />
 	<extension point="xbmc.addon.metadata">
+		<platform>all</platform>
+		<summary lang="en">Taraftarium module for VODS</summary>
+		<description lang="en">Taraftarium module for VODS</description>
+		<license>GNU General Public License, v2</license>
+		<forum>https://github.com/boogieeeee/repository.boogie/issues</forum>
+		<website>https://github.com/boogieeeee/repository.boogie</website>
+		<email>boogiepop@gmx.com</email>
+	</extension>
+	<tinyxbmc>
+	  	<plugin path="lib" id="vodsmovie" module="taraftarium" instance="taraftarium"/>
+	</tinyxbmc>
+</addon>
+
+<addon id="service.vods.f1full" name="Racereplay module for VODS" provider-name="boogie" version="0.1.1">
+	<requires>
+		<import addon="plugin.video.vods"/>
+		<import addon="script.module.htmlement"/>
+	</requires>
+	<extension point="xbmc.service"></extension>
+	<extension library="lib" point="xbmc.python.module" />
+	<extension point="xbmc.addon.metadata">
+		<broken>site is broken</broken>
 		<platform>all</platform>
 		<summary lang="en">Racereplay module for VODS</summary>
 		<description lang="en">Racereplay module for VODS</description>
@@ -183,7 +186,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.0.12">
+<addon id="plugin.program.aceengine" name="Acestream Engine" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="script.module.tinyxbmc"/>
 		<import addon="script.module.six" />
@@ -209,7 +212,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.1.23">
+<addon id="service.vods.poscitech" name="Poscitech module for VODS" provider-name="boogie" version="0.2.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
@@ -231,7 +234,7 @@
 	</tinyxbmc>
 </addon>
 
-<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.0.16">
+<addon id="service.vods.primewire" name="Primewire module for VODS" provider-name="boogie" version="0.1.0">
 	<requires>
 		<import addon="plugin.video.vods"/>
 		<import addon="script.module.htmlement"/>
