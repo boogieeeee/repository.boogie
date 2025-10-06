@@ -3,12 +3,15 @@
 import vods
 import re
 import htmlement
+import base64
 from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
 from tinyxbmc import const
 from tinyxbmc import iso
+from tinyxbmc import mediaurl
 import blowfish
 import hashlib
+from urllib import parse
 
 
 SEARCH_REGEX = r"e\.target\.elements\.s\.value.+?\"(.+?)\""
@@ -153,7 +156,11 @@ class base:
         return info, art, episodes
 
     def itermedias(self, link):
-        xpage = self.getpage(link, parse=True)
+        page = self.getpage(link)
+        xpage = htmlement.fromstring(page)
+        primesrc = self.primesrc(page, xpage)
+        if primesrc:
+            yield primesrc
         src = None
         for js in xpage.iterfind(".//script"):
             src = js.get("src")
@@ -178,6 +185,62 @@ class base:
                 if "streamz.ws" in media:
                     continue
                 yield media
+
+    def deobfus(self, txt):
+        txt = txt[2:]
+        if txt.endswith("=="):
+            txt = txt[:-2]
+        parts = []
+        for part in re.split(r"/@#@/.+?==", txt):
+            parts.append(part.split("=")[-1])
+        parts.append("==")
+        based = "".join(parts)
+        return base64.b64decode(based).decode()
+
+    def primesrc(self, page, xpage):
+        imdb = re.search(r"imdb\.com\/title\/(.+?)(?:\"|\')", page)
+        if imdb is None:
+            return
+        imdb = imdb.group(1)
+        primesrc = None
+        for iframe in xpage.iterfind(".//iframe"):
+            primesrc = iframe.get("src")
+            if not primesrc:
+                continue
+            if "primesrc" in primesrc:
+                break
+        if not primesrc:
+            return
+        referer = f"https://vidsrc.net/"
+        vidsrcu = f"{referer}embed/{self.section}/{imdb}"
+        vidsrc = self.getpage(vidsrcu, referer=referer, parse=True)
+        iframe = vidsrc.find(".//iframe")
+        if iframe is None:
+            return
+        iframeu = absurl(iframe.get("src"), referer)
+        iframesrc = self.getpage(iframeu, vidsrcu)
+        iframe2 = re.search(r"src\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", iframesrc)
+        if iframe2 is None:
+            return
+        iframe2u = absurl(iframe2.group(1), iframeu)
+        iframe2src = self.getpage(iframe2u, vidsrcu)
+        iframe3 = re.search(r"location\.replace\((?:\"|\')(.+?)(?:\"|\')", iframe2src)
+        if iframe3 is None:
+            return
+        iframe3u = absurl(iframe3.group(1), iframe2u)
+        iframe3src = self.getpage(iframe3u, iframe2u)
+        urls = re.findall(r"file\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", iframe3src)
+        up = parse.urlparse(iframe3u)
+        if not urls:
+            return
+        origin = f"{up.scheme}://{up.netloc}"
+        referer = origin + "/"
+        try:
+            url = self.deobfus(urls[-1])
+        except Exception:
+            return
+        return mediaurl.HlsUrl(url, headers={"origin": origin,
+                                             "referer": referer})
 
 
 class pwseries(vods.showextension, base):
