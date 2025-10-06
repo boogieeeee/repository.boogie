@@ -36,7 +36,7 @@ from tinyxbmc import const
 from chromium import Browser
 
 
-domain = "https://www.turkanime.net"
+domain = "https://www.turkanime.co"
 
 
 class animeturk(vods.showextension):
@@ -108,7 +108,11 @@ class animeturk(vods.showextension):
                 img = div.find(".//img").get("src")
             img = net.absurl(img, domain)
             art = {"icon": img, "thumb": img, "poster": img}
-            title = a.get("data-original-title").replace("izle", "").strip()
+            for attr in ["title", "data-original-title"]:
+                title = a.get(attr)
+                if title:
+                    break
+            title = title.replace("izle", "").strip()
             url = net.absurl(a.get("href"), domain)
             if "/anime/" in url:
                 imgid = re.search("([0-9]+)", img)
