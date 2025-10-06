@@ -23,6 +23,10 @@ class base:
     def domain(self):
         return "https://%s" % self.setting.getstr("domain")
 
+    @property
+    def highq(self):
+        return self.setting.getbool("highq")
+
     def getpage(self, link, referer=None, parse=False, removescr=False, rel=None, **kwargs):
         if rel is not None:
             link = absurl(link, rel)
@@ -36,7 +40,11 @@ class base:
     def scrapegrid(self, search=None, genre=None):
         pagenum = self.page or 1
         search_uri = "%s/filter" % self.domain
-        query = {"t": "y", "m": "m", "w": "q", "type": self.section, "sort": "Trending Today", "page": pagenum}
+        query = {"type": self.section,
+                 "sort": "Trending Today",
+                 "page": pagenum}
+        if self.highq:
+            query["quality"] = "DVD"
         if self.page:
             query["page"] = self.page
         if genre:

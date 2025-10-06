@@ -1,5 +1,6 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
 		<setting default="primewire.tf" id="domain" label="Domain" type="text"/>
+		<setting default="false" label="Show only high quality tagged" type="bool" id="highq"/>
 	</category>
 </settings>
