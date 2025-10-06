@@ -11,10 +11,21 @@ from liblivechannels.chexts.scrapertools import mynetyayin
 
 from tinyxbmc.tools import safeiter
 from tinyxbmc import mediaurl
+from tinyxbmc import addon
+
+
+if addon.has_addon("service.vods.taraftarium"):
+    addon.depend_addon("service.vods.taraftarium")
+    import libtaraftarium
+else:
+    libtaraftarium = None
 
 
 class multi:
     directs = []
+
+    # taraftarium name
+    taraf_name = None
 
     # acestreams
     acestreams = []
@@ -51,6 +62,9 @@ class multi:
     mynet_yayin = None
 
     def get(self):
+        if libtaraftarium and self.taraf_name:
+            for media in safeiter(libtaraftarium.geturlsfromchannel(self.taraf_name)):
+                yield media
         for acestream in self.acestreams:
             yield mediaurl.AceUrl(acestream)
         for direct in self.directs:

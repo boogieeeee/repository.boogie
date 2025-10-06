@@ -24,6 +24,7 @@ class tv8(multi, scraper):
     selcuk_name = "8"
     canlitv_ids = ["tv-8-canli-hd", "tv-8-canli-hd/2"]
     canlitvme_name = "Tv8"
+    taraf_name = "tv8"
 
     def get(self):
         for stream in multi.get(self):

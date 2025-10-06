@@ -40,6 +40,7 @@ class trt1(multi, scraper):
     selcuk_name = "trt1"
     canlitv_ids = ["trt1-izle", "trt1-izle/2"]
     canlitvme_name = "TRT 1"
+    taraf_name = "trt1"
 
 
 class trtspor(multi, scraper):
@@ -49,6 +50,7 @@ class trtspor(multi, scraper):
     yayin_id = "trt-3"
     selcuk_name = "trtspor"
     canlitvme_name = "TRT Spor"
+    taraf_name = "trtspor"
 
 
 class trtsporyildiz(multi, scraper):
@@ -58,6 +60,7 @@ class trtsporyildiz(multi, scraper):
     selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"
     canlitvme_name = "TRT Spor Yıldız"
+    taraf_name = "trtspor2"
 
 
 class trthaber(multi, scraper):
