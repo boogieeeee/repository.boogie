@@ -6,6 +6,7 @@ import htmlement
 from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
 from tinyxbmc import const
+from tinyxbmc import iso
 import blowfish
 import hashlib
 
@@ -27,6 +28,17 @@ class base:
     def highq(self):
         return self.setting.getbool("highq")
 
+    def getcats(self):
+        search_uri = self.domain + "/filter"
+        xpage = self.getpage(search_uri, parse=True)
+        for genre in xpage.iterfind(".//li[@class='genre-filter-bar']/.//input"):
+            genre = genre.get("value")
+            if not genre:
+                continue
+            yield genre.title(), {"genre[]": genre}
+        for code, country in iso.countries_2letter.items():
+            yield f"Country: {country}", {"country": code.upper()}
+
     def getpage(self, link, referer=None, parse=False, removescr=False, rel=None, **kwargs):
         if rel is not None:
             link = absurl(link, rel)
@@ -37,18 +49,18 @@ class base:
             return pg
         return htmlement.fromstring(pg)
 
-    def scrapegrid(self, search=None, genre=None):
+    def scrapegrid(self, search=None, filters=None):
         pagenum = self.page or 1
         search_uri = "%s/filter" % self.domain
         query = {"type": self.section,
                  "sort": "Trending Today",
                  "page": pagenum}
-        if self.highq:
+        if self.highq and self.section == "movie":
             query["quality"] = "DVD"
         if self.page:
             query["page"] = self.page
-        if genre:
-            query["genre[]"] = genre
+        if filters:
+            query.update(filters)
         if search:
             query["s"] = search
             index_pg = self.getpage(search_uri)
@@ -178,7 +190,11 @@ class pwseries(vods.showextension, base):
         self.scrapegrid(keyword)
 
     def getshows(self, catargs=None):
-        self.scrapegrid()
+        self.scrapegrid(filters=catargs)
+
+    def getcategories(self):
+        for catname, filters in self.getcats():
+            self.additem(catname, filters)
 
     def getseasons(self, url):
         info, art, episodes = self.scrapeinfo(url)
@@ -214,7 +230,11 @@ class pwmovies(vods.movieextension, base):
         self.scrapegrid(keyword)
 
     def getmovies(self, catargs=None):
-        self.scrapegrid()
+        self.scrapegrid(filters=catargs)
+
+    def getcategories(self):
+        for catname, filters in self.getcats():
+            self.additem(catname, filters)
 
     def geturls(self, link):
         for url in self.itermedias(link):
