@@ -3,12 +3,14 @@
 import vods
 import re
 import htmlement
-import base64
+import json
+
 from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
 from tinyxbmc import const
 from tinyxbmc import iso
-from tinyxbmc import mediaurl
+from tinyxbmc import tools
+from tinyxbmc import net
 import blowfish
 import hashlib
 from urllib import parse
@@ -156,11 +158,17 @@ class base:
         return info, art, episodes
 
     def itermedias(self, link):
+        links = []
         page = self.getpage(link)
         xpage = htmlement.fromstring(page)
-        primesrc = self.primesrc(page, xpage)
-        if primesrc:
-            yield primesrc
+        for primesrc in tools.safeiter(self.primesrcv2(page, xpage)):
+            if primesrc not in links:
+                yield primesrc
+                links.append(primesrc)
+        for primesrc in tools.safeiter(self.primesrcv1(xpage)):
+            if primesrc not in links:
+                yield primesrc
+                links.append(primesrc)
         src = None
         for js in xpage.iterfind(".//script"):
             src = js.get("src")
@@ -184,63 +192,73 @@ class base:
             if media:
                 if "streamz.ws" in media:
                     continue
+                if media not in links:
+                    yield media
+                    links.append(media)
                 yield media
 
-    def deobfus(self, txt):
-        txt = txt[2:]
-        if txt.endswith("=="):
-            txt = txt[:-2]
-        parts = []
-        for part in re.split(r"/@#@/.+?==", txt):
-            parts.append(part.split("=")[-1])
-        parts.append("==")
-        based = "".join(parts)
-        return base64.b64decode(based).decode()
-
-    def primesrc(self, page, xpage):
-        imdb = re.search(r"imdb\.com\/title\/(.+?)(?:\"|\')", page)
-        if imdb is None:
-            return
-        imdb = imdb.group(1)
-        primesrc = None
+    def primesrcv1(self, xpage):
+        url = None
         for iframe in xpage.iterfind(".//iframe"):
-            primesrc = iframe.get("src")
-            if not primesrc:
+            url = iframe.get("src")
+            if url is None:
                 continue
-            if "primesrc" in primesrc:
+            if "primesrc" in url:
                 break
-        if not primesrc:
+        if url is None:
             return
-        referer = f"https://vidsrc.net/"
-        vidsrcu = f"{referer}embed/{self.section}/{imdb}"
-        vidsrc = self.getpage(vidsrcu, referer=referer, parse=True)
+
+        # v1 api
+        up = parse.urlparse(url)
+        baseurl = f"{up.scheme}://{up.netloc}"
+        mediatype = up.path.split("/")[-1]
+        params = dict(parse.parse_qsl(up.query))
+        params["type"] = mediatype
+        api = net.http(f"{baseurl}/api/v1/s", params=params, json=True)
+        for server in api["servers"]:
+            api2 = net.http(f"{baseurl}/api/v1/l", params={"key": server["key"]}, json=True)
+            yield api2["link"]
+
+    def primesrcv2(self, page, xpage):
+        imdb = self.scrapeimdb(None, xpage)
+        if not imdb:
+            return
+        referer = "https://vidsrc.net/"
+        if self.section == "tv":
+            seasoninfo = re.search(r"episode_info\s*?\=\s*?({.+?\})", page)
+            if seasoninfo is None:
+                return
+            seasoninfo = json.loads(seasoninfo.group(1))
+            vidsrcu = f"{referer}embed/{self.section}"
+            params = {"imdb": imdb,
+                      "season": seasoninfo["season"],
+                      "episode": seasoninfo["episode"],
+                      "ref": referer}
+        else:
+            vidsrcu = f"{referer}embed/{self.section}/{imdb}"
+            params = {}
+        vidsrc = htmlement.fromstring(net.http(vidsrcu, referer=referer, params=params))
         iframe = vidsrc.find(".//iframe")
         if iframe is None:
             return
-        iframeu = absurl(iframe.get("src"), referer)
-        iframesrc = self.getpage(iframeu, vidsrcu)
-        iframe2 = re.search(r"src\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", iframesrc)
-        if iframe2 is None:
-            return
-        iframe2u = absurl(iframe2.group(1), iframeu)
-        iframe2src = self.getpage(iframe2u, vidsrcu)
-        iframe3 = re.search(r"location\.replace\((?:\"|\')(.+?)(?:\"|\')", iframe2src)
-        if iframe3 is None:
-            return
-        iframe3u = absurl(iframe3.group(1), iframe2u)
-        iframe3src = self.getpage(iframe3u, iframe2u)
-        urls = re.findall(r"file\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", iframe3src)
-        up = parse.urlparse(iframe3u)
-        if not urls:
-            return
-        origin = f"{up.scheme}://{up.netloc}"
-        referer = origin + "/"
-        try:
-            url = self.deobfus(urls[-1])
-        except Exception:
-            return
-        return mediaurl.HlsUrl(url, headers={"origin": origin,
-                                             "referer": referer})
+        iframeu = net.absurl(iframe.get("src"), referer)
+        up = parse.urlparse(iframeu)
+        serverpath = "/".join(up.path.split("/")[:-1])
+        for server in vidsrc.findall(".//div[@class='server']"):
+            server = server.get("data-hash")
+            serveru = f"{up.scheme}://{up.netloc}{serverpath}/{server}"
+            iframesrc = net.http(serveru, referer=vidsrcu)
+            iframe2 = re.search(r"src\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", iframesrc)
+            if iframe2 is None:
+                continue
+            iframe2u = net.absurl(iframe2.group(1), iframeu)
+            iframe2src = net.http(iframe2u, referer=vidsrcu)
+            rgxs = [r"location\.replace\((?:\"|\')(.+?)(?:\"|\')",
+                    r"btoa\((?:\'|\")(https\:\/\/.+?)(?:\'|\")"]
+            for rgx in rgxs:
+                iframe3 = re.search(rgx, iframe2src)
+                if iframe3 is not None:
+                    yield iframe3.group(1)
 
 
 class pwseries(vods.showextension, base):
@@ -280,6 +298,8 @@ class pwseries(vods.showextension, base):
             yield url
 
     def getimdb(self, url):
+        if not isinstance(url, str):
+            return
         return self.scrapeimdb(url)
 
 
