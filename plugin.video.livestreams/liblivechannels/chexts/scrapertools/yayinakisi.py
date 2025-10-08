@@ -55,8 +55,7 @@ def iterprogrammes(chname=None, chid=None):
         for day in subpage.iterfind(".//div[@role='region']"):
             for prog in day.iterfind('.//li[@itemprop="itemListElement"]'):
                 pdate = todate(tools.elementsrc(prog.find(".//time")), dayoffset)
-                ptitle = prog.find(".//div[@class='title']")
-                ptitle = tools.elementsrc(ptitle, ptitle.find(".//span"))
+                ptitle = prog.find(".//div[@class='title']").text.strip()
                 if prevdate:
                     yield programme(prevtitle,
                                     prevdate,
