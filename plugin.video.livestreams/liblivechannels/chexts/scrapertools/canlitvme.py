@@ -64,7 +64,7 @@ def itermedias(kw):
         sec = form.find(".//input[@name='security']").get("value")
         lpage = htmlement.fromstring(net.http(form.get("action"), params={"s": kw, "security": sec}, referer=domain))
         for channel in lpage.iterfind(xpath1):
-            chname = channel.get("title").lower().replace(" ", "")
+            chname = channel.get("title").lower().replace(" ", "").replace("tv", "")
             if chname == kw.lower().replace(" ", ""):
                 chpage = htmlement.fromstring(net.http(channel.get("href"), referer=domain))
                 for alt in chpage.iterfind(xpath2):
