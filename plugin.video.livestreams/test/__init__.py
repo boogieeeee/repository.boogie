@@ -59,7 +59,9 @@ class ChannelTest():
             self.assertFalse(self.channel.icon is None)
             self.assertFalse(self.channel.icon == const.DEFAULT_FOLDER)
             if self.channel.icon.startswith("http"):
-                self.assertFalse(net.http(self.channel.icon, method="HEAD") is None)
+                resp = net.http(self.channel.icon, method="HEAD")
+                self.assertFalse(resp is None)
+                self.assertTrue(resp.status_code >= 200 and resp.status_code < 300)
 
     def test_epg(self):
         if self.minepg:
