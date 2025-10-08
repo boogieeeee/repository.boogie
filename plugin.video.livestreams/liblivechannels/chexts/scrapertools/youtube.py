@@ -48,12 +48,15 @@ def itermedias(youtube_chanid, youtube_sindex):
                 for content in contents:
                     content = content["richItemRenderer"]["content"]
                     renderer = content.get("videoRenderer", content.get("compactVideoRenderer"))
+                    if "upcomingEventData" in renderer:
+                        continue
+                    if "publishedTimeText" in renderer or "lengthText" in renderer:
+                        continue
                     streams.append(renderer["videoId"])
                 break
             except KeyError:
                 continue
-        sindex = youtube_sindex if youtube_sindex is not None else 0
-        vid = streams[sindex]
+        vid = streams[youtube_sindex]
     except Exception:
         print(traceback.format_exc())
         return

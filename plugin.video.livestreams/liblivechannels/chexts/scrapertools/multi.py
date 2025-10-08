@@ -35,7 +35,7 @@ class multi:
 
     # youtube
     youtube_chanid = None
-    youtube_sindex = None
+    youtube_sindex = 0
 
     # canlitvme
     canlitvme_name = None
