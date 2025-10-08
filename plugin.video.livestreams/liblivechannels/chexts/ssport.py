@@ -17,13 +17,6 @@ except ImportError:
 
 from liblivechannels import scraper
 from liblivechannels.chexts.scrapertools.multi import multi
-from liblivechannels.chexts.scrapertools.mynetyayin import trmonmap, trtz, now
-from liblivechannels import programme
-import re
-import datetime
-
-from tinyxbmc import net
-import htmlement
 
 
 class ssport1(multi, scraper):
@@ -34,10 +27,6 @@ class ssport1(multi, scraper):
     selcuk_name = "ssport"
     taraf_name = "ssport"
 
-    def iterprogrammes(self):
-        for prog in iterprogrammes(""):
-            yield prog
-
 
 class ssport2(multi, scraper):
     title = u"S Sport 2"
@@ -45,31 +34,4 @@ class ssport2(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     selcuk_name = "ssport2"
     taraf_name = "ssport2"
-
-    def iterprogrammes(self):
-        for prog in iterprogrammes("-2"):
-            yield prog
-
-
-def iterprogrammes(suffix):
-    u = "https://www.ssport.tv/yayin-akisi"
-    pagex = htmlement.fromstring(net.http(u))
-    prename = predate = None
-    for day in pagex.iterfind('.//ul[@id="switcher-day-s-sport%s"]/li' % suffix):
-        datadate = day.get("data-date")
-        if datadate is not None:
-            curmatch = re.search(r"([0-9]+)\s(.+?)\s", datadate)
-            curd = int(curmatch.group(1))
-            curm = trmonmap[curmatch.group(2).lower().strip()]
-            for prog in day.iterfind("./ul/li"):
-                pdate = prog.find(".//time")
-                pname = prog.find(".//h3")
-                if pdate is not None and pname is not None:
-                    phour, pmin = pdate.get("datetime").split(":")
-                    pdate = datetime.datetime(day=curd, month=curm, year=now.year,
-                                              hour=int(phour), minute=int(pmin), tzinfo=trtz)
-                    pname = pname.text.strip()
-                    if prename:
-                        yield programme(prename, predate, pdate)
-                    prename = pname
-                    predate = pdate
+    yayin_name = "s sport 2"
