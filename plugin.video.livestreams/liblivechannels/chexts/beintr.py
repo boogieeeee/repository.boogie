@@ -27,9 +27,6 @@ try:
         index = "beintr:beinmax2:"
         minlinks = 1
 
-    class testbeinhaber(ChannelTest, unittest.TestCase):
-        index = "beintr:beinhaber:"
-        minlinks = 1
 except ImportError:
     pass
 
@@ -98,13 +95,3 @@ class beinmax2(multi, scraper):
     yayin_name = "beinmax2"
     selcuk_name = "beinmax2"
     taraf_name = "beinmax2"
-
-
-class beinhaber(multi, scraper):
-    title = u"Bein Sports Haber"
-    icon = "https://www.kolaytv.biz/bein-sports-haber.png"
-    categories = [u"Türkçe", u"Spor"]
-    youtube_chanid = "beinsportsturkiye"
-    yayin_name = "beinhaber"
-    selcuk_name = "beinhaber"
-
