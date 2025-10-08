@@ -20,4 +20,4 @@ class dmax(multi, scraper):
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "dmax"
     canlitv_ids = ["d-max-izle", "d-max-izle/2"]
-    canltivme_name = "D Max"
+    canlitvme_name = "D Max"

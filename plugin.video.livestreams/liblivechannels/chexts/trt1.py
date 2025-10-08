@@ -34,7 +34,7 @@ from tinyxbmc import mediaurl
 
 class trt1(multi, scraper):
     title = u"TRT 1"
-    icon = "https://www.trt1.com.tr/public/logo/d60ab555-f948-464a-a139-df5410d2a7b5/trt1_logo.png"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/TRT_1_logo_%282020-2021%29.svg/960px-TRT_1_logo_%282020-2021%29.svg.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_name = "trt1"
     selcuk_name = "trt1"
@@ -45,7 +45,7 @@ class trt1(multi, scraper):
 
 class trtspor(multi, scraper):
     title = u"TRT Spor"
-    icon = "https://www.trtspor.com.tr/static/img/trtspor-logo-yeni.png"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/TRT_Spor_logo_%282022%29.svg/640px-TRT_Spor_logo_%282022%29.svg.png"
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "trtspor"
     selcuk_name = "trtspor"
@@ -55,7 +55,7 @@ class trtspor(multi, scraper):
 
 class trtsporyildiz(multi, scraper):
     title = u"TRT Spor Yildiz"
-    icon = "https://www.trtspor.com.tr/static/img/trt-spor-yildiz-logo-beyaz-zemin.png"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/TRT_Spor_Y%C4%B1ld%C4%B1z_Logo.svg/960px-TRT_Spor_Y%C4%B1ld%C4%B1z_Logo.svg.png"
     categories = [u"Türkçe", u"Spor"]
     selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"

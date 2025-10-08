@@ -3,7 +3,7 @@ try:
     import test
 
     class testcalitvme(unittest.TestCase):
-        def test_daddy_link(self):
+        def test_canlitvme_link(self):
             test.testlink(self, itermedias("TRT 1"), 1, "TRT Spor Yildiz", 0)
 
 except ImportError:

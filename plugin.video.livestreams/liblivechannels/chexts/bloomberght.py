@@ -21,7 +21,7 @@ from liblivechannels.chexts.scrapertools.multi import multi
 
 class bloomberght(multi, scraper):
     title = u"Bloomberg HT"
-    icon = "http://www.bloomberght.com/images/logo.png"
+    icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/89/Bloomberg_HT_logo.svg/640px-Bloomberg_HT_logo.svg.png"
     youtube_chanid = "bloomberght"
     categories = [u"Türkçe", u"Haber"]
     canlitvme_name = "Bloomberg HT"
