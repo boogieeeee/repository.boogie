@@ -7,7 +7,7 @@ Created on Feb 1, 2021
 import re
 import json
 import htmlement
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from tinyxbmc import net
 from tinyxbmc import tools
@@ -18,33 +18,27 @@ from liblivechannels.chexts.scrapertools import normalize
 
 domain = "https://www.tvyayinakisi.com/"
 TZ = 3
-trtz = tools.tz_utc()
-trtz.settimezone(TZ)
+TRTZ = tools.tz_utc()
+TRTZ.settimezone(TZ)
+LOCTZ = tools.tz_local()
 
 
 def find(chname):
     xpage = htmlement.fromstring(net.http("%s/tv-kanallari" % domain, cache=60))
-    for channel in xpage.iterfind(".//a[@class='channel-card']"):
-        div = channel.find(".//div[@class='name']")
-        if div is not None and normalize(tools.elementsrc(div)) == normalize(chname):
-            return channel.get("href")
+    for channel in xpage.iterfind(".//li[@class='channel-item']"):
+        name = channel.get("data-name")
+        if not name:
+            continue
+        if normalize(name) == normalize(chname):
+            return channel.find(".//a").get("href")
 
 
-def todate(txt):
-    if txt.count("T") == 2:
-        txt = re.sub(r"T[0-9\:]+T", "T", txt)
-
-    formats = ["%Y-%m-%dT%H:%M:%S",
-               "%Y-%m-%d %H:%M:%S",
-               "%Y-%m-%dT%H:%M",
-               "%Y-%m-%d %H:%M"]
-    for fmt in formats:
-        try:
-            dt = datetime.strptime(txt, fmt)
-            return dt.replace(tzinfo=trtz)
-        except ValueError:
-            pass
-    print("unknown time: %s" % txt)
+def todate(txt, dayoffset):
+    dt = datetime.now(LOCTZ)
+    dt = dt.astimezone(TRTZ).replace(second=0, microsecond=0)
+    hour, minute = [int(x.strip()) for x in txt.split(":")]
+    offset = timedelta(days=dayoffset)
+    return dt.replace(hour=hour, minute=minute, tzinfo=TRTZ) + offset
 
 
 def iterprogrammes(chname=None, chid=None):
@@ -54,23 +48,19 @@ def iterprogrammes(chname=None, chid=None):
     elif chname:
         link = find(chname)
     if link:
-        subpage = net.http(link, referer=domain, cache=5)
-        apilink = re.search(r"kanal_detay\:\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
-        dslug = re.search(r"data-slug\=\s?(?:\"|\')(.+?)(?:\"|\')", subpage)
-        if apilink and dslug:
-            js = json.loads(net.http(apilink.group(1) + dslug.group(1), referer=domain))
-            for i in range(len(js["content"])):
-                try:
-                    nextstart = todate(js["content"][i + 1]["brod_start"])
-                except IndexError:
-                    nextstart = None
-                start = todate(js["content"][i]["brod_start"])
-                end = todate(js["content"][i]["brod_end"])
-                if nextstart is not None and (end is None or (end is not None and end <= start)):
-                    end = nextstart
-                if start and end:
-                    yield programme(js["content"][i]["name"],
-                                    start,
-                                    end,
-                                    categories=[js["content"][i]["type"], js["content"][i]["type2"]]
-                                    )
+        subpage = htmlement.fromstring(net.http(link, referer=domain, cache=5))
+        prevdate = None
+        prevtitle = None
+        dayoffset = 0
+        for day in subpage.iterfind(".//div[@role='region']"):
+            for prog in day.iterfind('.//li[@itemprop="itemListElement"]'):
+                pdate = todate(tools.elementsrc(prog.find(".//time")), dayoffset)
+                ptitle = prog.find(".//div[@class='title']")
+                ptitle = tools.elementsrc(ptitle, ptitle.find(".//span"))
+                if prevdate:
+                    yield programme(prevtitle,
+                                    prevdate,
+                                    pdate)
+                prevdate = pdate
+                prevtitle = ptitle
+            dayoffset += 1
