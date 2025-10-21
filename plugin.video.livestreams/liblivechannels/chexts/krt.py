@@ -23,4 +23,5 @@ class krt(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c4/KRT_Logo_2023.webp/500px-KRT_Logo_2023.webp.png"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "KRT"
+    canlitvme_name = "krt tv"
     youtube_chanid = "krtcanli"

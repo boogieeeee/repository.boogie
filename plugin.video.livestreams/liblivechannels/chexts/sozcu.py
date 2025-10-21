@@ -25,4 +25,4 @@ class sozcu(multi, scraper):
     yayin_name = "Sözcü TV"
     youtube_chanid = "Sozcutelevizyonu"
     youtube_sindex = -1
-    canlitvme_name = "sozcu"
+    canlitvme_name = "sözcü"

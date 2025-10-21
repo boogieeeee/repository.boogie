@@ -23,4 +23,5 @@ class tele1(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/tr/4/43/Tele1_logosu.png"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "Tele 1"
+    canlitvme_name = "Tele1"
     youtube_chanid = "Tele1comtr"

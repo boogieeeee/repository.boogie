@@ -24,5 +24,5 @@ class halk(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "Halk TV"
     youtube_chanid = "Halktvkanali"
-    canlitvme_name = "halk"
+    canlitvme_name = "halk tv"
     canlitv_id = "halk-tv"
