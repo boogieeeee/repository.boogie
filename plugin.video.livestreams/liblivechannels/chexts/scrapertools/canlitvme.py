@@ -15,6 +15,7 @@ from tinyxbmc import mediaurl
 import htmlement
 import re
 
+
 domains = {"https://www.canlitv.vin": [".//ul[@class='kanallar']/.//a",
                                        ".//div[@class='alternatif']/ul/.//a"],
            "https://www.canlitv.me": [".//li[@class='canlitvlist']/.//a",
@@ -75,6 +76,8 @@ def itermedias(kw):
                     gpage = net.http(geo, referer=u)
                     yayin = re.findall('src="(.+?ulke.+?)"', gpage)[-1]
                     yayin = yayin.replace("'+ulke+'", "DE")
+                    tks = re.search('"(.+?)"', net.http(re.search('"(.+?alfastream.+?)"', gpage).group(1))).group(1)
+                    yayin = yayin.replace("'+tkslast+'", tks)
                     ypage = net.http(yayin, referer=geo)
                     for ylink in tools.safeiter(deobfuslink(ypage)):
                         yield mediaurl.HlsUrl(ylink,
