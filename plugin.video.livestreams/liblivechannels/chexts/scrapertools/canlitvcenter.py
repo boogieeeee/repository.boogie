@@ -9,7 +9,7 @@ try:
 
     class testcanli(unittest.TestCase):
         def test_canli_link(self):
-            test.testlink(self, itermedias("tv8-izle-hd-canli"), 1, "tv8", 0)
+            test.testlink(self, itermedias("show-tv"), 1, "tv8", 0)
 
 except ImportError:
     pass
