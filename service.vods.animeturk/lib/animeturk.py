@@ -33,10 +33,9 @@ from tinyxbmc import net
 from tinyxbmc import tools
 from tinyxbmc import gui
 from tinyxbmc import const
-from chromium import Browser
 
 
-domain = "https://www.turkanime.co"
+domain = "https://www.turkanime.tv"
 
 
 class animeturk(vods.showextension):
@@ -52,17 +51,14 @@ class animeturk(vods.showextension):
 
     def iterkeys(self):
         yield self.masterkey
-        with Browser() as browser:
-            page = browser.navigate(domain + "/embed/", domain)
+        page = net.http(domain + "/embed/", referer=domain)
         for js in re.findall('"(\/embed\/js.*?)"', page):
-            with Browser() as browser:
-                jspage = browser.navigate(domain + js, domain)
+            jspage = net.http(domain + js, referer=domain)
             # find sub jspages
             if jspage is None:
                 continue
             for subjs in re.findall('([a-f0-9]{8,})', jspage):
-                with Browser() as browser:
-                    subjspage = browser.navigate(domain + "/embed/js/embeds." + subjs + ".js", domain)
+                subjspage = net.http(domain + "/embed/js/embeds." + subjs + ".js", referer=domain)
                 if subjspage is None:
                     continue
                 # find stringlist
@@ -87,8 +83,7 @@ class animeturk(vods.showextension):
 
     def getcategories(self):
         u = "%s/ajax/turler" % domain
-        with Browser() as browser:
-            page = browser.navigate(u, domain, headers={"x-requested-with": "XMLHttpRequest"})
+        page = net.http(u, referer=domain, headers={"x-requested-with": "XMLHttpRequest"})
         # page = self.download(u, headers=headers, referer=domain)
         xpage = htmlement.fromstring(page)
         for a in xpage.iterfind(".//a"):
@@ -96,8 +91,7 @@ class animeturk(vods.showextension):
 
     def getshows(self, catargs=None):
         if catargs:
-            with Browser() as browser:
-                page = browser.navigate(catargs, referer=domain)
+            page = net.http(catargs, referer=domain)
             self.scrapegrid(htmlement.fromstring(page))
 
     def scrapegrid(self, xpage):
@@ -122,19 +116,15 @@ class animeturk(vods.showextension):
             self.additem(title, url, art=art)
 
     def searchshows(self, keyword=None):
-        with Browser(maxtimeout=20) as browser:
-            browser.navigate(domain, html=False)
-            browser.elem_setattr("value", "'%s'" % keyword, tag="input")
-            browser.elem_call("submit", tag="form")
-            browser.waitloadevent()
-            page = browser.html()
+        # get the forntpage just in case cloudflare kicks in
+        _page = net.http(domain)
+        page = net.http(domain + "/arama", data={"arama": keyword}, referer=domain, method="POST", cache=None)
         self.scrapegrid(htmlement.fromstring(page))
         if not len(self.items):
             redirect = re.search("window\.location\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", page)
             if redirect and "anime/" in redirect.group(1):
                 url = net.absurl(redirect.group(1), domain)
-                with Browser() as browser:
-                    page = browser.navigate(url, domain)
+                page = net.http(url, referer=domain)
                 xpage = htmlement.fromstring(page)
                 div = xpage.find(".//div[@class='table-responsive']/")
                 title = div.find(".//tr[2]/td[3]").text
@@ -148,8 +138,7 @@ class animeturk(vods.showextension):
         if showargs:
             aniid, art = showargs
             url = "%s/ajax/bolumler&animeId=%s" % (domain, aniid)
-            with Browser() as browser:
-                page = browser.navigate(url, domain, headers={"x-requested-with": "XMLHttpRequest"})
+            page = net.http(url, referer=domain, headers={"x-requested-with": "XMLHttpRequest"})
             for a in htmlement.fromstring(page).iterfind(".//a"):
                 href = a.get("href")
                 if href and "/video/" in href:
@@ -157,15 +146,13 @@ class animeturk(vods.showextension):
                     url = net.absurl(a.get("href"), domain)
                     self.additem(title, url, art=art)
         else:
-            with Browser() as browser:
-                self.scrapegrid(htmlement.fromstring(browser.navigate(domain, None)))
+            self.scrapegrid(htmlement.fromstring(net.http(domain)))
 
     def getlink(self, mirrorlink, xmirrorpage=None):
         if not xmirrorpage:
-            with Browser() as browser:
-                mirrorpage = browser.navigate(mirrorlink,
-                                              domain,
-                                              headers={"x-requested-with": "XMLHttpRequest"})
+            mirrorpage = net.http(mirrorlink,
+                                  referer=domain,
+                                  headers={"x-requested-with": "XMLHttpRequest"})
             xmirrorpage = htmlement.fromstring(mirrorpage)
         iframe = net.absurl(xmirrorpage.find(".//iframe").get("src"), domain)
         urldata = parse.urlparse(iframe).fragment.split("/")[2].split("?")[0]
@@ -189,8 +176,7 @@ class animeturk(vods.showextension):
         fansubxpath = ".//div[@class='panel-body']/div[1]/button"
         mirrorxpath = ".//div[@class='panel-body']/div[4]/button"
 
-        with Browser() as browser:
-            page = browser.navigate(uid, domain)
+        page = net.http(uid, referer=domain)
         xpage = htmlement.fromstring(page)
 
         fansubs = {}
@@ -209,8 +195,7 @@ class animeturk(vods.showextension):
             for _fansub, fansublink in fansubs.items():
                 i += 1
                 if fansubselect == -1 or fansubselect == i:
-                    with Browser() as browser:
-                        page = browser.navigate(fansublink, uid, headers={"x-requested-with": "XMLHttpRequest"})
+                    page = net.http(fansublink, referer=uid, headers={"x-requested-with": "XMLHttpRequest"})
                     xfansubpage = htmlement.fromstring(page)
                     mirror = self.getlink(None, xfansubpage)
                     if mirror:
