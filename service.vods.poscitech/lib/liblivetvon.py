@@ -15,12 +15,6 @@ from tinyxbmc import mediaurl
 from tinyxbmc import tools
 from six.moves.urllib import parse
 
-try:
-    import chromium
-except ImportError:
-    chromium = None
-# from chromium import Browser
-
 
 setting = kodisetting("service.vods.poscitech")
 domain = "https://" + setting.getstr("domain")
@@ -96,25 +90,6 @@ def getzippy(iframe, iframeu, referer):
     return mediaurl.HlsUrl(url, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
 
 
-def get_fromchromium(iframe, iframeu, referer, timeout=6, maxxhr=10):
-    if not chromium:
-        return
-    with chromium.Browser(maxtimeout=timeout) as browser:
-        browser.navigate(iframeu, referer=referer, wait=False)
-        for _i in range(maxxhr):
-            message = browser.wait_message(timeout, msg_method="Network.requestWillBeSentExtraInfo")
-            if not message:
-                break
-            headers = message["params"]["headers"].copy()
-            _method = headers.pop(":method")
-            scheme = headers.pop(":scheme")
-            authority = headers.pop(":authority")
-            path = headers.pop(":path")
-            u = f'{scheme}://{authority}{path}'
-            if "m3u8" in path:
-                return mediaurl.HlsUrl(u, headers=headers, adaptive=True, ffmpegdirect=False, lheaders=headers)
-
-
 def geturls(streamid, path="/stream/stream-%s.php"):
     u = ("%s" + path) % (domain, streamid)
     xpage = htmlement.fromstring(net.http(u, referer=domain + "/"))
@@ -132,7 +107,7 @@ def geturls(streamid, path="/stream/stream-%s.php"):
                     iframe2 = net.http(iframeu2, referer=u)
                 except Exception:
                     continue
-                for cb in [get_forcedplay, getzippy, get_fromchromium]:
+                for cb in [get_forcedplay, getzippy]:
                     try:
                         media = cb(iframe2, iframeu2, u)
                         if media:
