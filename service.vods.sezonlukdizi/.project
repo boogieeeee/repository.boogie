@@ -4,7 +4,6 @@
 	<comment></comment>
 	<projects>
 		<project>plugin.video.vods</project>
-		<project>script.module.chromium</project>
 		<project>script.module.htmlement</project>
 	</projects>
 	<buildSpec>
