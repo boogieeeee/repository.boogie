@@ -20,11 +20,11 @@
 
 from tinyxbmc import container
 from tinyxbmc import tools
-from tinyxbmc import const
 from tinyxbmc import net
 from tinyxbmc import gui
 from tinyxbmc import extension
 from tinyxbmc import mediaurl
+from tinyxbmc import flare
 
 import time
 import socket
@@ -58,7 +58,7 @@ class Base(container.container):
         _headers = headers.copy()
         for retry in range(3):
             if "user-agent" not in [x.lower() for x in _headers.keys()]:
-                _headers[u"User-agent"] = const.USERAGENT
+                _headers[u"User-agent"] = flare.USERAGENT
             try:
                 resp = self.download(url, headers=_headers, text=False,
                                      timeout=common.query_timeout, stream=True,
