@@ -80,4 +80,4 @@ class PrimeVid(StreamsBase):
         ddata = json.loads(self.decrypt(player))
         hls = ddata.get("hls", ddata.get("cf"))
         hls = net.absurl(hls, referer)
-        yield mediaurl.HlsUrl(hls, headers={"referer": referer, "origin": host})
+        yield mediaurl.HlsUrl(hls, headers={"referer": referer, "origin": host}, adaptive=False)
