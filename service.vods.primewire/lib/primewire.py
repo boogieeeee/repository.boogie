@@ -190,12 +190,9 @@ class base:
                 continue
             media = subpage.get("link")
             if media:
-                if "streamz.ws" in media:
-                    continue
                 if media not in links:
                     yield media
                     links.append(media)
-                yield media
 
     def primesrcv1(self, xpage):
         url = None
