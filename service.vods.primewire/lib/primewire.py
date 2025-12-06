@@ -33,6 +33,14 @@ class base:
     def highq(self):
         return self.setting.getbool("highq")
 
+    @property
+    def lastreleased(self):
+        return self.setting.getint("lastreleased")
+
+    @property
+    def sort(self):
+        return self.setting.getstr(f"sort{self.section}")
+
     def getcats(self):
         search_uri = self.domain + "/filter"
         xpage = self.getpage(search_uri, parse=True)
@@ -58,10 +66,13 @@ class base:
         pagenum = self.page or 1
         search_uri = "%s/filter" % self.domain
         query = {"type": self.section,
-                 "sort": "Trending Today",
+                 "sort": self.sort,
                  "page": pagenum}
-        if self.highq and self.section == "movie":
-            query["quality"] = "DVD"
+        if self.section == "movie":
+            if self.highq:
+                query["quality"] = "DVD"
+            if self.lastreleased:
+                query["released_before"] = self.lastreleased
         if self.page:
             query["page"] = self.page
         if filters:
@@ -282,6 +293,8 @@ class pwseries(vods.showextension, base):
             self.additem("Season %s" % snum, snum, sinfo, art)
 
     def getepisodes(self, url, snum):
+        if not url:
+            return
         info, art, episodes = self.scrapeinfo(url)
         for epinum, title, url in episodes.get(snum, []):
             einfo = info.copy()
