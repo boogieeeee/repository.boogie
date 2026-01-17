@@ -21,3 +21,8 @@ class dmax(multi, scraper):
     yayin_name = "dmax"
     canlitv_ids = ["d-max-izle", "d-max-izle/2"]
     canlitvme_name = "D Max"
+
+    def get(self):
+        for link in super().get():
+            if "dogus" not in link.url:
+                yield link
