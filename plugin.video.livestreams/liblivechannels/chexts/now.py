@@ -23,6 +23,6 @@ class now(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/d/db/NOW_TV_%28Turkey%29_wordmark-red.svg/640px-NOW_TV_%28Turkey%29_wordmark-red.svg.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_name = "now"
-    youtube_chanid = "nowtvturkiye"
+    youtube_chanid = "@nowtvturkiye"
     canlitvme_name = "now"
     canlitv_id = "now-tv"

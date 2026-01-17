@@ -24,4 +24,4 @@ class krt(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "KRT"
     canlitvme_name = "krt tv"
-    youtube_chanid = "krtcanli"
+    youtube_chanid = "@krtcanli"

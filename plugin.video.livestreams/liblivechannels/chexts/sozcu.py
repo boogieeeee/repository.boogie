@@ -23,6 +23,6 @@ class sozcu(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/tr/e/ed/SZC_TV_logo.png"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "Sözcü TV"
-    youtube_chanid = "Sozcutelevizyonu"
+    youtube_chanid = "@Sozcutelevizyonu"
     youtube_sindex = -1
     canlitvme_name = "sözcü"

@@ -24,4 +24,4 @@ class tele1(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "Tele 1"
     canlitvme_name = "Tele1"
-    youtube_chanid = "Tele1comtr"
+    youtube_chanid = "@Tele1comtr"

@@ -36,6 +36,6 @@ class ahaber(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/7/7c/Ahaber_Logo.png"
     categories = [u"Türkçe", u"Haber"]
     yayin_id = "a-haber"
-    youtube_chanid = "ahaber"
+    youtube_chanid = "@ahaber"
     canlitv_ids = ["a-haber-izle/1", "a-haber-izle/2"]
     canlitvme_name = "A Haber"

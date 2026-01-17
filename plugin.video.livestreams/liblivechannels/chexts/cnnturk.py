@@ -21,7 +21,7 @@ from liblivechannels.chexts.scrapertools.multi import multi
 class cnnturk(multi, scraper):
     title = u"CNN Türk"
     icon = "http://www.gundemgazetesi.net/d/other/cnn_t_rk-001.png"
-    youtube_chanid = "cnnturk"
+    youtube_chanid = "@cnnturk"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "cnnturk"
     canlitvme_name = "CNN Türk"

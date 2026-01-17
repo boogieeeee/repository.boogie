@@ -23,6 +23,6 @@ class halk(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/4/42/Halk_TV_logo.png"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "Halk TV"
-    youtube_chanid = "Halktvkanali"
+    youtube_chanid = "@Halktvkanali"
     canlitvme_name = "halk tv"
     canlitv_id = "halk-tv"

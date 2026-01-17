@@ -4,62 +4,29 @@ try:
 
     class testyt(unittest.TestCase):
         def test_yt_link(self):
-            test.testlink(self, itermedias("cnnturk", None), 1, "bein1", 0)
+            test.testlink(self, itermedias("@krtcanli", 0), 1, "bein1", 0)
 
 except ImportError:
     pass
 
-import json
-import re
-import traceback
-import htmlement
-
-from tinyxbmc import net, mediaurl
-
-ua = "Mozilla/5.0 (Linux; Android 6.0.1; SM-G920V Build/MMB29K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.36"
+from tinyxbmc import mediaurl
+import ghub
+ghub.load("yt-dlp", "yt-dlp", "master")
+import yt_dlp
 
 
-def getconsent(page):
-    xpage = htmlement.fromstring(page)
-    form = xpage.find(".//form")
-    data = {}
-    if form is None or "/save" not in form.get("action"):
-        return page
-    for inp in form.findall(".//input[@type='hidden']"):
-        data[inp.get("name")] = inp.get("value")
-    page = net.http(form.get("action"),
-                    useragent=ua,
-                    method="POST",
-                    data=data)
-    return page
+def itermedias(chanid, sindex):
+    ydl_opts = {
+        'quiet': True,
+        'extract_flat': True,
+        'playlist_items': str(sindex + 1),
+        'playlistreverse': True,
+        'force_generic_extractor': False,
+    }
 
-
-def itermedias(youtube_chanid, youtube_sindex):
-    try:
-        u = "https://www.youtube.com/@%s/streams" % youtube_chanid
-        page = getconsent(net.http(u, useragent=ua))
-        t = re.search(r"ytInitialData\s*?=\s*?(?:\'|\")(.+)(?:\'|\");<\/script>", page)
-        esc = t.group(1).encode().decode("unicode_escape")
-        js = json.loads(esc)
-        streams = []
-        for tab in js["contents"].get("twoColumnBrowseResultsRenderer", js["contents"].get("singleColumnBrowseResultsRenderer"))["tabs"]:
-            try:
-                contents = tab["tabRenderer"]["content"]["richGridRenderer"]["contents"]
-                for content in contents:
-                    content = content["richItemRenderer"]["content"]
-                    renderer = content.get("videoRenderer", content.get("compactVideoRenderer"))
-                    if "upcomingEventData" in renderer:
-                        continue
-                    if "publishedTimeText" in renderer or "lengthText" in renderer:
-                        continue
-                    streams.append(renderer["videoId"])
-                break
-            except KeyError:
-                continue
-        vid = streams[youtube_sindex]
-    except Exception:
-        print(traceback.format_exc())
-        return
-    page = getconsent(net.http("https://www.youtube.com/watch?v=%s" % vid, useragent=ua))
-    hls = re.search(r"hlsManifestUrl(?:\"|\')\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", page).group(1)
-    yield mediaurl.HlsUrl(hls, adaptive=True, ffmpegdirect=False)
+    with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+        info = ydl.extract_info(f"https://www.youtube.com/{chanid}/streams", download=False)
+        if 'entries' in info and len(info['entries']) > 0:
+            first = info['entries'][sindex]
+            vinfo = ydl.extract_info(first["url"], download=False)
+            yield mediaurl.HlsUrl(vinfo["url"])

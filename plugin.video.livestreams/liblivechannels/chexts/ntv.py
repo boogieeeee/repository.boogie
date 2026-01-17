@@ -21,7 +21,7 @@ from liblivechannels.chexts.scrapertools.multi import multi
 class ntv(multi, scraper):
     title = u"NTV"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/NTV_logo.png/800px-NTV_logo.png"
-    youtube_chanid = "NTV"
+    youtube_chanid = "@NTV"
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "n"
     canlitvme_name = "NTV"
