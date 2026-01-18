@@ -1,6 +1,6 @@
 <?xml version="1.0" ?><settings>
 	<category id="Common" label="Common">
-		<setting default="primewire.tf" id="domain" label="Domain" type="text"/>
+		<setting default="primewire.si" id="domain" label="Domain" type="text"/>
 	</category>
 	<category id="Movies" label="Movies">
 	    <setting default="Trending Today" id="sortmovie" label="Sort Results" type="labelenum" values="Featured|Just Added|Popular|Trending Today|Trending this Week|Trending this Month|External Rating|Primewire Rating|Favorites|Favorites per view|Views|Release|Alphabet|In Theaters|Streaming Release|New"/>
