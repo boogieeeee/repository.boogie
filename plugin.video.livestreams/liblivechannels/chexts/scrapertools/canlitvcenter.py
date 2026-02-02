@@ -32,13 +32,13 @@ def findmedias(src, links, baseaddr):
     media = re.search(r"file[\s\t]*?\:[\s\t]*?atob\((?:\"|\')(.+?)(?:\"|\')\)", src)
     if media:
         link = base64.b64decode(media.group(1)).decode()
-        links.append(mediaurl.HlsUrl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
+        links.append(mediaurl.HlsUrl(link, headers={"referer": domain}, adaptive=True, ffmpegdirect=False))
         found = True
     else:
         for link in re.findall(rgxlink, src):
             if "anahtar" in link:
                 link = net.absurl(link, baseaddr)
-                links.append(mediaurl.HlsUrl(link, headers={"referer": domain}, adaptive=False, ffmpegdirect=False))
+                links.append(mediaurl.HlsUrl(link, headers={"referer": domain}, adaptive=True, ffmpegdirect=False))
                 found = True
                 break
     return found
