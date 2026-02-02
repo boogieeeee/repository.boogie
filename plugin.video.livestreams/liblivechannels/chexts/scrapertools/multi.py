@@ -1,9 +1,7 @@
 # -*- encoding: utf-8 -*-
 from liblivechannels.chexts.scrapertools import youtube
-from liblivechannels.chexts.scrapertools import selcuk
 from liblivechannels.chexts.scrapertools import canlitvcenter
 from liblivechannels.chexts.scrapertools import canlitvme
-from liblivechannels.chexts.scrapertools import dadylive
 
 from liblivechannels.chexts.scrapertools import yayinakisi
 from liblivechannels.chexts.scrapertools import vercel
@@ -11,27 +9,13 @@ from liblivechannels.chexts.scrapertools import mynetyayin
 
 from tinyxbmc.tools import safeiter
 from tinyxbmc import mediaurl
-from tinyxbmc import addon
-
-
-if addon.has_addon("service.vods.taraftarium"):
-    addon.depend_addon("service.vods.taraftarium")
-    import libtaraftarium
-else:
-    libtaraftarium = None
 
 
 class multi:
     directs = []
 
-    # taraftarium name
-    taraf_name = None
-
     # acestreams
     acestreams = []
-
-    # selcuk sports
-    selcuk_name = None
 
     # youtube
     youtube_chanid = None
@@ -43,10 +27,6 @@ class multi:
     # canlitvcenter
     canlitv_id = None
     canlitv_ids = None
-
-    # dadylive
-    dady_id = None
-    dady_name = None
 
     # sports24
     sports24_id = None
@@ -62,9 +42,6 @@ class multi:
     mynet_yayin = None
 
     def get(self):
-        if libtaraftarium and self.taraf_name:
-            for media in safeiter(libtaraftarium.geturlsfromchannel(self.taraf_name)):
-                yield media
         for acestream in self.acestreams:
             yield mediaurl.AceUrl(acestream)
         for direct in self.directs:
@@ -72,17 +49,11 @@ class multi:
         if self.youtube_chanid:
             for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
                 yield yayin
-        if self.selcuk_name:
-            for yayin in safeiter(selcuk.itermedias(self.selcuk_name)):
-                yield yayin
         if self.canlitvme_name:
             for yayin in safeiter(canlitvme.itermedias(self.canlitvme_name)):
                 yield yayin
         if self.canlitv_id or self.canlitv_ids:
             for yayin in safeiter(canlitvcenter.itermedias(self.canlitv_id, self.canlitv_ids)):
-                yield yayin
-        if self.dady_id or self.dady_name:
-            for yayin in safeiter(dadylive.itermedias(self.dady_id, self.dady_name)):
                 yield yayin
 
     def iterprogrammes(self):

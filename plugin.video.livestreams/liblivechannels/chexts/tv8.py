@@ -19,6 +19,5 @@ class tv8(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/en/thumb/3/35/Tv8_new_logo.png/125px-Tv8_new_logo.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_id = "tv-8"
-    selcuk_name = "8"
     canlitv_ids = ["tv-8-canli-hd", "tv-8-canli-hd/2"]
     canlitvme_name = "Tv8"

@@ -23,7 +23,6 @@ class espn(multi, scraper):
     icon = "https://logosmarken.com/wp-content/uploads/2020/12/ESPN-Logo-650x366.png"
     title = "ESPN"
     sports24_id = "espn"
-    dady_name = "espnusa"
     vercel_id = "10179"
     acestreams = ["acestream://4b4907de51ec11087d4bed5876f2a0c68264f442"]
 
@@ -32,6 +31,5 @@ class espn2(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/bf/ESPN2_logo.svg/800px-ESPN2_logo.svg.png"
     title = "ESPN 2"
     sports24_id = "espn2"
-    dady_name = "espn2usa"
     vercel_id = "12444"
     acestreams = ["acestream://664eb5fe460b96941aed633959a845b185cd8394"]

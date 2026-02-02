@@ -62,7 +62,6 @@ class polsatsport(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/40/Polsat_Sport_2021_gradient.svg/200px-Polsat_Sport_2021_gradient.svg.png"
     title = "Polsat Sport 1"
     categories = ["Polish", "Sport"]
-    dady_name = "polsatsportpoland"
     acestreams = ["acestream://92b6ba09dae4bbb8a67a405125d08ca8d15380ee"]
 
     def iterprogrammes(self):
@@ -74,7 +73,6 @@ class polsatpremium1(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b5/Polsat_Sport_Premium_1_2021_gradient.svg/320px-Polsat_Sport_Premium_1_2021_gradient.svg.png"
     title = "Polsat Sport Premium 1"
     categories = ["Polish", "Sport"]
-    dady_name = "polsatsportpoland"
     acestreams = ["acestream://4ce55db7e578ff52a6e526cf610e477464b8a99f"]
 
     def iterprogrammes(self):
@@ -86,7 +84,6 @@ class polsatpremium2(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c5/Polsat_Sport_Premium_2_2021_gradient.svg/320px-Polsat_Sport_Premium_2_2021_gradient.svg.png"
     title = "Polsat Sport Premium 2"
     categories = ["Polish", "Sport"]
-    dady_name = "polsatsportpoland"
     acestreams = ["acestream://3147c586346aee00c005d1caa55204d38678c95f"]
 
     def iterprogrammes(self):
@@ -98,7 +95,6 @@ class polsatsportextra(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/a/a8/Polsat_Sport_Extra_2021_gradient.svg/240px-Polsat_Sport_Extra_2021_gradient.svg.png"
     title = "Polsat Sport 2"
     categories = ["Polish", "Sport"]
-    dady_name = "polsatsportextrapoland"
     acestreams = ["acestream://ef2cf11fc83f4f15a33c9a514a7afd2bce73122f"]
 
     def iterprogrammes(self):
@@ -110,7 +106,6 @@ class polsatsportnews(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/f/f6/Polsat_Sport_News_2021_gradient.svg/240px-Polsat_Sport_News_2021_gradient.svg.png"
     title = "Polsat Sport News"
     categories = ["Polish", "Sport"]
-    dady_name = "polsatsportnewspoland"
 
     def iterprogrammes(self):
         for p in iterprogrammes(self.title):
@@ -150,7 +145,6 @@ class tvpsport(multi, scraper):
     title = "TVP Sport"
     categories = ["Polish", "Sport"]
     acestreams = ["acestream://d6f0a6377c31f68b1c1c071e0a8f9f105a455867"]
-    dady_name = "tvpsportpoland"
 
     def iterprogrammes(self):
         for p in iterprogrammes(self.title):

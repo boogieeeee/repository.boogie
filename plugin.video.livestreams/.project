@@ -8,8 +8,6 @@
 		<project>script.module.htmlement</project>
 		<project>script.module.tinyxbmc</project>
 		<project>service.vods.poscitech</project>
-		<project>service.vods.selcuk</project>
-		<project>service.vods.taraftarium</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>

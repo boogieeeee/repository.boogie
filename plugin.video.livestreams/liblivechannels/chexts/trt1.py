@@ -37,10 +37,8 @@ class trt1(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/TRT_1_logo_%282020-2021%29.svg/960px-TRT_1_logo_%282020-2021%29.svg.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_name = "trt1"
-    selcuk_name = "trt1"
     canlitv_ids = ["trt1-izle", "trt1-izle/2"]
     canlitvme_name = "TRT 1"
-    taraf_name = "trt1"
 
 
 class trtspor(multi, scraper):
@@ -48,19 +46,15 @@ class trtspor(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/9/92/TRT_Spor_logo_%282022%29.svg/640px-TRT_Spor_logo_%282022%29.svg.png"
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "trtspor"
-    selcuk_name = "trtspor"
     canlitvme_name = "TRT Spor"
-    taraf_name = "trtspor"
 
 
 class trtsporyildiz(multi, scraper):
     title = u"TRT Spor Yildiz"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/TRT_Spor_Y%C4%B1ld%C4%B1z_Logo.svg/960px-TRT_Spor_Y%C4%B1ld%C4%B1z_Logo.svg.png"
     categories = [u"Türkçe", u"Spor"]
-    selcuk_name = "trtspor2"
     mynet_yayin = "trt-spor-yildiz"
     canlitvme_name = "TRT Spor Yıldız"
-    taraf_name = "trtspor2"
     yayin_name = "TRT SPOR YILDIZ"
 
 
