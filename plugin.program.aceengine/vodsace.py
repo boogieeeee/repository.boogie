@@ -105,10 +105,7 @@ class ace(vods.movieextension):
             art = None
             img = result.get("icons")
             if img:
-                art = {"icon": img[0]["url"],
-                       "thumb": img[0]["url"],
-                       "poster": img[0]["url"],
-                       }
+                art = {"thumb": img[0]["url"]}
             epg = result.get("epg")
             if epg:
                 name += f" [{epg[0]['name']}]"
