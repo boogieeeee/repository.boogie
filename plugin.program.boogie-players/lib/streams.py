@@ -3,6 +3,7 @@ Created on Nov 21, 2019
 
 @author: boogie
 '''
+from tinyxbmc import stubmod
 from vods import linkplayerextension
 from tinyxbmc import extension
 from tinyxbmc import tools
@@ -14,8 +15,24 @@ import os
 ppath = os.path.join(os.path.dirname(__file__), "libstreams")
 
 
+class Test:
+    link = None
+    headers = {}
+
+    def test_link(self):
+        if not self.link:
+            return
+        s = streams(None)
+        found = False
+        for link in s.geturls(self.link, self.headers):
+            self.assertIsInstance(link, mediaurl.BaseUrl)
+            found = True
+        self.assertTrue(found)
+
+
 class StreamsBase:
     regex = None
+    testlink = None
 
     def resolve(self, url, headers):
         return mediaurl.LinkUrl(url, headers)
