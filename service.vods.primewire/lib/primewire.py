@@ -176,7 +176,7 @@ class base:
             if primesrc not in links:
                 yield primesrc
                 links.append(primesrc)
-        for primesrc in tools.safeiter(self.primesrcv1(xpage)):
+        for primesrc in tools.safeiter(self.primesrcv1(xpage, link)):
             if primesrc not in links:
                 yield primesrc
                 links.append(primesrc)
@@ -205,7 +205,7 @@ class base:
                     yield media
                     links.append(media)
 
-    def primesrcv1(self, xpage):
+    def primesrcv1(self, xpage, ref):
         url = None
         for iframe in xpage.iterfind(".//iframe"):
             url = iframe.get("src")
@@ -217,7 +217,7 @@ class base:
             return
 
         # v1 api
-        up = parse.urlparse(url)
+        up = parse.urlparse(net.absurl(url, ref))
         baseurl = f"{up.scheme}://{up.netloc}"
         mediatype = up.path.split("/")[-1]
         params = dict(parse.parse_qsl(up.query))
