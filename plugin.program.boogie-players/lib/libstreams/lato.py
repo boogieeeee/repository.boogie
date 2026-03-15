@@ -23,8 +23,7 @@ class Lato(StreamsBase):
         src = net.http(apiurl, referer=url, json=True)
         vidurl = src["url"]
         vidpage = net.http(vidurl, referer=url)
-        hlsurl = "".join(json.loads(re.search(r"return\((\[.+?\])", vidpage).group(1)))
-        hlsurl = hlsurl.replace("//", "/")
+        hlsurl = re.search(r"var\s*?src\s*?=\s*?(?:\'|\")(.+?)(?:\'|\")", vidpage).group(1)
         up = parse.urlparse(vidurl)
         origin = f"{up.scheme}://{up.netloc}"
         referer = origin + "/"

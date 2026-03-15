@@ -14,7 +14,7 @@ from six.moves.urllib import parse
 
 
 class Vidsrc(StreamsBase):
-    regex = r"vidsrc\.me"
+    regex = r"vidsrc\.|vidsrc-embed\.|vidsrcme\.|vsrc\."
     domain = "https://vidsrc.me"
 
     def resolve(self, url, headers):

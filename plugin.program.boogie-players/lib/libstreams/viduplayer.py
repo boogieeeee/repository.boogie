@@ -11,7 +11,7 @@ import re
 
 
 class Vidsrc(StreamsBase):
-    regex = r"viduplayer\.com|supervideo\.tv|vidmoly\.to"
+    regex = r"viduplayer\.com|supervideo\.tv|vidmoly\."
 
     def resolve(self, url, headers):
         page = net.http(url, headers=headers)
