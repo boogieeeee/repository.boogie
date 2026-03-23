@@ -12,7 +12,10 @@ except ImportError:
 from tinyxbmc import mediaurl
 import ghub
 ghub.load("yt-dlp", "yt-dlp", "master")
-import yt_dlp
+try:
+    import yt_dlp
+except ImportError:
+    yt_dlp = None
 
 
 def itermedias(chanid, sindex):
