@@ -52,19 +52,19 @@ class animeturk(vods.showextension):
     def iterkeys(self):
         yield self.masterkey
         page = net.http(domain + "/embed/", referer=domain)
-        for js in re.findall('"(\/embed\/js.*?)"', page):
+        for js in re.findall(r'"(\/embed\/js.*?)"', page):
             jspage = net.http(domain + js, referer=domain)
             # find sub jspages
             if jspage is None:
                 continue
-            for subjs in re.findall('([a-f0-9]{8,})', jspage):
+            for subjs in re.findall(r'([a-f0-9]{8,})', jspage):
                 subjspage = net.http(domain + "/embed/js/embeds." + subjs + ".js", referer=domain)
                 if subjspage is None:
                     continue
                 # find stringlist
-                for stringlist in re.findall("var _0x[a-z0-9]+?=\[(.*?)\];", subjspage):
+                for stringlist in re.findall(r"var _0x[a-z0-9]+?=\[(.*?)\];", subjspage):
                     # search for strings greater than 64 chars length (normally 100)
-                    for keycandidate in re.findall("'([^\']{64,})'", stringlist):
+                    for keycandidate in re.findall(r"'([^\']{64,})'", stringlist):
                         yield html.unescape(keycandidate).encode()
 
     def decrypt(self, data, iv, salt):
@@ -109,7 +109,7 @@ class animeturk(vods.showextension):
             title = title.replace("izle", "").strip()
             url = net.absurl(a.get("href"), domain)
             if "/anime/" in url:
-                imgid = re.search("([0-9]+)", img)
+                imgid = re.search(r"([0-9]+)", img)
                 if not imgid:
                     continue
                 url = imgid.group(1), art
@@ -121,7 +121,7 @@ class animeturk(vods.showextension):
         page = net.http(domain + "/arama", data={"arama": keyword}, referer=domain, method="POST", cache=None)
         self.scrapegrid(htmlement.fromstring(page))
         if not len(self.items):
-            redirect = re.search("window\.location\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", page)
+            redirect = re.search(r"window\.location\s*?\=\s*?(?:\"|\')(.+?)(?:\"|\')", page)
             if redirect and "anime/" in redirect.group(1):
                 url = net.absurl(redirect.group(1), domain)
                 page = net.http(url, referer=domain)
@@ -129,7 +129,7 @@ class animeturk(vods.showextension):
                 div = xpage.find(".//div[@class='table-responsive']/")
                 title = div.find(".//tr[2]/td[3]").text
                 img = net.absurl(div.find(".//div[@class='imaj']/.//img").get("data-src"), domain)
-                imgid = re.search("([0-9]+)", img).group(1)
+                imgid = re.search(r"([0-9]+)", img).group(1)
                 art = {"icon": img, "thumb": img, "poster": img}
                 url = imgid, art
                 self.additem(title, url, art=art)
@@ -155,7 +155,9 @@ class animeturk(vods.showextension):
                                   headers={"x-requested-with": "XMLHttpRequest"})
             xmirrorpage = htmlement.fromstring(mirrorpage)
         iframe = net.absurl(xmirrorpage.find(".//iframe").get("src"), domain)
-        urldata = parse.urlparse(iframe).fragment.split("/")[2].split("?")[0]
+        if not "#/url/" in iframe:
+            return iframe
+        urldata = parse.urlparse(iframe).fragment.split("/")[-1].split("?")[0]
         urldata = json.loads(base64.b64decode(urldata))
         link = self.decrypt(base64.b64decode(urldata["ct"]),
                             binascii.unhexlify(urldata["iv"]),
@@ -167,14 +169,14 @@ class animeturk(vods.showextension):
         for button in xpage.iterfind(xpath):
             link = button.get("onclick")
             if link:
-                ajaxlink = re.search("\((?:\"|\')(ajax.+?)(?:\"|\')", link)
+                ajaxlink = re.search(r"\((?:\"|\')(ajax.+?)(?:\"|\')", link)
                 if ajaxlink:
                     tag = tools.elementsrc(button).encode("ascii", "replace").strip()
                     yield tag, net.absurl(ajaxlink.group(1), domain)
 
     def geturls(self, uid):
-        fansubxpath = ".//div[@class='panel-body']/div[1]/button"
-        mirrorxpath = ".//div[@class='panel-body']/div[4]/button"
+        fansubxpath = r".//div[@class='panel-body']/div[1]/button"
+        mirrorxpath = r".//div[@class='panel-body']/div[4]/button"
 
         page = net.http(uid, referer=domain)
         xpage = htmlement.fromstring(page)
@@ -200,7 +202,7 @@ class animeturk(vods.showextension):
                     mirror = self.getlink(None, xfansubpage)
                     if mirror:
                         yield mirror
-                    for _, mirrorlink in tools.safeiter(self.iterajaxlink(xfansubpage, mirrorxpath)):
+                    for _, mirrorlink in self.iterajaxlink(xfansubpage, mirrorxpath):
                         mirror = self.getlink(mirrorlink)
                         if mirror:
                             yield mirror
