@@ -93,6 +93,7 @@ class smu(linkplayerextension):
 
     def geturls(self, link, headers=None):
         hmf = self.hmf(link, include_universal=True, include_disabled=True, include_popups=False)
-        resolved = hmf.resolve()
+        hmf._HostedMediaFile__resolvers = [x for x in hmf._HostedMediaFile__resolvers if "debrid" not in x.name.lower()]
+        resolved = hmf.resolve(allow_popups=False)
         if resolved:
             yield mediaurl.LinkUrl(*net.fromkodiurl(resolved))
