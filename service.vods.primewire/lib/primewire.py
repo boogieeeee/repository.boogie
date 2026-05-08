@@ -116,20 +116,17 @@ class base:
                     self.additem(title, url, info, art)
 
     def scrapeimdb(self, link, page=None):
-        page = page or self.getpage(link, removescr=True, parse=True)
-        for sublink in page.findall(".//div[@class='movie_info_actions']/div/a"):
-            subtext = sublink.text.lower()
-            if "imdb" in subtext:
-                imdbnumber = re.search("(tt[0-9]+)", sublink.get("href"))
-                if imdbnumber:
-                    return imdbnumber.group(1)
+        page = page or self.getpage(link, removescr=True, parse=False)
+        imdbid = re.search("(tt[0-9]+)", page)
+        if imdbid:
+            return imdbid.group(1)
 
     def scrapeinfo(self, link):
         page = self.getpage(link, removescr=True, parse=True)
         info = {}
         art = {}
         episodes = {}
-        imdb = self.scrapeimdb(link, page)
+        imdb = self.scrapeimdb(link)
         if imdb:
             info["imdbnumber"] = imdb
 
@@ -228,7 +225,7 @@ class base:
             yield api2["link"]
 
     def primesrcv2(self, page, xpage):
-        imdb = self.scrapeimdb(None, xpage)
+        imdb = self.scrapeimdb(None, page)
         if not imdb:
             return
         referer = "https://vidsrc.net/"
