@@ -202,7 +202,7 @@ class animeturk(vods.showextension):
                     mirror = self.getlink(None, xfansubpage)
                     if mirror:
                         yield mirror
-                    for _, mirrorlink in self.iterajaxlink(xfansubpage, mirrorxpath):
+                    for _, mirrorlink in tools.safeiter(self.iterajaxlink(xfansubpage, mirrorxpath)):
                         mirror = self.getlink(mirrorlink)
                         if mirror:
                             yield mirror
