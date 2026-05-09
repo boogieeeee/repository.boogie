@@ -4,6 +4,8 @@ import vods
 import re
 import htmlement
 import json
+import uuid
+import urllib
 
 from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
@@ -11,14 +13,14 @@ from tinyxbmc import const
 from tinyxbmc import iso
 from tinyxbmc import tools
 from tinyxbmc import net
-import blowfish
+from tinyxbmc import flare
 import hashlib
-from urllib import parse
 
 
 SEARCH_REGEX = r"e\.target\.elements\.s\.value.+?\"(.+?)\""
 JS_REGEX = r'script.+?type="text\/javascript" src=\"(.+?)"'
 TOKEN_REGEX = r';t="([^,|=]+?)"'
+UID = str(uuid.uuid4())
 
 
 class base:
@@ -161,7 +163,7 @@ class base:
                 else:
                     epinum = 0
                 title = episode.find(".//span[@class='tv_episode_name']").text.replace("-", "")
-                title = re.sub("([a-z])([A-Z])", "\g<1> \g<2>", title)
+                title = re.sub(r"([a-z])([A-Z])", "\g<1> \g<2>", title)
                 episodes[snum].append((epinum, title, url))
         return info, art, episodes
 
@@ -173,36 +175,8 @@ class base:
             if primesrc not in links:
                 yield primesrc
                 links.append(primesrc)
-        for primesrc in tools.safeiter(self.primesrcv1(xpage, link)):
-            if primesrc not in links:
-                yield primesrc
-                links.append(primesrc)
-        src = None
-        for js in xpage.iterfind(".//script"):
-            src = js.get("src")
-            if not src:
-                continue
-            if src.startswith("/js/app-"):
-                break
-        jspage = self.getpage(src, rel=self.domain)
-        token = re.search(TOKEN_REGEX, jspage).group(1)
 
-        userdata = xpage.find(r".//span[@id='user-data']").get("v")
-        codes = blowfish.decrypt(userdata)
-        for code in codes:
-            sublink = "https://%s/links/go/%s" % (self.setting.getstr("domain"), code)
-            try:
-                subpage = self.getpage(sublink, json=True, params={"token": token,
-                                                                   "emded": "true"})
-            except Exception:
-                continue
-            media = subpage.get("link")
-            if media:
-                if media not in links:
-                    yield media
-                    links.append(media)
-
-    def primesrcv1(self, xpage, ref):
+        # v1 api
         url = None
         for iframe in xpage.iterfind(".//iframe"):
             url = iframe.get("src")
@@ -213,16 +187,22 @@ class base:
         if url is None:
             return
 
-        # v1 api
-        up = parse.urlparse(net.absurl(url, ref))
+        up = urllib.parse.urlparse(net.absurl(url, link))
         baseurl = f"{up.scheme}://{up.netloc}"
         mediatype = up.path.split("/")[-1]
-        params = dict(parse.parse_qsl(up.query))
+        params = dict(urllib.parse.parse_qsl(up.query))
         params["type"] = mediatype
         api = net.http(f"{baseurl}/api/v1/s", params=params, json=True)
-        for server in api["servers"]:
-            api2 = net.http(f"{baseurl}/api/v1/l", params={"key": server["key"]}, json=True)
-            yield api2["link"]
+
+        with flare.Proxy("primewire") as proxy:
+            for server in api["servers"]:
+                sublink = "https://%s/links/go/%s?embed=true" % (self.setting.getstr("domain"), server["key"])
+                subpage = json.loads(re.sub(r"<.+?>", "", proxy.get(sublink)))
+                media = subpage.get("link")
+                if media:
+                    if media not in links:
+                        yield media
+                        links.append(media)
 
     def primesrcv2(self, page, xpage):
         imdb = self.scrapeimdb(None, page)
@@ -247,7 +227,7 @@ class base:
         if iframe is None:
             return
         iframeu = net.absurl(iframe.get("src"), referer)
-        up = parse.urlparse(iframeu)
+        up = urllib.parse.urlparse(iframeu)
         serverpath = "/".join(up.path.split("/")[:-1])
         for server in vidsrc.findall(".//div[@class='server']"):
             server = server.get("data-hash")
