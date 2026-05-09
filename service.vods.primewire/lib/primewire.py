@@ -11,9 +11,7 @@ from tinyxbmc.tools import elementsrc
 from tinyxbmc.net import absurl
 from tinyxbmc import const
 from tinyxbmc import iso
-from tinyxbmc import tools
 from tinyxbmc import net
-from tinyxbmc import flare
 import hashlib
 
 
@@ -57,7 +55,14 @@ class base:
     def getpage(self, link, referer=None, parse=False, removescr=False, rel=None, **kwargs):
         if rel is not None:
             link = absurl(link, rel)
-        pg = self.download(link, referer=referer or self.domain, **kwargs)
+        visitor_info = {'domain': self.setting.getstr("domain"),
+                        'uuid': UID,
+                        'mouse_moved': True,
+                        'suspected_bot': None,
+                        'adblock': False}
+        cstr = urllib.parse.quote(json.dumps(visitor_info, separators=(',', ':')), safe='{}:')
+        cookies = {"visitor_info": cstr}
+        pg = net.http(link, referer=referer or self.domain, cookies=cookies, **kwargs)
         if removescr:
             pg = re.sub("<script.*?script>", " ", pg, re.DOTALL)
         if not parse:
@@ -171,12 +176,7 @@ class base:
         links = []
         page = self.getpage(link)
         xpage = htmlement.fromstring(page)
-        for primesrc in tools.safeiter(self.primesrcv2(page, xpage)):
-            if primesrc not in links:
-                yield primesrc
-                links.append(primesrc)
 
-        # v1 api
         url = None
         for iframe in xpage.iterfind(".//iframe"):
             url = iframe.get("src")
@@ -194,56 +194,14 @@ class base:
         params["type"] = mediatype
         api = net.http(f"{baseurl}/api/v1/s", params=params, json=True)
 
-        with flare.Proxy("primewire") as proxy:
-            for server in api["servers"]:
-                sublink = "https://%s/links/go/%s?embed=true" % (self.setting.getstr("domain"), server["key"])
-                subpage = json.loads(re.sub(r"<.+?>", "", proxy.get(sublink)))
-                media = subpage.get("link")
-                if media:
-                    if media not in links:
-                        yield media
-                        links.append(media)
-
-    def primesrcv2(self, page, xpage):
-        imdb = self.scrapeimdb(None, page)
-        if not imdb:
-            return
-        referer = "https://vidsrc.net/"
-        if self.section == "tv":
-            seasoninfo = re.search(r"episode_info\s*?\=\s*?({.+?\})", page)
-            if seasoninfo is None:
-                return
-            seasoninfo = json.loads(seasoninfo.group(1))
-            vidsrcu = f"{referer}embed/{self.section}"
-            params = {"imdb": imdb,
-                      "season": seasoninfo["season"],
-                      "episode": seasoninfo["episode"],
-                      "ref": referer}
-        else:
-            vidsrcu = f"{referer}embed/{self.section}/{imdb}"
-            params = {}
-        vidsrc = htmlement.fromstring(net.http(vidsrcu, referer=referer, params=params))
-        iframe = vidsrc.find(".//iframe")
-        if iframe is None:
-            return
-        iframeu = net.absurl(iframe.get("src"), referer)
-        up = urllib.parse.urlparse(iframeu)
-        serverpath = "/".join(up.path.split("/")[:-1])
-        for server in vidsrc.findall(".//div[@class='server']"):
-            server = server.get("data-hash")
-            serveru = f"{up.scheme}://{up.netloc}{serverpath}/{server}"
-            iframesrc = net.http(serveru, referer=vidsrcu)
-            iframe2 = re.search(r"src\s*?\:\s*?(?:\"|\')(.+?)(?:\"|\')", iframesrc)
-            if iframe2 is None:
-                continue
-            iframe2u = net.absurl(iframe2.group(1), iframeu)
-            iframe2src = net.http(iframe2u, referer=vidsrcu)
-            rgxs = [r"location\.replace\((?:\"|\')(.+?)(?:\"|\')",
-                    r"btoa\((?:\'|\")(https\:\/\/.+?)(?:\'|\")"]
-            for rgx in rgxs:
-                iframe3 = re.search(rgx, iframe2src)
-                if iframe3 is not None:
-                    yield iframe3.group(1)
+        for server in api["servers"]:
+            sublink = "https://%s/links/go/%s?embed=true" % (self.setting.getstr("domain"), server["key"])
+            subpage = self.getpage(sublink, referer=link, json=True)
+            media = subpage.get("link")
+            if media:
+                if media not in links:
+                    yield media
+                    links.append(media)
 
 
 class pwseries(vods.showextension, base):
