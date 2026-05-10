@@ -128,7 +128,8 @@ class animeturk(vods.showextension):
                 xpage = htmlement.fromstring(page)
                 div = xpage.find(".//div[@class='table-responsive']/")
                 title = div.find(".//tr[2]/td[3]").text
-                img = net.absurl(div.find(".//div[@class='imaj']/.//img").get("data-src"), domain)
+                imgdiv = div.find(".//div[@class='imaj']/.//img")
+                img = net.absurl(imgdiv.get("data-src") or imgdiv.get("src"), domain)
                 imgid = re.search(r"([0-9]+)", img).group(1)
                 art = {"icon": img, "thumb": img, "poster": img}
                 url = imgid, art
