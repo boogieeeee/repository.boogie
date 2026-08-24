@@ -4,7 +4,7 @@ try:
 
     class testcalitvme(unittest.TestCase):
         def test_canlitvme_link(self):
-            test.testlink(self, itermedias("TRT 1"), 1, "TRT 1", 0)
+            test.testlink(self, itermedias("8"), 1, "tv 8", 0)
 
 except ImportError:
     pass
@@ -64,7 +64,8 @@ def itermedias(kw):
         spage = htmlement.fromstring(net.http(domain, referer=domain))
         form = spage.find(".//form")
         sec = form.find(".//input[@name='security']").get("value")
-        lpage = htmlement.fromstring(net.http(form.get("action"), params={"s": kw, "security": sec}, referer=domain))
+        rpage = net.http(form.get("action"), params={"s": kw, "security": sec}, referer=domain)
+        lpage = htmlement.fromstring(rpage)
         for channel in lpage.iterfind(xpath1):
             chname = channel.get("title").lower().replace("tv", "").replace(" ", "")
             if chname == kwfind:

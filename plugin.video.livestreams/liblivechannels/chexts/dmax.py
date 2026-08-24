@@ -19,7 +19,7 @@ class dmax(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4f/DMAX_-_Logo_2016.svg/1200px-DMAX_-_Logo_2016.svg.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "dmax"
-    canlitv_ids = ["d-max-izle", "d-max-izle/2"]
+    canlitvcenter_name = "dmax"
     canlitvme_name = "D Max"
 
     def get(self):

@@ -25,3 +25,4 @@ class showtv(multi, scraper):
     categories = [u"Türkçe", u"Realiti"]
     yayin_name = "show"
     canlitvme_name = "Show Tv"
+    canlitvcenter_name = "Show Tv"

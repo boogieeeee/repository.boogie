@@ -21,3 +21,4 @@ class tv8(multi, scraper):
     yayin_id = "tv-8"
     canlitv_ids = ["tv-8-canli-hd", "tv-8-canli-hd/2"]
     canlitvme_name = "Tv8"
+    canlitvcenter_name = "Tv8"

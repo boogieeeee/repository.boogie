@@ -25,3 +25,4 @@ class cnnturk(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "cnnturk"
     canlitvme_name = "CNN Türk"
+    canlitvcenter_name = "CNN Türk"

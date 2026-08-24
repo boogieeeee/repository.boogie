@@ -25,8 +25,7 @@ class multi:
     canlitvme_name = None
 
     # canlitvcenter
-    canlitv_id = None
-    canlitv_ids = None
+    canlitvcenter_name = None
 
     # sports24
     sports24_id = None
@@ -52,8 +51,8 @@ class multi:
         if self.canlitvme_name:
             for yayin in safeiter(canlitvme.itermedias(self.canlitvme_name)):
                 yield yayin
-        if self.canlitv_id or self.canlitv_ids:
-            for yayin in safeiter(canlitvcenter.itermedias(self.canlitv_id, self.canlitv_ids)):
+        if self.canlitvcenter_name:
+            for yayin in safeiter(canlitvcenter.itermedias(self.canlitvcenter_name)):
                 yield yayin
 
     def iterprogrammes(self):

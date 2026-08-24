@@ -25,4 +25,4 @@ class halk(multi, scraper):
     yayin_name = "Halk TV"
     youtube_chanid = "@Halktvkanali"
     canlitvme_name = "halk tv"
-    canlitv_id = "halk-tv"
+    canlitvcenter_name = "halk tv"

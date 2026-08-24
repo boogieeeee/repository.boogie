@@ -25,4 +25,5 @@ class bloomberght(multi, scraper):
     youtube_chanid = "@bloomberght"
     categories = [u"Türkçe", u"Haber"]
     canlitvme_name = "Bloomberg HT"
+    canlitvcenter_name = "Bloomberg HT"
     yayin_name = "bloomberght"

@@ -25,4 +25,4 @@ class now(multi, scraper):
     yayin_name = "now"
     youtube_chanid = "@nowtvturkiye"
     canlitvme_name = "now"
-    canlitv_id = "now-tv"
+    canlitvcenter_name = "now"

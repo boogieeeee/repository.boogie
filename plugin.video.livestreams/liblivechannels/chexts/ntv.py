@@ -25,3 +25,4 @@ class ntv(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "n"
     canlitvme_name = "NTV"
+    canlitvcenter_name = "NTV"

@@ -26,3 +26,4 @@ class haberturk(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "haberturk"
     canlitvme_name = "Habertürk Tv"
+    canlitvcenter_name = "Habertürk Tv"

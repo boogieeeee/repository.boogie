@@ -37,7 +37,7 @@ class trt1(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/3/31/TRT_1_logo_%282020-2021%29.svg/960px-TRT_1_logo_%282020-2021%29.svg.png"
     categories = [u"Türkçe", u"Realiti"]
     yayin_name = "trt1"
-    canlitv_ids = ["trt1-izle", "trt1-izle/2"]
+    canlitvcenter_name = "trt 1"
     canlitvme_name = "TRT 1"
 
 
@@ -47,15 +47,16 @@ class trtspor(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "trtspor"
     canlitvme_name = "TRT Spor"
+    canlitvcenter_name = "trt spor"
 
 
 class trtsporyildiz(multi, scraper):
     title = u"TRT Spor Yildiz"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/c/ce/TRT_Spor_Y%C4%B1ld%C4%B1z_Logo.svg/960px-TRT_Spor_Y%C4%B1ld%C4%B1z_Logo.svg.png"
     categories = [u"Türkçe", u"Spor"]
-    mynet_yayin = "trt-spor-yildiz"
     canlitvme_name = "TRT Spor Yıldız"
     yayin_name = "TRT SPOR YILDIZ"
+    canlitvcenter_name = "TRT Spor Yıldız"
 
 
 class trthaber(multi, scraper):
@@ -64,7 +65,7 @@ class trthaber(multi, scraper):
     categories = [u"Türkçe", u"Haber"]
     yayin_name = "trthaber"
     youtube_chanid = "trthaber"
-    canlitv_ids = ["trt-haber/1", "trt-haber/2"]
+    canlitvcenter_name = "trt haber"
     canlitvme_name = "TRT Haber"
     directs = [mediaurl.HlsUrl("https://tv-trthaber.medya.trt.com.tr/master.m3u8")]
 
@@ -74,7 +75,7 @@ class trtcocuk(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1a/TRT_%C3%87ocuk_logo_%282021%29.svg/2560px-TRT_%C3%87ocuk_logo_%282021%29.svg.png"
     categories = [u"Türkçe", u"Çocuk"]
     yayin_name = "trtcocuk"
-    canlitv_ids = ["trt-cocuk/1", "trt-cucuk/2", "trt-cocuk/3"]
+    canlitvcenter_name = "TRT Çocuk"
     canlitvme_name = "TRT Çocuk"
     directs = [mediaurl.HlsUrl("https://tv-trtcocuk.medya.trt.com.tr/master.m3u8")]
 
@@ -84,6 +85,5 @@ class trtbelgesel(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/b/ba/TRT_Belgesel_kurumsal_logo_%282015-2019%29.png/800px-TRT_Belgesel_kurumsal_logo_%282015-2019%29.png"
     categories = [u"Türkçe", u"Belgesel"]
     yayin_name = "trtbelgesel"
-    canlitv_ids = ["trtbelgesel-canli/1", "trtbelgesel-canli/2", "trt-cocuk/3"]
+    canlitvcenter_name = "trt belgesel"
     canlitvme_name = "TRT Belgesel"
-    # directs = [mediaurl.hlsurl("https://tv-trtbelgesel.medya.trt.com.tr/master.m3u8")]

@@ -24,6 +24,6 @@ class cntr(multi, scraper):
     title = u"Cartoon Network Turkiye"
     icon = "https://upload.wikimedia.org/wikipedia/commons/thumb/8/80/Cartoon_Network_2010_logo.svg/200px-Cartoon_Network_2010_logo.svg.png"
     categories = [u"Türkçe", u"Realiti"]
-    canlitv_ids = ["cartoon-network-canli/1", "cartoon-network-canli/2", "cartoon-network-canli/3"]
+    canlitvcenter_name = "cartoon network"
     yayin_id = "cartoon-network"
     canlitvme_name = "Cartoon Network"
