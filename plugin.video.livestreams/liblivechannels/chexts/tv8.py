@@ -22,3 +22,4 @@ class tv8(multi, scraper):
     canlitv_ids = ["tv-8-canli-hd", "tv-8-canli-hd/2"]
     canlitvme_name = "Tv8"
     canlitvcenter_name = "Tv8"
+    acestreams = ["acestream://4900019edaad4d975d4e258228f90b0c448b178a"]

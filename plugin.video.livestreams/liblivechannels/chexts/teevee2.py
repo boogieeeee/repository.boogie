@@ -28,3 +28,4 @@ class teevee2(multi, scraper):
     canlitvcenter_name = "teve2"
     yayin_name = "teve2"
     canlitvme_name = "Teve2"
+    acestreams = ["acestream://82cbbdda640413a55e9dda3b2e9471cbeffa983a"]

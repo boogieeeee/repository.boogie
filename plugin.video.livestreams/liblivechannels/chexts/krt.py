@@ -25,3 +25,4 @@ class krt(multi, scraper):
     yayin_name = "KRT"
     canlitvme_name = "krt tv"
     youtube_chanid = "@krtcanli"
+    acestreams = ["acestream://372e30838a1a059a5eac5615b3c16aa2d60b440d"]

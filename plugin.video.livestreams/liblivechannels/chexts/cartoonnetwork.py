@@ -27,3 +27,4 @@ class cntr(multi, scraper):
     canlitvcenter_name = "cartoon network"
     yayin_id = "cartoon-network"
     canlitvme_name = "Cartoon Network"
+    acestreams = ["acestream://3361a0066d39495556d451fbd8104be006d83b3c"]

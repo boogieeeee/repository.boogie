@@ -39,6 +39,7 @@ class trt1(multi, scraper):
     yayin_name = "trt1"
     canlitvcenter_name = "trt 1"
     canlitvme_name = "TRT 1"
+    acestreams = ["acestream://d4384fd1b8d17bb4e31e60c9edce0c4a8f3fe1fb"]
 
 
 class trtspor(multi, scraper):
@@ -48,6 +49,7 @@ class trtspor(multi, scraper):
     yayin_name = "trtspor"
     canlitvme_name = "TRT Spor"
     canlitvcenter_name = "trt spor"
+    acestreams = ["acestream://6c5e9bcc44d40423acfa5870a173c98213754af7"]
 
 
 class trtsporyildiz(multi, scraper):
@@ -68,6 +70,7 @@ class trthaber(multi, scraper):
     canlitvcenter_name = "trt haber"
     canlitvme_name = "TRT Haber"
     directs = [mediaurl.HlsUrl("https://tv-trthaber.medya.trt.com.tr/master.m3u8")]
+    acestreams = ["acestream://6f21947257ff458ca0cdaa51d38adf822661c40c"]
 
 
 class trtcocuk(multi, scraper):
@@ -78,6 +81,7 @@ class trtcocuk(multi, scraper):
     canlitvcenter_name = "TRT Çocuk"
     canlitvme_name = "TRT Çocuk"
     directs = [mediaurl.HlsUrl("https://tv-trtcocuk.medya.trt.com.tr/master.m3u8")]
+    acestreams = ["acestream://0e2e97a02f65bc6820e402331028489f0dcdfd49"]
 
 
 class trtbelgesel(multi, scraper):
@@ -87,3 +91,4 @@ class trtbelgesel(multi, scraper):
     yayin_name = "trtbelgesel"
     canlitvcenter_name = "trt belgesel"
     canlitvme_name = "TRT Belgesel"
+    acestreams = ["acestream://811c3c90eb249d1cf65502848d395ac9d6de3529"]

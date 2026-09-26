@@ -26,3 +26,4 @@ class cnnturk(multi, scraper):
     yayin_name = "cnnturk"
     canlitvme_name = "CNN Türk"
     canlitvcenter_name = "CNN Türk"
+    acestreams = ["acestream://dbbf25af5c60d5b5926cfd457de4336c3307efc5"]

@@ -18,15 +18,6 @@ try:
     class testbein4(ChannelTest, unittest.TestCase):
         index = "beintr:bein4:"
         minlinks = 1
-
-    class testbeinmax1(ChannelTest, unittest.TestCase):
-        index = "beintr:beinmax1:"
-        minlinks = 1
-
-    class testbeinmax2(ChannelTest, unittest.TestCase):
-        index = "beintr:beinmax2:"
-        minlinks = 1
-
 except ImportError:
     pass
 
@@ -65,17 +56,3 @@ class bein4(multi, scraper):
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "bein4"
     acestreams = ["acestream://7683cd0cbacf55fa8b39c363219ffba1bc47cf9d"]
-
-
-class beinmax1(multi, scraper):
-    title = u"Bein Sports Max 1 Turkiye"
-    icon = "https://i.pinimg.com/originals/95/f6/68/95f6681b3ad0c0404b04a7c4a8cccb06.png"
-    categories = [u"Türkçe", u"Spor"]
-    yayin_name = "beinmax1"
-
-
-class beinmax2(multi, scraper):
-    title = u"Bein Sports Max 2 Turkiye"
-    icon = "https://assets.bein.com/mena/sites/3/2015/06/beIN_SPORTS_MAX2_DIGITAL_Mono.png"
-    categories = [u"Türkçe", u"Spor"]
-    yayin_name = "beinmax2"

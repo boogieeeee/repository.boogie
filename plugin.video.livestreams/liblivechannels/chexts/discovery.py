@@ -4,7 +4,10 @@ try:
     from test import ChannelTest
 
     class testdmax(ChannelTest, unittest.TestCase):
-        index = "dmax:dmax:"
+        index = "discovery:dmax:"
+
+    class testdiscovery(ChannelTest, unittest.TestCase):
+        index = "discovery:discovery:"
 
 except ImportError:
     pass
@@ -26,3 +29,11 @@ class dmax(multi, scraper):
         for link in super().get():
             if "dogus" not in link.url:
                 yield link
+
+
+class discovery(multi, scraper):
+    title = u"Discovery Channel Turkiye"
+    icon = "https://reelcreativevideos.com/wp-content/uploads/2015/10/discovery-channel-logo.png?w=400"
+    categories = [u"Türkçe", u"Belgesel"]
+    yayin_name = "discovery channel"
+    acestreams = ["acestream://1534834fc65764c8eaca43cf108e0b49158d8c68"]

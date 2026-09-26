@@ -26,3 +26,4 @@ class ntv(multi, scraper):
     yayin_name = "n"
     canlitvme_name = "NTV"
     canlitvcenter_name = "NTV"
+    acestreams = ["acestream://412cae2e35e946f29ae0801323ee992cbf5e0e94"]

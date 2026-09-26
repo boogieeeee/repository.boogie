@@ -27,3 +27,4 @@ class haberturk(multi, scraper):
     yayin_name = "haberturk"
     canlitvme_name = "Habertürk Tv"
     canlitvcenter_name = "Habertürk Tv"
+    acestreams = ["acestream://5a90df96d912000eae438ab2b10368dc0574cc61"]

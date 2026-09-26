@@ -41,13 +41,13 @@ class multi:
     mynet_yayin = None
 
     def get(self):
+        if self.youtube_chanid:
+            for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
+                yield yayin
         for acestream in self.acestreams:
             yield mediaurl.AceUrl(acestream)
         for direct in self.directs:
             yield direct
-        if self.youtube_chanid:
-            for yayin in safeiter(youtube.itermedias(self.youtube_chanid, self.youtube_sindex)):
-                yield yayin
         if self.canlitvme_name:
             for yayin in safeiter(canlitvme.itermedias(self.canlitvme_name)):
                 yield yayin

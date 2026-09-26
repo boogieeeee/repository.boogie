@@ -31,3 +31,4 @@ class ssport2(multi, scraper):
     icon = "https://upload.wikimedia.org/wikipedia/tr/thumb/e/ed/S_Sport_2_logo.jpg/800px-S_Sport_2_logo.png"
     categories = [u"Türkçe", u"Spor"]
     yayin_name = "s sport 2"
+    acestreams = ["acestream://367f1bb1d5e85bbffcc14bd8b7297da7f4fa2e51"]

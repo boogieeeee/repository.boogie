@@ -29,6 +29,7 @@ class atv(multi, scraper):
     yayin_id = "atv"
     canlitvme_name = "atv"
     canlitvcenter_name = "atv"
+    acestreams = ["acestream://5a92f2385120a631f0d9f08e5629a4d9c3be2e10"]
 
 
 class ahaber(multi, scraper):
@@ -39,3 +40,4 @@ class ahaber(multi, scraper):
     youtube_chanid = "@ahaber"
     canlitvcenter_name = "a haber"
     canlitvme_name = "A Haber"
+    acestreams = ["acestream://8cbc6863e3072ab4fca0f26b076fdc046b3c683d"]

@@ -26,3 +26,4 @@ class showtv(multi, scraper):
     yayin_name = "show"
     canlitvme_name = "Show Tv"
     canlitvcenter_name = "Show Tv"
+    acestreams = ["acestream://f95c056c3b3288c99102f0b0144be7b0bf02e914"]

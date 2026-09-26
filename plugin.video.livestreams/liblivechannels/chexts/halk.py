@@ -26,3 +26,4 @@ class halk(multi, scraper):
     youtube_chanid = "@Halktvkanali"
     canlitvme_name = "halk tv"
     canlitvcenter_name = "halk tv"
+    acestreams = ["acestream://d7808d4a6db17036e485e34dba4785471b04575f"]

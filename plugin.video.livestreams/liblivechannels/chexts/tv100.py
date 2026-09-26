@@ -26,3 +26,4 @@ class tv100(multi, scraper):
     canlitvme_name = "TV100"
     canlitvcenter_name = "TV100"
     youtube_chanid = "@tv100"
+    acestreams = ["acestream://015ccd18da8c3c90a26c921db5e2af2eb5a6b555"]
