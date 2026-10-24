@@ -52,7 +52,7 @@ class base:
         for code, country in iso.countries_2letter.items():
             yield f"Country: {country}", {"country": code.upper()}
 
-    def getpage(self, link, referer=None, parse=False, removescr=False, rel=None, **kwargs):
+    def getpage(self, link, referer=None, parse=False, rel=None, **kwargs):
         if rel is not None:
             link = absurl(link, rel)
         visitor_info = {'domain': self.setting.getstr("domain"),
@@ -63,8 +63,6 @@ class base:
         cstr = urllib.parse.quote(json.dumps(visitor_info, separators=(',', ':')), safe='{}:')
         cookies = {"visitor_info": cstr}
         pg = net.http(link, referer=referer or self.domain, cookies=cookies, **kwargs)
-        if removescr:
-            pg = re.sub("<script.*?script>", " ", pg, re.DOTALL)
         if not parse:
             return pg
         return htmlement.fromstring(pg)
@@ -98,10 +96,12 @@ class base:
         div = page.find(".//div[@class='index_container']")
         if div is not None:
             for subdiv in div.iterfind(".//div"):
-                if subdiv.get("class") and "index_item" in subdiv.get("class"):
+                if subdiv.get("class") == "index_item":
                     titlediv = subdiv.find(".//div[@class='title-cutoff']")
                     title = titlediv.text.strip().title()
-                    year = elementsrc(subdiv.find("./a/h2"), exclude=titlediv)
+                    year = subdiv.find(".//a/h2")
+                    if year:
+                        year = elementsrc(year, exclude=titlediv)
                     if year:
                         yearre = re.search("([0-9]{4})", year)
                         if yearre:
@@ -123,13 +123,13 @@ class base:
                     self.additem(title, url, info, art)
 
     def scrapeimdb(self, link, page=None):
-        page = page or self.getpage(link, removescr=True, parse=False)
+        page = page or self.getpage(link, parse=False)
         imdbid = re.search("(tt[0-9]+)", page)
         if imdbid:
             return imdbid.group(1)
 
     def scrapeinfo(self, link):
-        page = self.getpage(link, removescr=True, parse=True)
+        page = self.getpage(link, parse=True)
         info = {}
         art = {}
         episodes = {}
@@ -196,6 +196,8 @@ class base:
 
         for server in api["servers"]:
             sublink = "https://%s/links/go/%s?embed=true" % (self.setting.getstr("domain"), server["key"])
+            # slow down a little bit not to trigger detection
+            time.sleep(1)
             subpage = self.getpage(sublink, referer=link, json=True)
             media = subpage.get("link")
             if media:
